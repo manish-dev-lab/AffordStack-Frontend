@@ -33,11 +33,11 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const fetchSettings = async () => {
     try {
       const data = await contentApi.getSettings();
-      const name = data['Company:Name'] || data['Business:Name'] || 'Soft Solutions';
-      const email = data['Company:Email'] || data['Business:Email'] || 'manishkiran8464@gmail.com';
-      const phone = data['Company:Phone'] || data['Business:Phone'] || '+91 8464992957';
-      const address = data['Company:Address'] || data['Business:Address'] || 'Rc puram Hyd';
-      const workingHours = data['Company:WorkingHours'] || data['Business:Hours'] || 'Mon - Sat: 9:00 AM - 8:00 PM IST';
+      const name = data['Company:Name'] || 'Soft Solutions';
+      const email = data['Company:Email'] || 'manishkiran8464@gmail.com';
+      const phone = data['Company:Phone'] || '+91 8464992957';
+      const address = data['Company:Address'] || 'Rc puram Hyd';
+      const workingHours = data['Company:WorkingHours'] || 'Mon - Sat: 9:00 AM - 8:00 PM IST';
       const whatsapp = data['Company:WhatsApp'] || phone;
       const currency = data['Finance:Currency'] || 'INR (₹)';
 

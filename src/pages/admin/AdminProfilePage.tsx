@@ -177,7 +177,7 @@ export const AdminProfilePage: React.FC = () => {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full sm:w-auto px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm rounded-lg shadow-sm disabled:opacity-50 flex items-center justify-center gap-2 transition-colors"
+                className="w-full sm:w-auto h-11 shrink-0 px-6 bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm rounded-lg shadow-sm disabled:opacity-50 flex items-center justify-center gap-2 transition-colors"
               >
                 {submitting && <LoadingSpinner size="sm" />}
                 Update Password

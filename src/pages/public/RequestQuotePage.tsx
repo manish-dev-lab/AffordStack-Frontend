@@ -14,7 +14,8 @@ import {
   FileSpreadsheet, 
   Clock, 
   ArrowRight,
-  AlertCircle
+  AlertCircle,
+  Loader2
 } from 'lucide-react';
 
 const quoteSchema = z.object({
@@ -421,10 +422,14 @@ export const RequestQuotePage: React.FC = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-base py-4 px-8 rounded-2xl shadow-xl shadow-blue-600/25 transition-all hover:scale-[1.01] active:scale-98 flex items-center justify-center gap-2 disabled:opacity-50"
+                className="w-full h-14 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-base px-8 rounded-2xl shadow-xl shadow-blue-600/25 transition-all hover:scale-[1.01] active:scale-98 flex items-center justify-center gap-2.5 disabled:opacity-50 shrink-0 cursor-pointer"
               >
-                <Send className="w-5 h-5" />
-                {isSubmitting ? 'Submitting & Generating Reference...' : 'Submit Quotation Request'}
+                {isSubmitting ? (
+                  <Loader2 className="w-5 h-5 animate-spin shrink-0" />
+                ) : (
+                  <Send className="w-5 h-5 shrink-0" />
+                )}
+                <span>{isSubmitting ? 'Submitting & Generating Reference...' : 'Submit Quotation Request'}</span>
               </button>
               <p className="text-center text-xs text-slate-500 mt-3">
                 By submitting this form, an enquiry reference will be generated and confirmation emailed automatically.

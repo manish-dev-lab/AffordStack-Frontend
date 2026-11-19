@@ -15,39 +15,46 @@ import {
   ShieldCheck,
   Server,
   Info,
+  Loader2,
 } from 'lucide-react';
 
 export const AdminSettingsPage: React.FC = () => {
   const { refreshSettings } = useCompanySettings();
-  const [settings, setSettings] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [savingKey, setSavingKey] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const [formFields, setFormFields] = useState({
-    'Company:Name': 'Your Business Name',
-    'Company:Email': 'your-email@example.com',
-    'Company:Phone': '+91XXXXXXXXXX',
-    'Company:Address': 'Tech Park, Bangalore / Hyderabad, India',
+    'Company:Name': 'Soft Solutions',
+    'Company:Email': 'manishkiran8464@gmail.com',
+    'Company:Phone': '+91 8464992957',
+    'Company:Address': 'Rc puram Hyd',
     'Company:WorkingHours': 'Mon - Sat: 9:00 AM - 8:00 PM IST',
-    'Company:WhatsApp': '+91XXXXXXXXXX',
-    'Finance:Currency': 'USD ($)',
+    'Company:WhatsApp': '+91 8464992957',
+    'Finance:Currency': 'INR (₹)',
     'Finance:DefaultTaxPercent': '18',
-    'Quotation:DefaultValidityDays': '15',
+    'Quotation:DefaultValidityDays': '10',
   });
 
   const loadSettings = async () => {
     try {
       setLoading(true);
       const res = await contentApi.getSettings();
-      setSettings(res);
-      setFormFields((prev) => ({
-        ...prev,
-        ...res,
-      }));
-    } catch (err) {
+      setFormFields({
+        'Company:Name': res['Company:Name'] || 'Soft Solutions',
+        'Company:Email': res['Company:Email'] || 'manishkiran8464@gmail.com',
+        'Company:Phone': res['Company:Phone'] || '+91 8464992957',
+        'Company:WhatsApp': res['Company:WhatsApp'] || res['Company:Phone'] || '+91 8464992957',
+        'Company:Address': res['Company:Address'] || 'Rc puram Hyd',
+        'Company:WorkingHours': res['Company:WorkingHours'] || 'Mon - Sat: 9:00 AM - 8:00 PM IST',
+        'Finance:Currency': res['Finance:Currency'] || 'INR (₹)',
+        'Finance:DefaultTaxPercent': res['Finance:DefaultTaxPercent'] || '18',
+        'Quotation:DefaultValidityDays': res['Quotation:DefaultValidityDays'] || '10',
+      });
+    } catch (err: any) {
       console.error('Failed to load settings', err);
+      setErrorMsg(err.message || 'Failed to load settings');
     } finally {
       setLoading(false);
     }
@@ -57,33 +64,15 @@ export const AdminSettingsPage: React.FC = () => {
     loadSettings();
   }, []);
 
-  const handleSaveIndividual = async (key: string, value: string) => {
-    try {
-      setSavingKey(key);
-      setErrorMsg(null);
-      await contentApi.updateSetting(key, value);
-      await refreshSettings();
-      setSuccessMsg(`Setting '${key}' saved successfully.`);
-      setTimeout(() => setSuccessMsg(null), 3000);
-    } catch (err: any) {
-      setErrorMsg(err.message || `Failed to update ${key}`);
-    } finally {
-      setSavingKey(null);
-    }
-  };
-
-  const handleSaveAll = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSaveAll = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     try {
       setSavingKey('ALL');
       setErrorMsg(null);
-      for (const [k, v] of Object.entries(formFields)) {
-        await contentApi.updateSetting(k, v);
-      }
+      await contentApi.updateSettingsBatch(formFields);
       await refreshSettings();
       setSuccessMsg('All configuration settings saved successfully!');
       setTimeout(() => setSuccessMsg(null), 3500);
-      loadSettings();
     } catch (err: any) {
       setErrorMsg(err.message || 'Failed to save settings');
     } finally {
@@ -105,12 +94,17 @@ export const AdminSettingsPage: React.FC = () => {
           </p>
         </div>
         <button
-          onClick={handleSaveAll}
+          type="button"
+          onClick={() => handleSaveAll()}
           disabled={savingKey === 'ALL'}
-          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm rounded-lg shadow-sm disabled:opacity-50 transition-colors"
+          className="h-11 shrink-0 inline-flex items-center justify-center gap-2.5 px-6 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-semibold text-sm rounded-xl shadow-md shadow-blue-500/20 disabled:opacity-60 transition-all cursor-pointer"
         >
-          {savingKey === 'ALL' ? <LoadingSpinner size="sm" /> : <Save className="w-4 h-4" />}
-          Save All Changes
+          {savingKey === 'ALL' ? (
+            <Loader2 className="w-4 h-4 animate-spin shrink-0" />
+          ) : (
+            <Save className="w-4 h-4 shrink-0" />
+          )}
+          <span className="shrink-0">{savingKey === 'ALL' ? 'Saving Changes...' : 'Save All Changes'}</span>
         </button>
       </div>
 

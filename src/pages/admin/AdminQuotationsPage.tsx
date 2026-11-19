@@ -16,7 +16,8 @@ import {
   CheckCircle2,
   Trash2,
   Calendar,
-  FileSpreadsheet
+  FileSpreadsheet,
+  Loader2
 } from 'lucide-react';
 
 export const AdminQuotationsPage: React.FC = () => {
@@ -398,71 +399,73 @@ export const AdminQuotationsPage: React.FC = () => {
               </button>
             </div>
 
-            <div className="space-y-2">
-              {items.map((item, index) => (
-                <div key={index} className="grid grid-cols-12 gap-2 bg-white p-2.5 rounded-xl border border-slate-200 items-center">
-                  <div className="col-span-5">
-                    <input
-                      type="text"
-                      placeholder="Item Title"
-                      required
-                      value={item.title}
-                      onChange={(e) => handleItemChange(index, 'title', e.target.value)}
-                      className="w-full px-2 py-1 text-xs border border-slate-300 rounded-lg"
-                    />
+            <div className="overflow-x-auto pb-1 -mx-1 px-1 sm:mx-0 sm:px-0">
+              <div className="min-w-[480px] space-y-2">
+                {items.map((item, index) => (
+                  <div key={index} className="grid grid-cols-12 gap-2 bg-white p-2.5 rounded-xl border border-slate-200 items-center">
+                    <div className="col-span-5">
+                      <input
+                        type="text"
+                        placeholder="Item Title"
+                        required
+                        value={item.title}
+                        onChange={(e) => handleItemChange(index, 'title', e.target.value)}
+                        className="w-full px-2 py-1.5 text-xs sm:text-xs border border-slate-300 rounded-lg"
+                      />
+                    </div>
+                    <div className="col-span-3">
+                      <input
+                        type="text"
+                        placeholder="Notes / Desc"
+                        value={item.description}
+                        onChange={(e) => handleItemChange(index, 'description', e.target.value)}
+                        className="w-full px-2 py-1.5 text-xs sm:text-xs border border-slate-300 rounded-lg"
+                      />
+                    </div>
+                    <div className="col-span-1">
+                      <input
+                        type="number"
+                        placeholder="Qty"
+                        min={1}
+                        value={item.quantity}
+                        onChange={(e) => handleItemChange(index, 'quantity', Number(e.target.value))}
+                        className="w-full px-2 py-1.5 text-xs sm:text-xs border border-slate-300 rounded-lg text-center"
+                      />
+                    </div>
+                    <div className="col-span-2">
+                      <input
+                        type="number"
+                        placeholder="Price (₹)"
+                        min={0}
+                        value={item.unitPrice}
+                        onChange={(e) => handleItemChange(index, 'unitPrice', Number(e.target.value))}
+                        className="w-full px-2 py-1.5 text-xs sm:text-xs border border-slate-300 rounded-lg text-right"
+                      />
+                    </div>
+                    <div className="col-span-1 text-center">
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveItem(index)}
+                        className="text-slate-400 hover:text-rose-600"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
-                  <div className="col-span-3">
-                    <input
-                      type="text"
-                      placeholder="Notes / Desc"
-                      value={item.description}
-                      onChange={(e) => handleItemChange(index, 'description', e.target.value)}
-                      className="w-full px-2 py-1 text-xs border border-slate-300 rounded-lg"
-                    />
-                  </div>
-                  <div className="col-span-1">
-                    <input
-                      type="number"
-                      placeholder="Qty"
-                      min={1}
-                      value={item.quantity}
-                      onChange={(e) => handleItemChange(index, 'quantity', Number(e.target.value))}
-                      className="w-full px-2 py-1 text-xs border border-slate-300 rounded-lg text-center"
-                    />
-                  </div>
-                  <div className="col-span-2">
-                    <input
-                      type="number"
-                      placeholder="Price (₹)"
-                      min={0}
-                      value={item.unitPrice}
-                      onChange={(e) => handleItemChange(index, 'unitPrice', Number(e.target.value))}
-                      className="w-full px-2 py-1 text-xs border border-slate-300 rounded-lg text-right"
-                    />
-                  </div>
-                  <div className="col-span-1 text-center">
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveItem(index)}
-                      className="text-slate-400 hover:text-rose-600"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
 
           {/* Pricing calculations */}
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-200 text-xs">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 p-3 sm:p-4 bg-slate-50 rounded-2xl border border-slate-200 text-xs">
             <div>
               <label className="block text-slate-500 font-bold uppercase mb-1">Dev Cost (₹)</label>
               <input
                 type="number"
                 value={devCost}
                 onChange={(e) => setDevCost(Number(e.target.value))}
-                className="w-full px-3 py-1.5 border border-slate-300 rounded-lg font-bold"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg font-bold"
               />
             </div>
             <div>
@@ -471,7 +474,7 @@ export const AdminQuotationsPage: React.FC = () => {
                 type="number"
                 value={addCost}
                 onChange={(e) => setAddCost(Number(e.target.value))}
-                className="w-full px-3 py-1.5 border border-slate-300 rounded-lg font-bold"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg font-bold"
               />
             </div>
             <div>
@@ -480,7 +483,7 @@ export const AdminQuotationsPage: React.FC = () => {
                 type="number"
                 value={taxRate}
                 onChange={(e) => setTaxRate(Number(e.target.value))}
-                className="w-full px-3 py-1.5 border border-slate-300 rounded-lg font-bold"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg font-bold"
               />
             </div>
             <div>
@@ -489,13 +492,13 @@ export const AdminQuotationsPage: React.FC = () => {
                 type="number"
                 value={advanceAmount}
                 onChange={(e) => setAdvanceAmount(Number(e.target.value))}
-                className="w-full px-3 py-1.5 border border-slate-300 rounded-lg font-bold text-emerald-700"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg font-bold text-emerald-700"
               />
             </div>
           </div>
 
           {/* Computed Summary */}
-          <div className="p-4 bg-blue-50/70 border border-blue-200 rounded-2xl flex items-center justify-between text-xs sm:text-sm">
+          <div className="p-3 sm:p-4 bg-blue-50/70 border border-blue-200 rounded-2xl flex flex-col sm:flex-row gap-2 sm:items-center justify-between text-xs sm:text-sm">
             <div>
               <span className="text-slate-500">Subtotal: ₹{calculatedSubtotal.toLocaleString()}</span>
               <span className="text-slate-500 ml-4">Tax: ₹{calculatedTax.toLocaleString()}</span>
@@ -509,16 +512,23 @@ export const AdminQuotationsPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setCreateModalOpen(false)}
-              className="px-5 py-2.5 rounded-xl border border-slate-300 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+              className="h-11 px-5 rounded-xl border border-slate-300 text-sm font-semibold text-slate-700 hover:bg-slate-100 shrink-0 cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold shadow-md disabled:opacity-50"
+              className="h-11 px-6 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-sm font-bold shadow-md disabled:opacity-50 inline-flex items-center justify-center gap-2 shrink-0 cursor-pointer"
             >
-              {saving ? 'Creating Quotation...' : 'Save Quotation Draft'}
+              {saving ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin shrink-0" />
+                  <span>Saving...</span>
+                </>
+              ) : (
+                <span>Save Quotation Draft</span>
+              )}
             </button>
           </div>
         </form>

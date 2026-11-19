@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Lock, User, AlertCircle, ArrowRight, Code } from 'lucide-react';
+import { Lock, User, AlertCircle, ArrowRight, Code, Loader2 } from 'lucide-react';
 
 export const AdminLoginPage: React.FC = () => {
   const [usernameOrEmail, setUsernameOrEmail] = useState('admin');
-  const [password, setPassword] = useState('Admin@123456');
+  const [password, setPassword] = useState('admin@123');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -103,10 +103,19 @@ export const AdminLoginPage: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm py-3 px-4 rounded-xl shadow-lg shadow-blue-600/30 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full h-12 bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm px-4 rounded-xl shadow-lg shadow-blue-600/30 transition-all flex items-center justify-center gap-2 disabled:opacity-50 shrink-0 cursor-pointer"
             >
-              {loading ? 'Authenticating...' : 'Sign In to Dashboard'}
-              <ArrowRight className="w-4 h-4" />
+              {loading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin shrink-0" />
+                  <span>Authenticating...</span>
+                </>
+              ) : (
+                <>
+                  <span>Sign In to Dashboard</span>
+                  <ArrowRight className="w-4 h-4 shrink-0" />
+                </>
+              )}
             </button>
           </form>
 
@@ -115,7 +124,7 @@ export const AdminLoginPage: React.FC = () => {
             <div className="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800 text-xs text-slate-400 text-left">
               <span className="font-bold text-blue-400 block mb-1">Development Initial Credentials:</span>
               <div>Username: <code className="text-white">admin</code></div>
-              <div>Password: <code className="text-white">Admin@123456</code></div>
+              <div>Password: <code className="text-white">admin@123</code></div>
               <div className="mt-1 text-[11px] text-slate-500">Change password in Admin Profile once signed in.</div>
             </div>
           </div>
