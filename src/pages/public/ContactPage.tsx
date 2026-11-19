@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, Phone, MapPin, Clock, Send, CheckCircle2 } from 'lucide-react';
+import { Mail, Phone, MapPin, Clock, Send, CheckCircle2, Loader2 } from 'lucide-react';
 import { enquiryApi } from '../../api/enquiryApi';
 import { useCompanySettings } from '../../context/SettingsContext';
 
@@ -179,10 +179,19 @@ export const ContactPage: React.FC = () => {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm px-8 py-3.5 rounded-xl shadow-md flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+                className="w-full sm:w-auto h-12 shrink-0 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm px-8 rounded-xl shadow-md flex items-center justify-center gap-2 transition-all disabled:opacity-50"
               >
-                <Send className="w-4 h-4" />
-                {submitting ? 'Sending Message...' : 'Send Message'}
+                {submitting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin shrink-0" />
+                    <span>Sending Message...</span>
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-4 h-4 shrink-0" />
+                    <span>Send Message</span>
+                  </>
+                )}
               </button>
             </form>
           )}

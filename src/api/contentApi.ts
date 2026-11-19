@@ -153,4 +153,9 @@ export const contentApi = {
     });
     return res.data.success;
   },
+
+  updateSettingsBatch: async (settings: Record<string, string>): Promise<boolean> => {
+    const res = await axiosInstance.put<ApiResponse<boolean>>('/admin/settings/batch', settings);
+    return res.data.success;
+  },
 };

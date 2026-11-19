@@ -451,7 +451,7 @@ export const AdminServicesPage: React.FC = () => {
             <button
               type="submit"
               disabled={submitting}
-              className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm rounded-lg shadow-sm disabled:opacity-50 flex items-center gap-2"
+              className="px-5 h-10 shrink-0 bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm rounded-lg shadow-sm disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {submitting && <LoadingSpinner size="sm" />}
               {editingId ? 'Update Service' : 'Save Service'}

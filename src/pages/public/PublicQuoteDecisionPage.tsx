@@ -13,7 +13,8 @@ import {
   Clock, 
   ShieldCheck, 
   FileText,
-  AlertCircle
+  AlertCircle,
+  Loader2
 } from 'lucide-react';
 
 export const PublicQuoteDecisionPage: React.FC = () => {
@@ -293,10 +294,11 @@ export const PublicQuoteDecisionPage: React.FC = () => {
                 type="button"
                 disabled={actionLoading || (decisionType === 'reject' && !remarks.trim())}
                 onClick={handleDecisionSubmit}
-                className={`px-6 py-2 rounded-xl text-white text-sm font-bold shadow-md disabled:opacity-50 ${
+                className={`h-10 shrink-0 px-6 rounded-xl text-white text-sm font-bold shadow-md disabled:opacity-50 inline-flex items-center justify-center gap-2 ${
                   decisionType === 'accept' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-rose-600 hover:bg-rose-700'
                 }`}
               >
+                {actionLoading && <Loader2 className="w-4 h-4 animate-spin shrink-0" />}
                 {actionLoading ? 'Submitting...' : decisionType === 'accept' ? 'Confirm Acceptance' : 'Confirm Decline'}
               </button>
             </div>

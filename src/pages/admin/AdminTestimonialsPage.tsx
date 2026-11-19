@@ -314,7 +314,7 @@ export const AdminTestimonialsPage: React.FC = () => {
             <button
               type="submit"
               disabled={submitting}
-              className="px-5 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium text-sm rounded-lg shadow-sm disabled:opacity-50 flex items-center gap-2"
+              className="px-5 h-10 shrink-0 bg-amber-500 hover:bg-amber-600 text-white font-medium text-sm rounded-lg shadow-sm disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {submitting && <LoadingSpinner size="sm" />}
               Save Testimonial
