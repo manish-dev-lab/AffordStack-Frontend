@@ -1,0 +1,26 @@
+name: Deploy Frontend to Raspberry Pi
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, linux, arm64]
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Build & Update Frontend Container
+        run: |
+          docker build -t softwareservices-frontend:latest .
+          docker stop frontend_app || true
+          docker rm frontend_app || true
+          docker run -d \
+            --name frontend_app \
+            --restart always \
+            --network app-network \
+            -p 80:80 \
+            softwareservices-frontend:latest
+          docker image prune -f
