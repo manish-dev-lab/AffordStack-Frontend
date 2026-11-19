@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { contentApi } from '../../api/contentApi';
 import { LoadingSpinner } from '../../components/common/LoadingSpinner';
+import { useCompanySettings } from '../../context/SettingsContext';
 import {
   Settings,
   Save,
@@ -17,6 +18,7 @@ import {
 } from 'lucide-react';
 
 export const AdminSettingsPage: React.FC = () => {
+  const { refreshSettings } = useCompanySettings();
   const [settings, setSettings] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [savingKey, setSavingKey] = useState<string | null>(null);
@@ -60,6 +62,7 @@ export const AdminSettingsPage: React.FC = () => {
       setSavingKey(key);
       setErrorMsg(null);
       await contentApi.updateSetting(key, value);
+      await refreshSettings();
       setSuccessMsg(`Setting '${key}' saved successfully.`);
       setTimeout(() => setSuccessMsg(null), 3000);
     } catch (err: any) {
@@ -77,6 +80,7 @@ export const AdminSettingsPage: React.FC = () => {
       for (const [k, v] of Object.entries(formFields)) {
         await contentApi.updateSetting(k, v);
       }
+      await refreshSettings();
       setSuccessMsg('All configuration settings saved successfully!');
       setTimeout(() => setSuccessMsg(null), 3500);
       loadSettings();
