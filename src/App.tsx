@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { SettingsProvider } from './context/SettingsContext';
 
 // Layouts & Guards
 import { PublicLayout } from './components/layout/PublicLayout';
@@ -43,7 +44,8 @@ import { AdminProfilePage } from './pages/admin/AdminProfilePage';
 export const App: React.FC = () => {
   return (
     <AuthProvider>
-      <BrowserRouter>
+      <SettingsProvider>
+        <BrowserRouter>
         <Routes>
           {/* Public Website Routes */}
           <Route element={<PublicLayout />}>
@@ -92,7 +94,8 @@ export const App: React.FC = () => {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
-    </AuthProvider>
+    </SettingsProvider>
+  </AuthProvider>
   );
 };
 

@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Clock, Send, CheckCircle2 } from 'lucide-react';
 import { enquiryApi } from '../../api/enquiryApi';
+import { useCompanySettings } from '../../context/SettingsContext';
 
 export const ContactPage: React.FC = () => {
+  const settings = useCompanySettings();
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({
@@ -57,7 +59,7 @@ export const ContactPage: React.FC = () => {
             </div>
             <h3 className="font-bold text-slate-900 text-base">Direct Email</h3>
             <p className="text-slate-500 text-xs mt-1">Our technical coordinators respond within 24 hours.</p>
-            <p className="text-blue-600 font-semibold text-sm mt-3">your-email@example.com</p>
+            <a href={`mailto:${settings.email}`} className="text-blue-600 font-semibold text-sm mt-3 block hover:underline">{settings.email}</a>
           </div>
 
           <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-md">
@@ -65,8 +67,8 @@ export const ContactPage: React.FC = () => {
               <Phone className="w-5 h-5" />
             </div>
             <h3 className="font-bold text-slate-900 text-base">Phone &amp; WhatsApp</h3>
-            <p className="text-slate-500 text-xs mt-1">Mon - Sat from 9:00 AM to 7:00 PM IST.</p>
-            <p className="text-indigo-600 font-semibold text-sm mt-3">+91XXXXXXXXXX</p>
+            <p className="text-slate-500 text-xs mt-1">{settings.workingHours}</p>
+            <a href={`tel:${settings.phone}`} className="text-indigo-600 font-semibold text-sm mt-3 block hover:underline">{settings.phone}</a>
           </div>
 
           <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-md">
@@ -75,7 +77,7 @@ export const ContactPage: React.FC = () => {
             </div>
             <h3 className="font-bold text-slate-900 text-base">Office &amp; Technical Lab</h3>
             <p className="text-slate-500 text-xs mt-1">Software development &amp; mentoring center.</p>
-            <p className="text-slate-800 font-semibold text-sm mt-3">Your Business Address</p>
+            <p className="text-slate-800 font-semibold text-sm mt-3">{settings.address}</p>
           </div>
         </div>
 

@@ -1,8 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Code, Mail, Phone, MapPin, ArrowRight, ShieldCheck } from 'lucide-react';
+import { useCompanySettings } from '../../context/SettingsContext';
 
 export const Footer: React.FC = () => {
+  const settings = useCompanySettings();
   return (
     <footer className="bg-slate-950 text-slate-400 border-t border-slate-800">
       {/* Top Banner */}
@@ -46,15 +48,15 @@ export const Footer: React.FC = () => {
             <div className="mt-6 space-y-2.5 text-sm">
               <div className="flex items-center gap-3 text-slate-300">
                 <Mail className="w-4 h-4 text-blue-500" />
-                <span>your-email@example.com</span>
+                <a href={`mailto:${settings.email}`} className="hover:text-blue-400">{settings.email}</a>
               </div>
               <div className="flex items-center gap-3 text-slate-300">
                 <Phone className="w-4 h-4 text-blue-500" />
-                <span>+91XXXXXXXXXX</span>
+                <a href={`tel:${settings.phone}`} className="hover:text-blue-400">{settings.phone}</a>
               </div>
               <div className="flex items-center gap-3 text-slate-300">
                 <MapPin className="w-4 h-4 text-blue-500" />
-                <span>Your Business Address</span>
+                <span>{settings.address}</span>
               </div>
             </div>
           </div>
