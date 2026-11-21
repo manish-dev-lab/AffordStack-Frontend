@@ -11,7 +11,7 @@ export const EnterpriseDevPage: React.FC = () => {
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 mb-6">
             <Building2 className="w-4 h-4" /> Full-Cycle Enterprise Engineering
           </div>
-          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight max-w-4xl">
+          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight max-w-4xl text-white">
             Custom Business &amp; Enterprise Software Development
           </h1>
           <p className="mt-6 text-base sm:text-lg text-slate-300 max-w-3xl leading-relaxed">
@@ -20,7 +20,7 @@ export const EnterpriseDevPage: React.FC = () => {
           <div className="mt-8 flex flex-wrap gap-4">
             <Link
               to="/request-a-quote?category=Enterprise%20Application%20Development"
-              className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-7 py-3 rounded-xl shadow-lg shadow-emerald-600/30 transition-all flex items-center gap-2"
+              className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-7 py-3 rounded-xl shadow-lg shadow-emerald-600/30 transition-all flex items-center gap-2 cursor-pointer"
             >
               Start Enterprise Project
               <ArrowRight className="w-4 h-4" />
@@ -66,12 +66,12 @@ export const EnterpriseDevPage: React.FC = () => {
           ].map((item) => {
             const Icon = item.icon;
             return (
-              <div key={item.title} className="bg-white rounded-3xl p-8 border border-slate-200/80 shadow-md">
-                <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-6">
+              <div key={item.title} className="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200/80 dark:border-slate-800 shadow-md hover:border-emerald-500/40 transition-colors">
+                <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-6">
                   <Icon className="w-6 h-6" />
                 </div>
-                <h3 className="text-xl font-bold text-slate-900">{item.title}</h3>
-                <p className="mt-3 text-sm text-slate-600 leading-relaxed">{item.desc}</p>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white">{item.title}</h3>
+                <p className="mt-3 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">{item.desc}</p>
               </div>
             );
           })}

@@ -65,7 +65,8 @@ export const Navbar: React.FC = () => {
   const userInitial = (clientUser?.fullName || clientUser?.email || 'U').charAt(0).toUpperCase();
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/95 dark:bg-slate-950/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80 transition-colors shadow-xs">
+    <>
+      <nav className="sticky top-0 z-50 bg-white/95 dark:bg-slate-950/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80 transition-colors shadow-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20 items-center">
           {/* Brand Logo */}
@@ -294,8 +295,9 @@ export const Navbar: React.FC = () => {
             </Link>
 
             <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="p-1.5 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-hidden cursor-pointer"
+              type="button"
+              onClick={() => setIsOpen((prev) => !prev)}
+              className="p-2 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-hidden cursor-pointer touch-manipulation z-50 select-none active:scale-95 transition-transform"
               aria-label="Toggle menu"
             >
               {isOpen ? <X className="w-6 h-6 text-slate-900 dark:text-white" /> : <Menu className="w-6 h-6 text-slate-900 dark:text-white" />}
@@ -303,10 +305,14 @@ export const Navbar: React.FC = () => {
           </div>
         </div>
       </div>
+    </nav>
 
-      {/* Mobile Drawer Menu: Solid full screen dropdown without gaps */}
-      {isOpen && (
-        <div className="fixed inset-x-0 top-20 bottom-0 z-50 lg:hidden flex flex-col bg-white dark:bg-slate-950 border-t border-slate-200/80 dark:border-slate-800 shadow-2xl overflow-y-auto overscroll-contain animate-in slide-in-from-top-2 duration-150">
+    {/* Mobile Drawer Menu: Rendered outside <nav> so backdrop-blur does not trap fixed coordinates */}
+    {isOpen && (
+      <div 
+        className="fixed inset-x-0 top-20 bottom-0 z-40 lg:hidden flex flex-col bg-white dark:bg-slate-950 border-t border-slate-200/80 dark:border-slate-800 shadow-2xl overflow-y-auto overscroll-contain animate-in slide-in-from-top-2 duration-150"
+        style={{ height: 'calc(100dvh - 5rem)' }}
+      >
           <div className="px-4 pt-3 pb-20 space-y-2.5">
             {/* 1. Home */}
             <Link
@@ -472,6 +478,6 @@ export const Navbar: React.FC = () => {
           </div>
         </div>
       )}
-    </nav>
+    </>
   );
 };
