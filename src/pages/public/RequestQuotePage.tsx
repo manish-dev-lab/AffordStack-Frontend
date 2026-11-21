@@ -514,9 +514,9 @@ export const RequestQuotePage: React.FC = () => {
                     Additional Requirements or Special Instructions (Optional)
                   </label>
                   <textarea
-                    rows={2}
+                    rows={4}
                     {...register('additionalRequirements')}
-                    className="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
+                    className="w-full min-h-[105px] px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:outline-hidden leading-relaxed resize-y placeholder:text-slate-400 dark:placeholder:text-slate-500"
                     placeholder="Mention specific framework versions, database requirements, or presentation slides needed..."
                   />
                 </div>
