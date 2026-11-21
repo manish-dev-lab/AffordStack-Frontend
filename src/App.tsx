@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import { UserAuthProvider } from './context/UserAuthContext';
 import { SettingsProvider } from './context/SettingsContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { ToastProvider } from './context/ToastContext';
 
 // Layouts & Guards
 import { PublicLayout } from './components/layout/PublicLayout';
@@ -51,10 +52,11 @@ import { AdminProfilePage } from './pages/admin/AdminProfilePage';
 export const App: React.FC = () => {
   return (
     <ThemeProvider>
-      <AuthProvider>
-        <UserAuthProvider>
-          <SettingsProvider>
-            <BrowserRouter>
+      <ToastProvider>
+        <AuthProvider>
+          <UserAuthProvider>
+            <SettingsProvider>
+              <BrowserRouter>
               <Routes>
                 {/* Public Website Routes */}
                 <Route element={<PublicLayout />}>
@@ -117,7 +119,8 @@ export const App: React.FC = () => {
           </SettingsProvider>
         </UserAuthProvider>
       </AuthProvider>
-    </ThemeProvider>
+    </ToastProvider>
+  </ThemeProvider>
   );
 };
 

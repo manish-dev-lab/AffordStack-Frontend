@@ -50,7 +50,14 @@ axiosInstance.interceptors.response.use(
 
     // 2. Extract human-readable error message from backend
     let friendlyMessage = '';
+    const status = error.response?.status;
     const resData = error.response?.data;
+
+    let isServerOrTechnicalError = false;
+
+    if (!status || status >= 500 || error.code === 'ECONNABORTED' || !error.response) {
+      isServerOrTechnicalError = true;
+    }
 
     if (resData) {
       if (typeof resData === 'string' && resData.trim().length > 0) {
@@ -68,8 +75,37 @@ axiosInstance.interceptors.response.use(
       }
     }
 
-    if (!friendlyMessage) {
-      const status = error.response?.status;
+    // Inspect if the extracted text itself contains internal technical keywords
+    const lowerMsg = (friendlyMessage || '').toLowerCase();
+    if (
+      lowerMsg.includes('internal server error') ||
+      lowerMsg.includes('unhandled exception') ||
+      lowerMsg.includes('npgsql') ||
+      lowerMsg.includes('syntax error') ||
+      lowerMsg.includes('relation ') ||
+      lowerMsg.includes('column ') ||
+      lowerMsg.includes('stack trace') ||
+      lowerMsg.includes('nullreference') ||
+      lowerMsg.includes('object reference') ||
+      lowerMsg.includes('exception of type')
+    ) {
+      isServerOrTechnicalError = true;
+    }
+
+    if (isServerOrTechnicalError) {
+      friendlyMessage = 'Something went wrong while processing your request. Please try again shortly.';
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(
+          new CustomEvent('app:toast', {
+            detail: {
+              type: 'error',
+              title: 'Something went wrong',
+              message: 'We experienced an unexpected issue. Please try again in a moment.',
+            },
+          })
+        );
+      }
+    } else if (!friendlyMessage) {
       if (status === 401) {
         friendlyMessage = 'Incorrect username or password. Please verify your credentials.';
       } else if (status === 403) {
@@ -78,18 +114,15 @@ axiosInstance.interceptors.response.use(
         friendlyMessage = 'The requested information could not be found.';
       } else if (status === 409) {
         friendlyMessage = 'A conflict occurred. This record may already exist.';
-      } else if (status === 415) {
-        friendlyMessage = 'Unsupported media format. Please check your input.';
-      } else if (status && status >= 500) {
-        friendlyMessage = 'A server error occurred. Please try again shortly.';
-      } else if (error.code === 'ECONNABORTED' || !error.response) {
-        friendlyMessage = 'Network connection failed. Please check your network connection.';
+      } else if (status === 422) {
+        friendlyMessage = 'Provided information is incomplete or invalid. Please check your inputs.';
       } else {
-        friendlyMessage = 'An unexpected error occurred. Please try again.';
+        friendlyMessage = 'Unable to complete your request. Please try again.';
       }
     }
 
     error.message = friendlyMessage;
+    error.isServerError = isServerOrTechnicalError;
     return Promise.reject(error);
   }
 );
