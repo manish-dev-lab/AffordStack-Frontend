@@ -9,6 +9,7 @@ export interface CompanySettings {
   workingHours: string;
   whatsapp: string;
   currency: string;
+  isUnderMaintenance: boolean;
   rawSettings: Record<string, string>;
   refreshSettings: () => Promise<void>;
 }
@@ -21,6 +22,7 @@ const defaultSettings: CompanySettings = {
   workingHours: 'Mon - Sat: 9:00 AM - 8:00 PM IST',
   whatsapp: '+91 8464992957',
   currency: 'INR (₹)',
+  isUnderMaintenance: false,
   rawSettings: {},
   refreshSettings: async () => {},
 };
@@ -40,6 +42,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       const workingHours = data['Company:WorkingHours'] || 'Mon - Sat: 9:00 AM - 8:00 PM IST';
       const whatsapp = data['Company:WhatsApp'] || phone;
       const currency = data['Finance:Currency'] || 'INR (₹)';
+      const isUnderMaintenance = data['System:MaintenanceMode'] === 'true';
 
       setSettings({
         name,
@@ -49,6 +52,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         workingHours,
         whatsapp,
         currency,
+        isUnderMaintenance,
         rawSettings: data,
         refreshSettings: fetchSettings,
       });
@@ -69,3 +73,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 };
 
 export const useCompanySettings = () => useContext(SettingsContext);
+export const useSettings = () => {
+  const s = useContext(SettingsContext);
+  return { settings: s, ...s };
+};

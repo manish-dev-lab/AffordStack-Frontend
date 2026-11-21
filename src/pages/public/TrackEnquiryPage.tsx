@@ -18,7 +18,8 @@ import {
   Calendar,
   Layers,
   ArrowRight,
-  RefreshCw
+  RefreshCw,
+  FolderKanban
 } from 'lucide-react';
 
 export const TrackEnquiryPage: React.FC = () => {
@@ -276,6 +277,103 @@ export const TrackEnquiryPage: React.FC = () => {
                 </div>
               </div>
             </Reveal>
+
+            {/* Project Execution & Milestones Progress */}
+            {((tracking.milestones && tracking.milestones.length > 0) || tracking.progressPercentage !== undefined) && (
+              <Reveal animation="fade-up" delayMs={120}>
+                <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-200/80 dark:border-slate-800 space-y-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-slate-800">
+                    <div>
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-900">
+                        <FolderKanban className="w-3.5 h-3.5" /> Project Roadmap &amp; Execution
+                      </div>
+                      <h3 className="text-xl font-extrabold text-slate-900 dark:text-white mt-2">
+                        {tracking.projectNumber ? `Project #${tracking.projectNumber}` : 'Sprint Development & Milestones'}
+                      </h3>
+                      {tracking.expectedCompletionDate && (
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-1.5">
+                          <Calendar className="w-3.5 h-3.5 text-blue-500" />
+                          Target Completion: {new Date(tracking.expectedCompletionDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Progress Bar Badge */}
+                    <div className="flex flex-col sm:items-end">
+                      <span className="text-3xl font-black text-blue-600 dark:text-blue-400">
+                        {tracking.progressPercentage || 0}%
+                      </span>
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                        Project Completed
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Visual Progress Bar */}
+                  <div className="space-y-1.5">
+                    <div className="w-full h-3 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-blue-600 to-indigo-600 transition-all duration-500 rounded-full"
+                        style={{ width: `${Math.min(Math.max(tracking.progressPercentage || 0, 5), 100)}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Milestone Item List */}
+                  {tracking.milestones && tracking.milestones.length > 0 && (
+                    <div className="space-y-3">
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                        Milestone Deliverables &amp; Progress
+                      </h4>
+                      <div className="grid grid-cols-1 gap-3">
+                        {tracking.milestones.map((m, idx) => (
+                          <div
+                            key={m.id || idx}
+                            className={`p-4 rounded-2xl border transition-all flex items-start gap-3.5 ${
+                              m.isCompleted
+                                ? 'bg-emerald-50/70 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900/60'
+                                : 'bg-slate-50/80 dark:bg-slate-800/40 border-slate-200/80 dark:border-slate-800'
+                            }`}
+                          >
+                            <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5 ${
+                              m.isCompleted
+                                ? 'bg-emerald-600 text-white shadow-xs'
+                                : 'bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400'
+                            }`}>
+                              {m.isCompleted ? <CheckCircle2 className="w-5 h-5" /> : <Clock className="w-4 h-4" />}
+                            </div>
+
+                            <div className="flex-1 min-w-0">
+                              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                                <h5 className={`text-sm font-bold truncate ${
+                                  m.isCompleted
+                                    ? 'text-emerald-900 dark:text-emerald-200'
+                                    : 'text-slate-900 dark:text-white'
+                                }`}>
+                                  {m.title}
+                                </h5>
+                                <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full inline-block shrink-0 ${
+                                  m.isCompleted
+                                    ? 'bg-emerald-200 dark:bg-emerald-900/80 text-emerald-800 dark:text-emerald-200'
+                                    : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+                                }`}>
+                                  {m.isCompleted ? '✓ Completed' : `Due: ${new Date(m.dueDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}`}
+                                </span>
+                              </div>
+                              {m.description && (
+                                <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
+                                  {m.description}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </Reveal>
+            )}
 
             {/* Active Quotation Review & Decision Section */}
             {tracking.activeQuotation && (

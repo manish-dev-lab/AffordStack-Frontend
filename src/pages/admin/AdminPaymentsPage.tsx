@@ -137,11 +137,11 @@ export const AdminPaymentsPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2.5">
-            <CreditCard className="w-6 h-6 text-emerald-600" />
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-2.5">
+            <CreditCard className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
             Payment Management
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
             Track client project receipts, advances, milestone installments and settlement records.
           </p>
         </div>
@@ -151,7 +151,7 @@ export const AdminPaymentsPage: React.FC = () => {
             setSuccess(null);
             setModalOpen(true);
           }}
-          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm rounded-lg shadow-sm transition-colors"
+          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm rounded-xl shadow-xs transition-colors"
         >
           <Plus className="w-4 h-4" />
           Record New Payment
@@ -160,39 +160,39 @@ export const AdminPaymentsPage: React.FC = () => {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+        <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold">
             <Receipt className="w-6 h-6" />
           </div>
           <div>
-            <div className="text-xs font-semibold uppercase tracking-wider text-slate-500">Page Total Received</div>
-            <div className="text-2xl font-extrabold text-slate-900 mt-0.5">${totalCollected.toLocaleString()}</div>
+            <div className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Page Total Received</div>
+            <div className="text-2xl font-extrabold text-slate-900 dark:text-white mt-0.5">₹{totalCollected.toLocaleString()}</div>
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+        <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold">
             <ArrowUpRight className="w-6 h-6" />
           </div>
           <div>
-            <div className="text-xs font-semibold uppercase tracking-wider text-slate-500">Total Transactions</div>
-            <div className="text-2xl font-extrabold text-slate-900 mt-0.5">{totalCount}</div>
+            <div className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Total Transactions</div>
+            <div className="text-2xl font-extrabold text-slate-900 dark:text-white mt-0.5">{totalCount}</div>
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
+        <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold">
             <Calendar className="w-6 h-6" />
           </div>
           <div>
-            <div className="text-xs font-semibold uppercase tracking-wider text-slate-500">Active Projects Tracked</div>
-            <div className="text-2xl font-extrabold text-slate-900 mt-0.5">{projects.length}</div>
+            <div className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Active Projects Tracked</div>
+            <div className="text-2xl font-extrabold text-slate-900 dark:text-white mt-0.5">{projects.length}</div>
           </div>
         </div>
       </div>
 
       {/* Filter / Search Bar */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex flex-col sm:flex-row items-center gap-3">
+      <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs flex flex-col sm:flex-row items-center gap-3">
         <div className="relative flex-1 w-full">
           <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
@@ -203,67 +203,67 @@ export const AdminPaymentsPage: React.FC = () => {
               setSearch(e.target.value);
               setPage(1);
             }}
-            className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-blue-500"
           />
         </div>
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden">
         {loading ? (
           <div className="py-20 flex justify-center">
             <LoadingSpinner size="lg" />
           </div>
         ) : payments.length === 0 ? (
-          <div className="py-16 text-center text-slate-500">
-            <Receipt className="w-12 h-12 mx-auto text-slate-300 mb-3" />
-            <p className="font-medium text-slate-700">No payment transactions found.</p>
-            <p className="text-xs text-slate-400 mt-1">Record a project payment to begin tracking finances.</p>
+          <div className="py-16 text-center text-slate-500 dark:text-slate-400">
+            <Receipt className="w-12 h-12 mx-auto text-slate-300 dark:text-slate-600 mb-3" />
+            <p className="font-medium text-slate-700 dark:text-slate-300">No payment transactions found.</p>
+            <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Record a project payment to begin tracking finances.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-slate-600">
-              <thead className="bg-slate-50 text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-200">
+            <table className="w-full text-left text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+              <thead className="bg-slate-50 dark:bg-slate-800/60 text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider border-b border-slate-200 dark:border-slate-800">
                 <tr>
                   <th className="px-6 py-3.5">ID / Date</th>
                   <th className="px-6 py-3.5">Project</th>
-                  <th className="px-6 py-3.5">Type & Method</th>
+                  <th className="px-6 py-3.5">Type &amp; Method</th>
                   <th className="px-6 py-3.5">Transaction Ref</th>
                   <th className="px-6 py-3.5">Amount</th>
                   <th className="px-6 py-3.5">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                 {payments.map((p) => (
-                  <tr key={p.id} className="hover:bg-slate-50/70 transition-colors">
+                  <tr key={p.id} className="hover:bg-slate-50/70 dark:hover:bg-slate-800/50 transition-colors">
                     <td className="px-6 py-4">
-                      <div className="font-semibold text-slate-900">PAY-#{p.id}</div>
-                      <div className="text-xs text-slate-400 mt-0.5">
+                      <div className="font-semibold text-slate-900 dark:text-white">PAY-#{p.id}</div>
+                      <div className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
                         {p.paymentDate ? new Date(p.paymentDate).toLocaleDateString() : 'N/A'}
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="font-medium text-slate-800">
+                      <div className="font-medium text-slate-800 dark:text-slate-200">
                         {p.projectTitle || `Project #${p.projectId}`}
                       </div>
-                      {p.notes && <div className="text-xs text-slate-400 truncate max-w-xs mt-0.5">{p.notes}</div>}
+                      {p.notes && <div className="text-xs text-slate-400 dark:text-slate-500 truncate max-w-xs mt-0.5">{p.notes}</div>}
                     </td>
                     <td className="px-6 py-4">
-                      <div className="font-medium text-slate-700">{getPaymentTypeName(Number(p.paymentType))}</div>
-                      <div className="text-xs text-slate-400 mt-0.5">{p.paymentMethod || 'Direct Transfer'}</div>
+                      <div className="font-medium text-slate-700 dark:text-slate-300">{getPaymentTypeName(Number(p.paymentType))}</div>
+                      <div className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{p.paymentMethod || 'Direct Transfer'}</div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="font-mono text-xs bg-slate-100 px-2.5 py-1 rounded-md text-slate-700 border border-slate-200">
+                      <span className="font-mono text-xs bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-md text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                         {p.transactionReference || 'N/A'}
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="font-bold text-emerald-600 text-base">
-                        ${(p.amount || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                      <div className="font-bold text-emerald-600 dark:text-emerald-400 text-base">
+                        ₹{(p.amount || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
                         <CheckCircle2 className="w-3.5 h-3.5" />
                         Completed
                       </span>
@@ -277,22 +277,22 @@ export const AdminPaymentsPage: React.FC = () => {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="px-6 py-4 border-t border-slate-200 flex items-center justify-between text-sm">
-            <span className="text-slate-500">
+          <div className="px-6 py-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs sm:text-sm">
+            <span className="text-slate-500 dark:text-slate-400">
               Showing page {page} of {totalPages} ({totalCount} total)
             </span>
             <div className="flex gap-2">
               <button
                 disabled={page <= 1}
                 onClick={() => setPage((p) => p - 1)}
-                className="px-3 py-1.5 border border-slate-200 rounded-md text-slate-600 disabled:opacity-50 hover:bg-slate-50"
+                className="px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-300 disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-slate-800"
               >
                 Previous
               </button>
               <button
                 disabled={page >= totalPages}
                 onClick={() => setPage((p) => p + 1)}
-                className="px-3 py-1.5 border border-slate-200 rounded-md text-slate-600 disabled:opacity-50 hover:bg-slate-50"
+                className="px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-300 disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-slate-800"
               >
                 Next
               </button>
@@ -305,27 +305,27 @@ export const AdminPaymentsPage: React.FC = () => {
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title="Record Project Payment">
         <form onSubmit={handleRecordPayment} className="space-y-4">
           {error && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-xs flex items-center gap-2">
+            <div className="p-3 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 rounded-lg text-red-700 dark:text-red-300 text-xs flex items-center gap-2">
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{error}</span>
             </div>
           )}
 
           {success && (
-            <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-700 text-xs flex items-center gap-2">
+            <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-lg text-emerald-700 dark:text-emerald-300 text-xs flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 shrink-0" />
               <span>{success}</span>
             </div>
           )}
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
               Select Project *
             </label>
             <select
               value={formData.projectId}
               onChange={(e) => setFormData({ ...formData, projectId: Number(e.target.value) })}
-              className="w-full px-3.5 py-2.5 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3.5 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               required
             >
               <option value="0">-- Select Project --</option>
@@ -339,8 +339,8 @@ export const AdminPaymentsPage: React.FC = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                Amount ($) *
+              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+                Amount (₹) *
               </label>
               <input
                 type="number"
@@ -348,19 +348,19 @@ export const AdminPaymentsPage: React.FC = () => {
                 placeholder="e.g. 1500.00"
                 value={formData.amount}
                 onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-                className="w-full px-3.5 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
                 Payment Type
               </label>
               <select
                 value={formData.paymentType}
                 onChange={(e) => setFormData({ ...formData, paymentType: Number(e.target.value) })}
-                className="w-full px-3.5 py-2.5 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3.5 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               >
                 <option value={1}>Advance Payment</option>
                 <option value={2}>Milestone Payment</option>
@@ -372,13 +372,13 @@ export const AdminPaymentsPage: React.FC = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
                 Payment Method
               </label>
               <select
                 value={formData.paymentMethod}
                 onChange={(e) => setFormData({ ...formData, paymentMethod: e.target.value })}
-                className="w-full px-3.5 py-2.5 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3.5 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               >
                 <option value="Bank Transfer">Bank Wire / NEFT / IMPS</option>
                 <option value="UPI">UPI / QR Code</option>
@@ -390,20 +390,20 @@ export const AdminPaymentsPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
                 Payment Date
               </label>
               <input
                 type="date"
                 value={formData.paymentDate}
                 onChange={(e) => setFormData({ ...formData, paymentDate: e.target.value })}
-                className="w-full px-3.5 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
               Transaction Ref / Receipt No
             </label>
             <input
@@ -411,12 +411,12 @@ export const AdminPaymentsPage: React.FC = () => {
               placeholder="e.g. TXN-9988231 or UTR No"
               value={formData.transactionReference}
               onChange={(e) => setFormData({ ...formData, transactionReference: e.target.value })}
-              className="w-full px-3.5 py-2.5 border border-slate-200 rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-mono text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
               Internal Notes / Purpose
             </label>
             <textarea
@@ -424,22 +424,22 @@ export const AdminPaymentsPage: React.FC = () => {
               placeholder="Notes on milestone delivery or payment acknowledgement..."
               value={formData.notes}
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-              className="w-full px-3.5 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3.5 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
-          <div className="flex justify-end gap-3 pt-3 border-t border-slate-100">
+          <div className="flex justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
             <button
               type="button"
               onClick={() => setModalOpen(false)}
-              className="px-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-600 hover:bg-slate-50"
+              className="px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-medium"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={submitting}
-              className="px-5 h-10 shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm rounded-lg shadow-sm disabled:opacity-50 flex items-center justify-center gap-2"
+              className="px-5 h-10 shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs sm:text-sm rounded-xl shadow-xs disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {submitting && <LoadingSpinner size="sm" />}
               Save Payment

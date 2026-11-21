@@ -267,6 +267,12 @@ export interface EnquiryTracking {
   createdAt: string;
   updatedAt?: string;
   activeQuotation?: PublicQuotation;
+  projectId?: number;
+  projectNumber?: string;
+  projectStatus?: ProjectStatus | number;
+  progressPercentage?: number;
+  expectedCompletionDate?: string;
+  milestones?: ProjectMilestone[];
 }
 
 // Projects
@@ -393,6 +399,12 @@ export interface UserEnquirySummary {
   quotationSecureToken?: string;
   quotationAmount?: number;
   quotationStatus?: QuotationStatus | number;
+  projectId?: number;
+  projectNumber?: string;
+  projectStatus?: ProjectStatus | number;
+  progressPercentage?: number;
+  expectedCompletionDate?: string;
+  milestones?: ProjectMilestone[];
 }
 
 export interface AdminUserAccount {

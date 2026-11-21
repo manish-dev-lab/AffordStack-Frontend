@@ -53,4 +53,20 @@ export const userAuthApi = {
     const res = await axiosInstance.post<ApiResponse<boolean>>('/user/auth/change-password', payload);
     return res.data.success;
   },
+
+  forgotPassword: async (email: string): Promise<boolean> => {
+    const res = await axiosInstance.post<ApiResponse<boolean>>('/user/auth/forgot-password', { email });
+    if (!res.data.success) {
+      throw new Error(res.data.message || 'Failed to send reset code');
+    }
+    return res.data.data ?? true;
+  },
+
+  resetPassword: async (payload: { email: string; otp: string; newPassword: string }): Promise<boolean> => {
+    const res = await axiosInstance.post<ApiResponse<boolean>>('/user/auth/reset-password', payload);
+    if (!res.data.success) {
+      throw new Error(res.data.message || 'Failed to reset password');
+    }
+    return res.data.data ?? true;
+  },
 };
