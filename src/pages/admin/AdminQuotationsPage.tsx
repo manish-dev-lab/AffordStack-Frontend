@@ -30,7 +30,7 @@ export const AdminQuotationsPage: React.FC = () => {
 
   // Create Modal
   const [createModalOpen, setCreateModalOpen] = useState(false);
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const queryEnquiryId = searchParams.get('createForEnquiry');
 
   // Enquiries list for dropdown
@@ -132,6 +132,13 @@ export const AdminQuotationsPage: React.FC = () => {
   const calculatedTax = Math.round(calculatedSubtotal * (taxRate / 100));
   const calculatedTotal = calculatedSubtotal + calculatedTax;
 
+  const handleCloseCreateModal = () => {
+    setCreateModalOpen(false);
+    if (searchParams.get('createForEnquiry')) {
+      setSearchParams({}, { replace: true });
+    }
+  };
+
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedEnquiryId) {
@@ -154,6 +161,7 @@ export const AdminQuotationsPage: React.FC = () => {
         items,
       });
       setCreateModalOpen(false);
+      setSearchParams({}, { replace: true });
       loadQuotations();
     } catch (err: unknown) {
       alert(err instanceof Error ? err.message : 'Error creating quotation');
@@ -318,7 +326,7 @@ export const AdminQuotationsPage: React.FC = () => {
       {/* Create Quotation Modal */}
       <Modal
         isOpen={createModalOpen}
-        onClose={() => setCreateModalOpen(false)}
+        onClose={handleCloseCreateModal}
         title="Create Official Quotation Proposal"
         maxWidth="4xl"
       >
@@ -511,7 +519,7 @@ export const AdminQuotationsPage: React.FC = () => {
           <div className="flex items-center justify-end gap-3 pt-2">
             <button
               type="button"
-              onClick={() => setCreateModalOpen(false)}
+              onClick={handleCloseCreateModal}
               className="h-11 px-5 rounded-xl border border-slate-300 text-sm font-semibold text-slate-700 hover:bg-slate-100 shrink-0 cursor-pointer"
             >
               Cancel

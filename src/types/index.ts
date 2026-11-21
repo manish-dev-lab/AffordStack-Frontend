@@ -227,6 +227,7 @@ export interface Quotation {
 
 export interface PublicQuotation {
   quotationNumber: string;
+  secureToken: string;
   customerName: string;
   companyName?: string;
   serviceDescription: string;
@@ -245,6 +246,27 @@ export interface PublicQuotation {
   respondedAt?: string;
   responseRemarks?: string;
   items: QuotationItem[];
+}
+
+export interface EnquiryTracking {
+  id: number;
+  referenceNumber: string;
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
+  companyName?: string;
+  projectTitle: string;
+  projectDescription: string;
+  serviceCategoryName?: string;
+  requiredTechnology: string;
+  estimatedBudget: string;
+  status: EnquiryStatus | number;
+  statusDisplay: string;
+  statusDescription: string;
+  stepIndex: number;
+  createdAt: string;
+  updatedAt?: string;
+  activeQuotation?: PublicQuotation;
 }
 
 // Projects
@@ -334,4 +356,89 @@ export interface DashboardStats {
   monthlyRevenue: { month: string; revenue: number }[];
   serviceCategoryDistribution: { categoryName: string; count: number }[];
   projectStatusDistribution: { status: string; count: number }[];
+}
+
+// User Accounts & Customer Portal
+export interface UserProfile {
+  id: number;
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  companyName?: string;
+  isActive: boolean;
+  lastLoginAt?: string;
+  createdAt: string;
+  totalEnquiries: number;
+  activeQuotations: number;
+  activeProjects: number;
+}
+
+export interface UserLoginResponse {
+  token: string;
+  expiresAt: string;
+  user: UserProfile;
+}
+
+export interface UserEnquirySummary {
+  id: number;
+  referenceNumber: string;
+  projectTitle: string;
+  projectDescription: string;
+  requiredTechnology: string;
+  estimatedBudget: string;
+  status: EnquiryStatus | number;
+  statusDisplay: string;
+  createdAt: string;
+  quotationNumber?: string;
+  quotationSecureToken?: string;
+  quotationAmount?: number;
+  quotationStatus?: QuotationStatus | number;
+}
+
+export interface AdminUserAccount {
+  id: number;
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  companyName?: string;
+  isActive: boolean;
+  lastLoginAt?: string;
+  createdAt: string;
+  enquiriesCount: number;
+  quotationsCount: number;
+}
+
+// System Configurations
+export interface TokenConfig {
+  tokenTimeoutMinutes: number;
+  refreshTokenDays: number;
+}
+
+export interface EmailConfig {
+  emailsEnabled: boolean;
+  sendCustomerNotifications: boolean;
+  sendAdminNotifications: boolean;
+  smtpHost: string;
+  smtpPort: number;
+  username: string;
+  password?: string;
+  fromEmail: string;
+  fromName: string;
+  adminNotificationEmail: string;
+  enableSsl: boolean;
+}
+
+export interface WebsiteConfig {
+  siteName: string;
+  supportEmail: string;
+  supportPhone: string;
+  contactAddress: string;
+  maintenanceMode: boolean;
+}
+
+export interface AppConfigItem {
+  key: string;
+  value: string;
+  description?: string;
+  updatedAt?: string;
 }

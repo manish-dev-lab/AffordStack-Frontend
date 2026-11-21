@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Lock, User, AlertCircle, ArrowRight, Code, Loader2 } from 'lucide-react';
@@ -9,11 +9,17 @@ export const AdminLoginPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
   const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/admin/dashboard';
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/admin/dashboard', { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

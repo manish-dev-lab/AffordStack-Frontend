@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { ThemeToggle } from '../common/ThemeToggle';
 import {
   LayoutDashboard,
   Inbox,
   Users,
+  UserCheck,
   FileSpreadsheet,
   FolderKanban,
   CreditCard,
@@ -36,6 +38,7 @@ export const AdminLayout: React.FC = () => {
     { label: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
     { label: 'Enquiries', path: '/admin/enquiries', icon: Inbox },
     { label: 'Customers', path: '/admin/customers', icon: Users },
+    { label: 'Registered Users', path: '/admin/users', icon: UserCheck },
     { label: 'Quotations', path: '/admin/quotations', icon: FileSpreadsheet },
     { label: 'Projects', path: '/admin/projects', icon: FolderKanban },
     { label: 'Payments', path: '/admin/payments', icon: CreditCard },
@@ -48,7 +51,7 @@ export const AdminLayout: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-100 flex flex-col lg:flex-row">
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-100 flex flex-col lg:flex-row transition-colors">
       {/* Mobile Header */}
       <div className="lg:hidden bg-slate-900 text-white px-4 py-3 flex items-center justify-between shadow-md sticky top-0 z-40">
         <div className="flex items-center gap-2.5">
@@ -57,12 +60,15 @@ export const AdminLayout: React.FC = () => {
           </div>
           <span className="font-bold text-base tracking-tight">Admin Console</span>
         </div>
-        <button
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="p-2 rounded-lg bg-slate-800 text-slate-300 hover:text-white"
-        >
-          {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
+        <div className="flex items-center gap-2">
+          <ThemeToggle className="bg-slate-800 border-slate-700 text-slate-200" />
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="p-2 rounded-lg bg-slate-800 text-slate-300 hover:text-white"
+          >
+            {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
       </div>
 
       {/* Sidebar for Desktop / Mobile Drawer */}
@@ -125,7 +131,6 @@ export const AdminLayout: React.FC = () => {
         <div className="p-3 border-t border-slate-900 space-y-1">
           <Link
             to="/"
-            target="_blank"
             className="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-slate-400 hover:bg-slate-900 hover:text-slate-200 transition-colors"
           >
             <ExternalLink className="w-3.5 h-3.5" />
@@ -145,22 +150,22 @@ export const AdminLayout: React.FC = () => {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top bar (Desktop) */}
-        <header className="hidden lg:flex h-16 bg-white border-b border-slate-200 px-8 items-center justify-between">
-          <div className="text-sm font-semibold text-slate-600">
-            Platform Administration &bull; <span className="text-slate-900 font-bold">{new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' })}</span>
+        <header className="hidden lg:flex h-16 bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 px-8 items-center justify-between">
+          <div className="text-sm font-semibold text-slate-600 dark:text-slate-400">
+            Platform Administration &bull; <span className="text-slate-900 dark:text-white font-bold">{new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' })}</span>
           </div>
           <div className="flex items-center gap-4">
+            <ThemeToggle />
             <Link
               to="/request-a-quote"
-              target="_blank"
-              className="text-xs font-semibold text-blue-600 hover:text-blue-700 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-200/60"
+              className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 bg-blue-50 dark:bg-blue-950/60 px-3 py-1.5 rounded-lg border border-blue-200/60 dark:border-blue-900"
             >
               Test Quote Form &rarr;
             </Link>
-            <div className="h-5 w-px bg-slate-200" />
+            <div className="h-5 w-px bg-slate-200 dark:bg-slate-800" />
             <button
               onClick={handleLogout}
-              className="text-xs font-semibold text-slate-600 hover:text-rose-600 flex items-center gap-1.5"
+              className="text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 flex items-center gap-1.5 cursor-pointer"
             >
               <LogOut className="w-3.5 h-3.5" />
               Logout

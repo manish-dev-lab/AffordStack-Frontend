@@ -394,25 +394,47 @@ export const AdminEnquiriesPage: React.FC = () => {
             </div>
 
             {/* Modal Bottom Actions */}
-            <div className="border-t border-slate-200 pt-4 flex justify-between items-center">
-              <button
-                type="button"
-                onClick={() => handleDelete(detail.id)}
-                className="text-xs font-bold text-rose-600 hover:text-rose-800"
-              >
-                Delete Enquiry
-              </button>
+            <div className="border-t border-slate-200 dark:border-slate-800 pt-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+              <div className="flex items-center gap-3 w-full sm:w-auto">
+                <button
+                  type="button"
+                  onClick={() => handleDelete(detail.id)}
+                  className="text-xs font-bold text-rose-600 hover:text-rose-800 py-2 cursor-pointer"
+                >
+                  Delete Enquiry
+                </button>
+                {detail.status === 'New' && (
+                  <button
+                    type="button"
+                    onClick={() => handleStatusChange('Reviewed')}
+                    className="text-xs font-bold px-3 py-1.5 bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-900 rounded-xl hover:bg-blue-100 dark:hover:bg-blue-900/60 transition-colors cursor-pointer"
+                  >
+                    Mark Reviewed
+                  </button>
+                )}
+              </div>
 
-              <button
-                type="button"
-                onClick={() => {
-                  setSelectedEnquiryId(null);
-                  navigate(`/admin/quotations?createForEnquiry=${detail.id}`);
-                }}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-md flex items-center gap-1.5"
-              >
-                <FileSpreadsheet className="w-4 h-4" /> Generate Quotation Proposal
-              </button>
+              <div className="flex items-center gap-2.5 w-full sm:w-auto justify-end">
+                <button
+                  type="button"
+                  onClick={() => setSelectedEnquiryId(null)}
+                  className="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold transition-colors cursor-pointer"
+                >
+                  Close
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const enquiryId = detail.id;
+                    setSelectedEnquiryId(null);
+                    navigate(`/admin/quotations?createForEnquiry=${enquiryId}`);
+                  }}
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-md flex items-center gap-1.5 cursor-pointer"
+                >
+                  <FileSpreadsheet className="w-4 h-4" /> Create Quotation Proposal
+                </button>
+              </div>
             </div>
           </div>
         )}

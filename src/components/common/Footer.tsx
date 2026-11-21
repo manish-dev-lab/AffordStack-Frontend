@@ -130,7 +130,12 @@ export const Footer: React.FC = () => {
             <h4 className="text-sm font-bold text-white uppercase tracking-wider mb-4">Enterprise &amp; Portal</h4>
             <ul className="space-y-2.5 text-sm">
               <li>
-                <Link to="/services/business-software-development" className="hover:text-blue-400 transition-colors">
+                <Link to="/track-enquiry" className="text-blue-400 hover:text-blue-300 transition-colors font-medium flex items-center gap-1.5">
+                  Track Live Enquiry
+                </Link>
+              </li>
+              <li>
+                <Link to="/services/business-enterprise-software" className="hover:text-blue-400 transition-colors">
                   Custom ERP &amp; CRM
                 </Link>
               </li>
@@ -140,12 +145,12 @@ export const Footer: React.FC = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/privacy-policy" className="hover:text-blue-400 transition-colors">
+                <Link to="/privacy" className="hover:text-blue-400 transition-colors">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link to="/terms-and-conditions" className="hover:text-blue-400 transition-colors">
+                <Link to="/terms" className="hover:text-blue-400 transition-colors">
                   Terms &amp; Conditions
                 </Link>
               </li>

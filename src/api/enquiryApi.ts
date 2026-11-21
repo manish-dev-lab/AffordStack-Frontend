@@ -1,7 +1,15 @@
 import axiosInstance from './axiosInstance';
-import type { ApiResponse, PagedResult, EnquiryListItem, EnquiryDetail, EnquiryStatus } from '../types';
+import type { ApiResponse, PagedResult, EnquiryListItem, EnquiryDetail, EnquiryStatus, EnquiryTracking } from '../types';
 
 export const enquiryApi = {
+  trackEnquiry: async (payload: { referenceNumber: string; email: string }): Promise<EnquiryTracking> => {
+    const res = await axiosInstance.post<ApiResponse<EnquiryTracking>>('/enquiries/track', payload);
+    if (!res.data.success || !res.data.data) {
+      throw new Error(res.data.message || 'Failed to find enquiry tracking details.');
+    }
+    return res.data.data;
+  },
+
   submitEnquiryForm: async (formData: FormData): Promise<{ referenceNumber: string; message: string }> => {
     const res = await axiosInstance.post<ApiResponse<{ referenceNumber: string; message: string }>>(
       '/enquiries',
