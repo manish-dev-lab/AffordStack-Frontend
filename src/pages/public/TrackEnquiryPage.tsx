@@ -295,14 +295,20 @@ export const TrackEnquiryPage: React.FC = () => {
                     </div>
 
                     <div className="flex items-center gap-3">
-                      <a
-                        href={quotationApi.downloadPublicPdfUrl(tracking.activeQuotation.secureToken)}
-                        target="_blank"
-                        rel="noreferrer"
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (tracking.activeQuotation?.secureToken) {
+                            quotationApi.downloadPublicPdfBlob(
+                              tracking.activeQuotation.secureToken,
+                              tracking.activeQuotation.quotationNumber
+                            );
+                          }
+                        }}
                         className="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold transition-colors inline-flex items-center gap-2 cursor-pointer"
                       >
                         <Download className="w-4 h-4" /> Download PDF
-                      </a>
+                      </button>
                     </div>
                   </div>
 

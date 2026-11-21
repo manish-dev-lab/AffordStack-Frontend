@@ -519,6 +519,19 @@ export const AdminSettingsPage: React.FC = () => {
 
               <div className="sm:col-span-2">
                 <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+                  Working Hours
+                </label>
+                <input
+                  type="text"
+                  value={companySettings['Company:WorkingHours'] || ''}
+                  onChange={(e) => setCompanySettings({ ...companySettings, 'Company:WorkingHours': e.target.value })}
+                  placeholder="e.g. Mon - Sat: 9:00 AM - 8:00 PM IST"
+                  className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm"
+                />
+              </div>
+
+              <div className="sm:col-span-2">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
                   Physical / Lab Address
                 </label>
                 <input
@@ -527,6 +540,83 @@ export const AdminSettingsPage: React.FC = () => {
                   onChange={(e) => setCompanySettings({ ...companySettings, 'Company:Address': e.target.value })}
                   className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm"
                 />
+              </div>
+            </div>
+          </div>
+
+          {/* Card: Financial Currency, Tax & Quotation Settings */}
+          <div className="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-6">
+            <div className="border-b border-slate-100 dark:border-slate-800 pb-4 flex items-center gap-3">
+              <div className="p-2.5 rounded-xl bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400">
+                <Server className="w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="text-base font-extrabold text-slate-900 dark:text-white">
+                  Currency, Tax &amp; Quotation Defaults
+                </h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  Default currency format, tax rates, and validity periods across all generated quotations and PDF documents.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+                  Platform Base Currency *
+                </label>
+                <select
+                  value={companySettings['Finance:Currency'] || 'INR (₹)'}
+                  onChange={(e) => setCompanySettings({ ...companySettings, 'Finance:Currency': e.target.value })}
+                  className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold cursor-pointer"
+                >
+                  <option value="INR (₹)">INR - Indian Rupee (₹)</option>
+                  <option value="USD ($)">USD - US Dollar ($)</option>
+                  <option value="EUR (€)">EUR - Euro (€)</option>
+                  <option value="GBP (£)">GBP - British Pound (£)</option>
+                  <option value="AED (AED)">AED - UAE Dirham (AED)</option>
+                  <option value="SGD (S$)">SGD - Singapore Dollar (S$)</option>
+                  <option value="AUD (A$)">AUD - Australian Dollar (A$)</option>
+                  <option value="CAD (C$)">CAD - Canadian Dollar (C$)</option>
+                </select>
+                <span className="text-[11px] text-slate-400 mt-1 block">
+                  Used in live quotes, invoices, and website pricing.
+                </span>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+                  Default Tax / GST Rate (%)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  max="50"
+                  step="0.5"
+                  value={companySettings['Finance:DefaultTaxPercent'] || '18'}
+                  onChange={(e) => setCompanySettings({ ...companySettings, 'Finance:DefaultTaxPercent': e.target.value })}
+                  className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-mono"
+                />
+                <span className="text-[11px] text-slate-400 mt-1 block">
+                  Standard tax percentage applied when creating proposals.
+                </span>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+                  Quotation Validity (Days)
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  max="90"
+                  value={companySettings['Quotation:DefaultValidityDays'] || '10'}
+                  onChange={(e) => setCompanySettings({ ...companySettings, 'Quotation:DefaultValidityDays': e.target.value })}
+                  className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-mono"
+                />
+                <span className="text-[11px] text-slate-400 mt-1 block">
+                  Number of days before an issued quotation proposal expires.
+                </span>
               </div>
             </div>
           </div>

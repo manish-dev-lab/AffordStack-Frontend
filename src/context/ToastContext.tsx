@@ -26,17 +26,24 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, []);
 
   const showToast = useCallback(
-    ({ type, title, message, duration = 4500 }: Omit<ToastMessage, 'id'>) => {
-      const id = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
-      const newToast: ToastMessage = { id, type, title, message, duration };
+    ({ type, title, message, duration = 4000 }: Omit<ToastMessage, 'id'>) => {
+      setToasts((prev) => {
+        // Prevent duplicate toast if message is already displayed
+        if (prev.some((t) => t.message === message)) {
+          return prev;
+        }
+        const id = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+        const newToast: ToastMessage = { id, type, title, message, duration };
 
-      setToasts((prev) => [...prev.slice(-3), newToast]); // keep max 4 toasts
+        if (duration > 0) {
+          setTimeout(() => {
+            removeToast(id);
+          }, duration);
+        }
 
-      if (duration > 0) {
-        setTimeout(() => {
-          removeToast(id);
-        }, duration);
-      }
+        // Keep maximum 1 active toast to avoid screen clutter
+        return [newToast];
+      });
     },
     [removeToast]
   );

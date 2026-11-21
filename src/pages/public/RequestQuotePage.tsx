@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useSearchParams, Link } from 'react-router-dom';
 import { enquiryApi } from '../../api/enquiryApi';
+import { useUserAuth } from '../../context/UserAuthContext';
+import { CountryCodeSelect } from '../../components/common/CountryCodeSelect';
 import { 
   FileText, 
   Send, 
@@ -14,7 +16,8 @@ import {
   ArrowRight,
   AlertCircle,
   Loader2,
-  Search
+  Search,
+  UserCheck
 } from 'lucide-react';
 import { Reveal } from '../../components/common/Reveal';
 
@@ -28,6 +31,7 @@ const quoteSchema = z.object({
   projectTitle: z.string().min(4, 'Project title must be at least 4 characters'),
   projectDescription: z.string().min(15, 'Please provide more details (at least 15 characters)'),
   estimatedBudget: z.string().min(1, 'Please select an estimated budget range'),
+  customBudgetAmount: z.string().optional(),
   expectedCompletionDate: z.string().optional(),
   additionalRequirements: z.string().optional(),
 });
@@ -38,7 +42,10 @@ export const RequestQuotePage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const prefillCategory = searchParams.get('category') || '';
   const prefillService = searchParams.get('service') || '';
+  const { user: clientUser, isUserAuthenticated } = useUserAuth();
 
+  const [countryCode, setCountryCode] = useState('+91');
+  const [isCustomBudget, setIsCustomBudget] = useState(false);
   const [fileAttachment, setFileAttachment] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -51,32 +58,88 @@ export const RequestQuotePage: React.FC = () => {
   const {
     register,
     handleSubmit,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<QuoteFormValues>({
     resolver: zodResolver(quoteSchema),
     defaultValues: {
+      fullName: '',
+      email: '',
+      phoneNumber: '',
+      companyName: '',
       serviceCategoryName: prefillCategory || 'Student Project Guidance',
       projectTitle: prefillService ? `Guidance on ${prefillService}` : '',
       requiredTechnology: '.NET 10 / ASP.NET Core & React',
       estimatedBudget: '₹25,000 - ₹50,000',
+      customBudgetAmount: '',
     },
   });
+
+  // Auto-fill logged-in customer profile information
+  useEffect(() => {
+    if (clientUser) {
+      if (clientUser.fullName) setValue('fullName', clientUser.fullName);
+      if (clientUser.email) setValue('email', clientUser.email);
+      if (clientUser.companyName) setValue('companyName', clientUser.companyName);
+      if (clientUser.phoneNumber) {
+        // Parse country code if present
+        const phone = clientUser.phoneNumber.trim();
+        if (phone.startsWith('+')) {
+          const parts = phone.split(' ');
+          if (parts.length > 1) {
+            setCountryCode(parts[0]);
+            setValue('phoneNumber', parts.slice(1).join(' '));
+          } else {
+            setValue('phoneNumber', phone);
+          }
+        } else {
+          setValue('phoneNumber', phone);
+        }
+      }
+    }
+  }, [clientUser, setValue]);
+
+  // Watch budget dropdown to toggle custom price input
+  const selectedBudget = watch('estimatedBudget');
+  useEffect(() => {
+    if (selectedBudget === 'Custom Budget') {
+      setIsCustomBudget(true);
+    } else {
+      setIsCustomBudget(false);
+    }
+  }, [selectedBudget]);
+
+  // Scroll to top when confirmation is shown
+  useEffect(() => {
+    if (confirmation) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [confirmation]);
 
   const onSubmit = async (values: QuoteFormValues) => {
     setIsSubmitting(true);
     setSubmitError(null);
 
     try {
+      const fullPhone = values.phoneNumber.trim().startsWith('+')
+        ? values.phoneNumber.trim()
+        : `${countryCode} ${values.phoneNumber.trim()}`;
+
+      const finalBudget = isCustomBudget && values.customBudgetAmount?.trim()
+        ? `Custom: ${values.customBudgetAmount.trim()}`
+        : values.estimatedBudget;
+
       const formData = new FormData();
       formData.append('fullName', values.fullName);
       formData.append('email', values.email);
-      formData.append('phoneNumber', values.phoneNumber);
+      formData.append('phoneNumber', fullPhone);
       if (values.companyName) formData.append('companyName', values.companyName);
       formData.append('serviceCategoryName', values.serviceCategoryName);
       formData.append('requiredTechnology', values.requiredTechnology);
       formData.append('projectTitle', values.projectTitle);
       formData.append('projectDescription', values.projectDescription);
-      formData.append('estimatedBudget', values.estimatedBudget);
+      formData.append('estimatedBudget', finalBudget);
       if (values.expectedCompletionDate) {
         formData.append('expectedCompletionDate', values.expectedCompletionDate);
       }
@@ -93,6 +156,7 @@ export const RequestQuotePage: React.FC = () => {
         message: res.message,
         customerEmail: values.email,
       });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err: unknown) {
       const errorMsg = err instanceof Error ? err.message : 'An error occurred while submitting your quotation. Please try again.';
       setSubmitError(errorMsg);
@@ -148,47 +212,52 @@ export const RequestQuotePage: React.FC = () => {
               </p>
             </div>
 
-            {/* Next steps breakdown */}
-            <div className="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-6 text-left max-w-xl mx-auto border border-slate-200/70 dark:border-slate-800 space-y-4">
+            <div className="p-6 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700 text-left max-w-lg mx-auto space-y-3">
               <h3 className="font-bold text-slate-900 dark:text-white text-sm flex items-center gap-2">
-                <Clock className="w-4 h-4 text-blue-600 dark:text-blue-400" /> What happens next?
+                <Clock className="w-4 h-4 text-blue-600" /> Next Engineering Steps:
               </h3>
-              <ol className="list-decimal list-inside space-y-2.5 text-xs sm:text-sm text-slate-600 dark:text-slate-300">
-                <li>Our senior architects review your project specifications and technical scope.</li>
-                <li>An official, itemized PDF quotation breakdown will be generated and emailed to you.</li>
-                <li>You can review the deliverables, costs, and accept or reject the proposal with one click.</li>
-              </ol>
+              <ul className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 space-y-2 list-disc list-inside">
+                <li>Senior architect reviews architecture, modules &amp; timeline (4-12 hours).</li>
+                <li>You will receive an official PDF quotation and interactive proposal by email.</li>
+                <li>You can track the live technical review status at any time using your reference number.</li>
+              </ul>
             </div>
 
-            <div className="pt-4 flex flex-wrap items-center justify-center gap-4">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
               <Link
                 to={`/track-enquiry?ref=${confirmation.referenceNumber}&email=${encodeURIComponent(confirmation.customerEmail)}`}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm px-7 py-3 rounded-xl transition-all shadow-lg shadow-emerald-600/25 flex items-center gap-2 cursor-pointer"
+                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-lg shadow-blue-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
-                <Search className="w-4 h-4" />
-                Track Live Status Now
+                <Search className="w-4 h-4" /> Track Status Live
               </Link>
               <button
-                onClick={() => setConfirmation(null)}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm px-6 py-3 rounded-xl transition-colors cursor-pointer"
+                type="button"
+                onClick={() => {
+                  setConfirmation(null);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="w-full sm:w-auto px-6 py-3 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm font-semibold transition-colors cursor-pointer"
               >
-                Submit Another Request
+                Submit Another Enquiry
               </button>
-              <Link
-                to="/"
-                className="border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-sm px-6 py-3 rounded-xl transition-colors"
-              >
-                Return to Home
-              </Link>
             </div>
           </div>
         </Reveal>
       ) : (
-        /* Quotation Form */
-        <Reveal animation="fade-up" delayMs={100}>
-          <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 sm:p-12 border border-slate-200/80 dark:border-slate-800 shadow-xl">
+        /* Form View */
+        <Reveal animation="fade-up" delayMs={50}>
+          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-12 border border-slate-200/90 dark:border-slate-800 shadow-xl space-y-8">
+            {isUserAuthenticated && (
+              <div className="p-3.5 rounded-2xl bg-blue-50/70 dark:bg-blue-950/40 border border-blue-200/80 dark:border-blue-900 flex items-center gap-2.5 text-xs text-blue-800 dark:text-blue-300">
+                <UserCheck className="w-4 h-4 text-blue-600 shrink-0" />
+                <span>
+                  Logged in as <strong>{clientUser?.fullName}</strong> ({clientUser?.email}). Your account contact coordinates have been auto-filled.
+                </span>
+              </div>
+            )}
+
             {submitError && (
-              <div className="mb-8 p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-rose-800 dark:text-rose-200 text-sm flex items-center gap-3">
+              <div className="p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-rose-800 dark:text-rose-200 text-sm flex items-center gap-3">
                 <AlertCircle className="w-5 h-5 text-rose-600 shrink-0" />
                 <span>{submitError}</span>
               </div>
@@ -242,14 +311,20 @@ export const RequestQuotePage: React.FC = () => {
                     <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
                       Phone / WhatsApp Number *
                     </label>
-                    <input
-                      type="tel"
-                      {...register('phoneNumber')}
-                      className={`w-full px-4 py-3 rounded-xl border bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:outline-hidden ${
-                        errors.phoneNumber ? 'border-rose-400 bg-rose-50/30' : 'border-slate-300 dark:border-slate-700'
-                      }`}
-                      placeholder="+91 98765 43210"
-                    />
+                    <div className="flex">
+                      <CountryCodeSelect
+                        value={countryCode}
+                        onChange={setCountryCode}
+                      />
+                      <input
+                        type="tel"
+                        {...register('phoneNumber')}
+                        className={`w-full px-4 py-3 rounded-r-xl border border-l-0 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:outline-hidden ${
+                          errors.phoneNumber ? 'border-rose-400 bg-rose-50/30' : 'border-slate-300 dark:border-slate-700'
+                        }`}
+                        placeholder="98765 43210"
+                      />
+                    </div>
                     {errors.phoneNumber && <p className="text-rose-600 dark:text-rose-400 text-xs mt-1">{errors.phoneNumber.message}</p>}
                   </div>
 
@@ -261,19 +336,20 @@ export const RequestQuotePage: React.FC = () => {
                       type="text"
                       {...register('companyName')}
                       className="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
-                      placeholder="e.g. NIT Rourkela or Acme Tech"
+                      placeholder="e.g. NIT Rourkela / Infosys Ltd."
                     />
                   </div>
                 </div>
               </div>
 
-              {/* Section 2: Project Specifications */}
+              {/* Section 2: Project Scope & Technical Stack */}
               <div className="space-y-6">
                 <div className="border-b border-slate-200 dark:border-slate-800 pb-3">
                   <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                     <span className="w-6 h-6 rounded-full bg-blue-600 text-white text-xs flex items-center justify-center font-bold">2</span>
-                    Service Category &amp; Technology Requirements
+                    Service Category &amp; Project Requirements
                   </h2>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Specify what type of assistance you require from our engineering group.</p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -285,24 +361,16 @@ export const RequestQuotePage: React.FC = () => {
                       {...register('serviceCategoryName')}
                       className="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:outline-hidden cursor-pointer"
                     >
-                      <option value="Student Project Guidance">Student Project Guidance (B.Tech / MCA)</option>
-                      <option value=".NET Development">.NET Development</option>
-                      <option value="Java / Spring Boot Development">Java / Spring Boot Development</option>
-                      <option value="React Development">React Development</option>
-                      <option value="Full-Stack Application Development">Full-Stack Application Development</option>
-                      <option value="Bug Fixing">Bug Fixing &amp; Developer Support</option>
-                      <option value="API Development">API Development &amp; Integrations</option>
-                      <option value="Database Development">Database Development &amp; Optimization</option>
-                      <option value="E-commerce Development">E-commerce Development</option>
-                      <option value="Business Website Development">Business Website Development</option>
-                      <option value="Enterprise Application Development">Enterprise Application Development (ERP/CRM)</option>
-                      <option value="Other">Other Custom Requirement</option>
+                      <option value="Student Project Guidance">Student Project Guidance (Major/Minor/M.Tech)</option>
+                      <option value="Developer Technical Support">Developer Technical Support (Bug Fixing, DB Tuning)</option>
+                      <option value="Business & Enterprise Software">Business &amp; Enterprise Software (Custom SaaS, ERP)</option>
+                      <option value="Cloud & DevOps Engineering">Cloud &amp; DevOps Engineering (Docker, CI/CD, AWS)</option>
                     </select>
                   </div>
 
                   <div>
                     <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
-                      Required Technology *
+                      Target Technology Stack *
                     </label>
                     <select
                       {...register('requiredTechnology')}
@@ -363,7 +431,7 @@ export const RequestQuotePage: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
-                      Estimated Budget *
+                      Estimated Budget Range *
                     </label>
                     <select
                       {...register('estimatedBudget')}
@@ -374,7 +442,23 @@ export const RequestQuotePage: React.FC = () => {
                       <option value="₹30,000 - ₹60,000">₹30,000 - ₹60,000</option>
                       <option value="₹60,000 - ₹1,20,000">₹60,000 - ₹1,20,000</option>
                       <option value="Enterprise Custom (₹1,50,000+)">Enterprise Custom (₹1,50,000+)</option>
+                      <option value="Custom Budget">Custom Budget (Specify your own price)</option>
                     </select>
+
+                    {/* Custom Budget Amount Input */}
+                    {isCustomBudget && (
+                      <div className="mt-3 animate-in fade-in duration-150">
+                        <label className="block text-[11px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-1">
+                          Type Your Custom Budget *
+                        </label>
+                        <input
+                          type="text"
+                          {...register('customBudgetAmount')}
+                          placeholder="e.g. ₹45,000 or $1,200"
+                          className="w-full px-4 py-2.5 rounded-xl border border-blue-300 dark:border-blue-700 bg-blue-50/40 dark:bg-blue-950/40 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
+                        />
+                      </div>
+                    )}
                   </div>
 
                   <div>
@@ -399,51 +483,68 @@ export const RequestQuotePage: React.FC = () => {
                       type="file"
                       id="fileUpload"
                       onChange={handleFileChange}
-                      accept=".pdf,.zip,.rar,.docx,.doc,.png,.jpg,.jpeg,.txt"
                       className="hidden"
+                      accept=".pdf,.zip,.rar,.docx,.doc,.png,.jpg,.jpeg,.txt"
                     />
-                    <label htmlFor="fileUpload" className="cursor-pointer flex flex-col items-center">
-                      <Upload className="w-8 h-8 text-blue-600 dark:text-blue-400 mb-2" />
-                      <span className="text-sm font-semibold text-slate-800 dark:text-slate-200">
-                        {fileAttachment ? fileAttachment.name : 'Click to select or drag and drop file'}
+                    <label htmlFor="fileUpload" className="cursor-pointer block">
+                      <Upload className="w-10 h-10 text-slate-400 mx-auto mb-2" />
+                      <span className="text-sm font-bold text-blue-600 dark:text-blue-400 hover:underline">
+                        Upload architecture document or code zip
                       </span>
-                      <span className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                        PDF, ZIP, DOCX, PNG, JPG (Max 20MB)
-                      </span>
+                      <p className="text-xs text-slate-400 mt-1">PDF, DOCX, ZIP, PNG up to 20MB</p>
                     </label>
+                    {fileAttachment && (
+                      <div className="mt-3 inline-flex items-center gap-2 bg-blue-50 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 text-xs font-semibold px-3 py-1.5 rounded-lg border border-blue-200 dark:border-blue-900">
+                        <FileText className="w-4 h-4" />
+                        <span>{fileAttachment.name} ({(fileAttachment.size / (1024 * 1024)).toFixed(2)} MB)</span>
+                        <button
+                          type="button"
+                          onClick={() => setFileAttachment(null)}
+                          className="text-rose-500 hover:text-rose-700 ml-2 font-bold cursor-pointer"
+                        >
+                          &times;
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
-                    Additional Notes or Instructions (Optional)
+                    Additional Requirements or Special Instructions (Optional)
                   </label>
                   <textarea
-                    rows={3}
+                    rows={2}
                     {...register('additionalRequirements')}
                     className="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
-                    placeholder="Any particular university constraints, examiner requests, or deployment instructions..."
+                    placeholder="Mention specific framework versions, database requirements, or presentation slides needed..."
                   />
                 </div>
               </div>
 
               {/* Submit Button */}
-              <div className="pt-4">
+              <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="text-xs text-slate-500 dark:text-slate-400 text-center sm:text-left">
+                  By submitting, you will receive an automated tracking code. No upfront payment required.
+                </div>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full h-14 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold text-base px-8 rounded-2xl shadow-xl shadow-blue-600/25 transition-all hover:scale-[1.01] active:scale-98 flex items-center justify-center gap-2.5 disabled:opacity-50 shrink-0 cursor-pointer"
+                  className="w-full sm:w-auto h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold text-sm px-8 rounded-xl shadow-lg shadow-blue-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                 >
                   {isSubmitting ? (
-                    <Loader2 className="w-5 h-5 animate-spin shrink-0" />
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin shrink-0" />
+                      <span>Submitting Specification...</span>
+                    </>
                   ) : (
-                    <Send className="w-5 h-5 shrink-0" />
+                    <>
+                      <Send className="w-4 h-4" />
+                      <span>Request Official Quotation</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </>
                   )}
-                  <span>{isSubmitting ? 'Submitting & Generating Reference...' : 'Submit Quotation Request'}</span>
                 </button>
-                <p className="text-center text-xs text-slate-500 dark:text-slate-400 mt-3">
-                  By submitting this form, an enquiry reference will be generated and confirmation emailed automatically.
-                </p>
               </div>
             </form>
           </div>

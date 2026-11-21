@@ -28,6 +28,6 @@ export const adminUsersApi = {
 
   toggleUserStatus: async (id: number): Promise<boolean> => {
     const res = await axiosInstance.put<ApiResponse<boolean>>(`/admin/users/${id}/toggle-status`);
-    return res.data.success;
+    return res.data.data ?? false;
   },
 };
