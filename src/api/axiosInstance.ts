@@ -9,10 +9,20 @@ export const axiosInstance = axios.create({
   },
 });
 
-// Request Interceptor: Attach JWT Token
+// Request Interceptor: Attach JWT Token dynamically (Admin vs User)
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('authToken');
+    const adminToken = localStorage.getItem('authToken');
+    const userToken = localStorage.getItem('ss_user_token');
+
+    // For user auth endpoints or public user calls, prefer user token
+    let token = adminToken;
+    if (config.url?.startsWith('/user/') || (userToken && !adminToken)) {
+      token = userToken || adminToken;
+    } else if (config.url?.startsWith('/enquiries') && userToken && !adminToken) {
+      token = userToken;
+    }
+
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -25,12 +35,16 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    // 1. Session expiration: redirect to login if unauthorized in admin section (except login page itself)
+    // 1. Session expiration: redirect to appropriate login if unauthorized
     if (error.response?.status === 401) {
       if (window.location.pathname.startsWith('/admin') && window.location.pathname !== '/admin/login') {
         localStorage.removeItem('authToken');
         localStorage.removeItem('authUser');
         window.location.href = '/admin/login';
+      } else if (window.location.pathname.startsWith('/user') && window.location.pathname !== '/user/login') {
+        localStorage.removeItem('ss_user_token');
+        localStorage.removeItem('ss_user');
+        window.location.href = '/user/login';
       }
     }
 
