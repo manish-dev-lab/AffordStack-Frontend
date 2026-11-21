@@ -10,6 +10,7 @@ import {
   Building,
   ArrowRight,
   AlertCircle,
+  AlertTriangle,
   Loader2,
   Code,
   CheckCircle2,
@@ -31,6 +32,7 @@ export const UserLoginPage: React.FC = () => {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [serverErrorPopup, setServerErrorPopup] = useState<string | null>(null);
 
   const redirectPath = (location.state as { from?: string })?.from || '/user/dashboard';
 
@@ -44,6 +46,7 @@ export const UserLoginPage: React.FC = () => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    setServerErrorPopup(null);
 
     try {
       if (tab === 'signin') {
@@ -59,7 +62,13 @@ export const UserLoginPage: React.FC = () => {
       }
       navigate(redirectPath, { replace: true });
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Authentication failed. Please verify your details.');
+      const apiErr = err as { isServerError?: boolean; message?: string };
+      if (apiErr?.isServerError) {
+        setServerErrorPopup('Something went wrong while connecting to the server. Please try again shortly.');
+        setError(null);
+      } else {
+        setError(apiErr?.message || (err instanceof Error ? err.message : 'Authentication failed. Please verify your details.'));
+      }
     } finally {
       setLoading(false);
     }
@@ -237,6 +246,29 @@ export const UserLoginPage: React.FC = () => {
           </div>
         </Reveal>
       </div>
+
+      {/* Server Error Popup Modal */}
+      {serverErrorPopup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl border border-slate-200 dark:border-slate-800 text-center space-y-4 animate-in zoom-in-95 duration-150">
+            <div className="w-14 h-14 mx-auto rounded-2xl bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-900/60 flex items-center justify-center text-amber-600 dark:text-amber-400 shadow-sm">
+              <AlertTriangle className="w-7 h-7" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">Something Went Wrong</h3>
+              <p className="mt-1.5 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                {serverErrorPopup}
+              </p>
+            </div>
+            <button
+              onClick={() => setServerErrorPopup(null)}
+              className="w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs uppercase tracking-wider transition-all cursor-pointer shadow-md shadow-blue-500/25"
+            >
+              Dismiss
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Lock, User, AlertCircle, ArrowRight, Code, Loader2 } from 'lucide-react';
+import { Lock, User, AlertCircle, AlertTriangle, ArrowRight, Code, Loader2 } from 'lucide-react';
 
 export const AdminLoginPage: React.FC = () => {
   const [usernameOrEmail, setUsernameOrEmail] = useState('admin');
   const [password, setPassword] = useState('admin@123');
   const [error, setError] = useState<string | null>(null);
+  const [serverErrorPopup, setServerErrorPopup] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const { login, isAuthenticated } = useAuth();
@@ -25,12 +26,19 @@ export const AdminLoginPage: React.FC = () => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    setServerErrorPopup(null);
 
     try {
       await login(usernameOrEmail, password);
       navigate(from, { replace: true });
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Invalid administrator credentials');
+      const apiErr = err as { isServerError?: boolean; message?: string };
+      if (apiErr?.isServerError) {
+        setServerErrorPopup('Something went wrong on the server. Please try again shortly.');
+        setError(null);
+      } else {
+        setError(apiErr?.message || (err instanceof Error ? err.message : 'Invalid administrator credentials'));
+      }
     } finally {
       setLoading(false);
     }
@@ -142,6 +150,29 @@ export const AdminLoginPage: React.FC = () => {
           </Link>
         </div>
       </div>
+
+      {/* Server Error Popup Modal */}
+      {serverErrorPopup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-slate-900 rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl border border-slate-800 text-center space-y-4 animate-in zoom-in-95 duration-150">
+            <div className="w-14 h-14 mx-auto rounded-2xl bg-amber-950/60 border border-amber-900/60 flex items-center justify-center text-amber-400 shadow-sm">
+              <AlertTriangle className="w-7 h-7" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-white">Something Went Wrong</h3>
+              <p className="mt-1.5 text-xs sm:text-sm text-slate-400">
+                {serverErrorPopup}
+              </p>
+            </div>
+            <button
+              onClick={() => setServerErrorPopup(null)}
+              className="w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs uppercase tracking-wider transition-all cursor-pointer shadow-md shadow-blue-500/25"
+            >
+              Dismiss
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
