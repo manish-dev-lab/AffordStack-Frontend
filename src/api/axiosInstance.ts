@@ -35,6 +35,15 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Log complete error response for local debugging
+    console.error('[API Error Debug]:', {
+      url: error.config?.url,
+      method: error.config?.method,
+      status: error.response?.status,
+      data: error.response?.data,
+      error,
+    });
+
     // 1. Session expiration: redirect to appropriate login if unauthorized
     if (error.response?.status === 401) {
       if (window.location.pathname.startsWith('/admin') && window.location.pathname !== '/admin/login') {
