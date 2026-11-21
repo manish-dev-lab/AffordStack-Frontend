@@ -279,13 +279,19 @@ export const AdminProjectsPage: React.FC = () => {
                   </label>
                   <select
                     value={String(editStatus)}
-                    onChange={(e) => setEditStatus(e.target.value as ProjectStatus)}
+                    onChange={(e) => {
+                      const newStatus = e.target.value as ProjectStatus;
+                      setEditStatus(newStatus);
+                      if (newStatus === 'Completed') {
+                        setEditProgress(100);
+                      }
+                    }}
                     className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-900 dark:text-white"
                   >
                     <option value="NotStarted">Not Started</option>
-                    <option value="InProgress">In Progress</option>
+                    <option value="InProgress">4. In Progress (Active Development)</option>
                     <option value="OnHold">On Hold</option>
-                    <option value="Completed">Completed</option>
+                    <option value="Completed">5. Delivered (Codebase, Demo &amp; Docs Handed Over)</option>
                     <option value="Cancelled">Cancelled</option>
                   </select>
                 </div>

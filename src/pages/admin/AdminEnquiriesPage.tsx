@@ -275,59 +275,59 @@ export const AdminEnquiriesPage: React.FC = () => {
         ) : (
           <div className="space-y-6">
             {/* Status change header */}
-            <div className="flex flex-wrap items-center justify-between p-3.5 bg-slate-50 rounded-2xl border border-slate-200 gap-3">
+            <div className="flex flex-wrap items-center justify-between p-3.5 bg-slate-50 dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 gap-3">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-slate-500 uppercase">Current Status:</span>
+                <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Current Status:</span>
                 <Badge status={detail.status} />
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-xs text-slate-500 font-semibold">Update:</span>
+                <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold">Update:</span>
                 <select
                   value={String(detail.status)}
                   onChange={(e) => handleStatusChange(e.target.value as EnquiryStatus)}
-                  className="bg-white border border-slate-300 text-xs font-semibold rounded-lg px-2.5 py-1"
+                  className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white text-xs font-semibold rounded-lg px-2.5 py-1 focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
                 >
-                  <option value="New">New</option>
-                  <option value="Reviewed">Reviewed</option>
-                  <option value="Quoted">Quoted</option>
-                  <option value="FollowUp">FollowUp</option>
-                  <option value="Converted">Converted</option>
-                  <option value="Closed">Closed</option>
-                  <option value="Spam">Spam</option>
+                  <option value="New">1. New (Enquiry Received)</option>
+                  <option value="Reviewed">2. Reviewed (Under Technical Review)</option>
+                  <option value="Quoted">3. Quoted (Quotation Ready)</option>
+                  <option value="FollowUp">Follow Up (Clarification &amp; Scope)</option>
+                  <option value="Converted">4. Converted (Project Active)</option>
+                  <option value="Closed">5. Delivered (Handed Over / Completed)</option>
+                  <option value="Spam">Spam (Archived)</option>
                 </select>
               </div>
             </div>
 
             {/* Customer Details */}
-            <div className="grid grid-cols-2 gap-4 text-xs bg-slate-50 p-4 rounded-2xl border border-slate-100">
+            <div className="grid grid-cols-2 gap-4 text-xs bg-slate-50 dark:bg-slate-800/80 p-4 rounded-2xl border border-slate-200 dark:border-slate-700">
               <div>
-                <span className="text-slate-400 block font-bold uppercase">Customer</span>
-                <span className="font-semibold text-slate-900 text-sm">{detail.customerName}</span>
-                <div className="text-slate-600 mt-0.5">{detail.customerEmail}</div>
-                <div className="text-slate-600">{detail.customerPhone}</div>
+                <span className="text-slate-400 dark:text-slate-400 block font-bold uppercase">Customer</span>
+                <span className="font-semibold text-slate-900 dark:text-white text-sm">{detail.customerName}</span>
+                <div className="text-slate-600 dark:text-slate-300 mt-0.5">{detail.customerEmail}</div>
+                <div className="text-slate-600 dark:text-slate-300">{detail.customerPhone}</div>
               </div>
               <div>
-                <span className="text-slate-400 block font-bold uppercase">Company / College</span>
-                <span className="font-semibold text-slate-800">{detail.companyName || 'Not specified'}</span>
-                <span className="text-slate-400 block font-bold uppercase mt-2">Budget &amp; Target</span>
-                <span className="text-slate-800 font-medium">{detail.estimatedBudget}</span>
+                <span className="text-slate-400 dark:text-slate-400 block font-bold uppercase">Company / College</span>
+                <span className="font-semibold text-slate-800 dark:text-slate-200">{detail.companyName || 'Not specified'}</span>
+                <span className="text-slate-400 dark:text-slate-400 block font-bold uppercase mt-2">Budget &amp; Target</span>
+                <span className="text-slate-800 dark:text-slate-200 font-medium">{detail.estimatedBudget}</span>
               </div>
             </div>
 
             {/* Project Scope */}
             <div>
-              <h3 className="text-xs font-bold uppercase text-slate-400 tracking-wider mb-1">Project Title</h3>
-              <p className="text-sm font-bold text-slate-900">{detail.projectTitle}</p>
+              <h3 className="text-xs font-bold uppercase text-slate-400 dark:text-slate-400 tracking-wider mb-1">Project Title</h3>
+              <p className="text-sm font-bold text-slate-900 dark:text-white">{detail.projectTitle}</p>
 
-              <h3 className="text-xs font-bold uppercase text-slate-400 tracking-wider mt-4 mb-1">Requirement Details</h3>
-              <div className="text-xs sm:text-sm text-slate-700 whitespace-pre-line bg-slate-50 p-3.5 rounded-xl border border-slate-100 leading-relaxed max-h-40 overflow-y-auto">
+              <h3 className="text-xs font-bold uppercase text-slate-400 dark:text-slate-400 tracking-wider mt-4 mb-1">Requirement Details</h3>
+              <div className="text-xs sm:text-sm text-slate-700 dark:text-slate-200 whitespace-pre-line bg-slate-50 dark:bg-slate-800/80 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 leading-relaxed max-h-40 overflow-y-auto">
                 {detail.projectDescription}
               </div>
 
               {detail.additionalRequirements && (
                 <div className="mt-3">
-                  <h3 className="text-xs font-bold uppercase text-slate-400 tracking-wider mb-1">Additional Notes</h3>
-                  <p className="text-xs text-slate-600 bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                  <h3 className="text-xs font-bold uppercase text-slate-400 dark:text-slate-400 tracking-wider mb-1">Additional Notes</h3>
+                  <p className="text-xs text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/80 p-2.5 rounded-lg border border-slate-200 dark:border-slate-700">
                     {detail.additionalRequirements}
                   </p>
                 </div>
@@ -337,14 +337,14 @@ export const AdminEnquiriesPage: React.FC = () => {
             {/* Attachments */}
             {detail.attachments && detail.attachments.length > 0 && (
               <div>
-                <h3 className="text-xs font-bold uppercase text-slate-400 tracking-wider mb-2 flex items-center gap-1.5">
+                <h3 className="text-xs font-bold uppercase text-slate-400 dark:text-slate-400 tracking-wider mb-2 flex items-center gap-1.5">
                   <Paperclip className="w-3.5 h-3.5" /> Attachments ({detail.attachments.length})
                 </h3>
                 <div className="space-y-1.5">
                   {detail.attachments.map((a) => (
-                    <div key={a.id} className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs">
-                      <span className="font-semibold text-slate-800">{a.originalFileName}</span>
-                      <span className="text-slate-400 font-mono">{(a.fileSizeBytes / 1024).toFixed(1)} KB</span>
+                    <div key={a.id} className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs text-slate-800 dark:text-slate-200">
+                      <span className="font-semibold text-slate-800 dark:text-slate-200">{a.originalFileName}</span>
+                      <span className="text-slate-400 dark:text-slate-500 font-mono">{(a.fileSizeBytes / 1024).toFixed(1)} KB</span>
                     </div>
                   ))}
                 </div>
@@ -352,20 +352,20 @@ export const AdminEnquiriesPage: React.FC = () => {
             )}
 
             {/* Internal Notes History */}
-            <div className="border-t border-slate-200 pt-4 space-y-3">
-              <h3 className="text-xs font-bold uppercase text-slate-500 tracking-wider flex items-center gap-1.5">
-                <MessageSquare className="w-3.5 h-3.5 text-blue-600" /> Internal Notes Thread
+            <div className="border-t border-slate-200 dark:border-slate-800 pt-4 space-y-3">
+              <h3 className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400 tracking-wider flex items-center gap-1.5">
+                <MessageSquare className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" /> Internal Notes Thread
               </h3>
 
               {detail.notes && detail.notes.length > 0 ? (
                 <div className="space-y-2 max-h-36 overflow-y-auto">
                   {detail.notes.map((note) => (
-                    <div key={note.id} className="p-2.5 bg-blue-50/50 border border-blue-100 rounded-xl text-xs space-y-0.5">
-                      <div className="flex justify-between font-bold text-slate-700">
+                    <div key={note.id} className="p-2.5 bg-blue-50/50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl text-xs space-y-0.5">
+                      <div className="flex justify-between font-bold text-slate-700 dark:text-slate-300">
                         <span>{note.authorName || 'Admin'}</span>
-                        <span className="text-slate-400 font-normal">{new Date(note.createdAt).toLocaleString()}</span>
+                        <span className="text-slate-400 dark:text-slate-500 font-normal">{new Date(note.createdAt).toLocaleString()}</span>
                       </div>
-                      <p className="text-slate-600">{note.noteContent}</p>
+                      <p className="text-slate-600 dark:text-slate-400">{note.noteContent}</p>
                     </div>
                   ))}
                 </div>
@@ -381,12 +381,12 @@ export const AdminEnquiriesPage: React.FC = () => {
                   value={newNote}
                   onChange={(e) => setNewNote(e.target.value)}
                   placeholder="Write an internal note..."
-                  className="flex-1 px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
+                  className="flex-1 px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl text-xs focus:ring-2 focus:ring-blue-500 focus:outline-hidden placeholder:text-slate-400 dark:placeholder:text-slate-500"
                 />
                 <button
                   type="submit"
                   disabled={noteSubmitting}
-                  className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition-colors disabled:opacity-50"
+                  className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition-colors disabled:opacity-50 cursor-pointer"
                 >
                   Add Note
                 </button>

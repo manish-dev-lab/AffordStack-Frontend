@@ -261,6 +261,7 @@ export interface EnquiryTracking {
   requiredTechnology: string;
   estimatedBudget: string;
   status: EnquiryStatus | number;
+  effectiveStatus?: string;
   statusDisplay: string;
   statusDescription: string;
   stepIndex: number;
@@ -393,6 +394,7 @@ export interface UserEnquirySummary {
   requiredTechnology: string;
   estimatedBudget: string;
   status: EnquiryStatus | number;
+  effectiveStatus?: string;
   statusDisplay: string;
   createdAt: string;
   quotationNumber?: string;

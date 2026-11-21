@@ -332,18 +332,18 @@ export const AdminQuotationsPage: React.FC = () => {
         <form onSubmit={handleCreateSubmit} className="space-y-6">
           {/* Enquiry Selection */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
               Select Related Enquiry *
             </label>
             <select
               value={selectedEnquiryId}
               onChange={(e) => handleEnquirySelect(Number(e.target.value))}
               required
-              className="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-hidden bg-white"
+              className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-hidden bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
             >
-              <option value="">-- Choose an Enquiry --</option>
+              <option value="" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">-- Choose an Enquiry --</option>
               {enquiriesList.map((enq) => (
-                <option key={enq.id} value={enq.id}>
+                <option key={enq.id} value={enq.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">
                   #{enq.referenceNumber} - {enq.customerName} ({enq.projectTitle})
                 </option>
               ))}
@@ -352,7 +352,7 @@ export const AdminQuotationsPage: React.FC = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
                 Service Description *
               </label>
               <input
@@ -360,13 +360,13 @@ export const AdminQuotationsPage: React.FC = () => {
                 required
                 value={serviceDescription}
                 onChange={(e) => setServiceDescription(e.target.value)}
-                className="w-full px-4 py-2 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
+                className="w-full px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-hidden bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
                 placeholder="e.g. ASP.NET Core & React E-Commerce Portal"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
                 Expected Delivery Date *
               </label>
               <input
@@ -374,13 +374,13 @@ export const AdminQuotationsPage: React.FC = () => {
                 required
                 value={deliveryDate}
                 onChange={(e) => setDeliveryDate(e.target.value)}
-                className="w-full px-4 py-2 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-hidden bg-white"
+                className="w-full px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-hidden bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
               Detailed Scope &amp; Deliverables *
             </label>
             <textarea
@@ -388,19 +388,19 @@ export const AdminQuotationsPage: React.FC = () => {
               rows={3}
               value={deliverables}
               onChange={(e) => setDeliverables(e.target.value)}
-              className="w-full px-4 py-2 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
+              className="w-full px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-hidden bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
               placeholder="List core deliverables, sprints, and handover criteria..."
             />
           </div>
 
           {/* Line items builder */}
-          <div className="border border-slate-200 rounded-2xl p-4 bg-slate-50/50 space-y-3">
+          <div className="border border-slate-200 dark:border-slate-700 rounded-2xl p-4 bg-slate-50/50 dark:bg-slate-800/50 space-y-3">
             <div className="flex items-center justify-between">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-600">Itemized Breakdown</h4>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Itemized Breakdown</h4>
               <button
                 type="button"
                 onClick={handleAddItem}
-                className="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                className="text-xs font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 flex items-center gap-1 cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5" /> Add Line Item
               </button>
@@ -409,7 +409,7 @@ export const AdminQuotationsPage: React.FC = () => {
             <div className="overflow-x-auto pb-1 -mx-1 px-1 sm:mx-0 sm:px-0">
               <div className="min-w-[480px] space-y-2">
                 {items.map((item, index) => (
-                  <div key={index} className="grid grid-cols-12 gap-2 bg-white p-2.5 rounded-xl border border-slate-200 items-center">
+                  <div key={index} className="grid grid-cols-12 gap-2 bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 items-center">
                     <div className="col-span-5">
                       <input
                         type="text"
@@ -417,7 +417,7 @@ export const AdminQuotationsPage: React.FC = () => {
                         required
                         value={item.title}
                         onChange={(e) => handleItemChange(index, 'title', e.target.value)}
-                        className="w-full px-2 py-1.5 text-xs sm:text-xs border border-slate-300 rounded-lg"
+                        className="w-full px-2 py-1.5 text-xs sm:text-xs border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
                       />
                     </div>
                     <div className="col-span-3">
@@ -426,7 +426,7 @@ export const AdminQuotationsPage: React.FC = () => {
                         placeholder="Notes / Desc"
                         value={item.description}
                         onChange={(e) => handleItemChange(index, 'description', e.target.value)}
-                        className="w-full px-2 py-1.5 text-xs sm:text-xs border border-slate-300 rounded-lg"
+                        className="w-full px-2 py-1.5 text-xs sm:text-xs border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
                       />
                     </div>
                     <div className="col-span-1">
@@ -436,7 +436,7 @@ export const AdminQuotationsPage: React.FC = () => {
                         min={1}
                         value={item.quantity}
                         onChange={(e) => handleItemChange(index, 'quantity', Number(e.target.value))}
-                        className="w-full px-2 py-1.5 text-xs sm:text-xs border border-slate-300 rounded-lg text-center"
+                        className="w-full px-2 py-1.5 text-xs sm:text-xs border border-slate-300 dark:border-slate-700 rounded-lg text-center bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
                       />
                     </div>
                     <div className="col-span-2">
@@ -446,14 +446,14 @@ export const AdminQuotationsPage: React.FC = () => {
                         min={0}
                         value={item.unitPrice}
                         onChange={(e) => handleItemChange(index, 'unitPrice', Number(e.target.value))}
-                        className="w-full px-2 py-1.5 text-xs sm:text-xs border border-slate-300 rounded-lg text-right"
+                        className="w-full px-2 py-1.5 text-xs sm:text-xs border border-slate-300 dark:border-slate-700 rounded-lg text-right bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
                       />
                     </div>
                     <div className="col-span-1 text-center">
                       <button
                         type="button"
                         onClick={() => handleRemoveItem(index)}
-                        className="text-slate-400 hover:text-rose-600"
+                        className="text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 cursor-pointer"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -465,52 +465,52 @@ export const AdminQuotationsPage: React.FC = () => {
           </div>
 
           {/* Pricing calculations */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 p-3 sm:p-4 bg-slate-50 rounded-2xl border border-slate-200 text-xs">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 p-3 sm:p-4 bg-slate-50 dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 text-xs">
             <div>
-              <label className="block text-slate-500 font-bold uppercase mb-1">Dev Cost (₹)</label>
+              <label className="block text-slate-500 dark:text-slate-400 font-bold uppercase mb-1">Dev Cost (₹)</label>
               <input
                 type="number"
                 value={devCost}
                 onChange={(e) => setDevCost(Number(e.target.value))}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg font-bold"
+                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg font-bold bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
               />
             </div>
             <div>
-              <label className="block text-slate-500 font-bold uppercase mb-1">Additional Cost (₹)</label>
+              <label className="block text-slate-500 dark:text-slate-400 font-bold uppercase mb-1">Additional Cost (₹)</label>
               <input
                 type="number"
                 value={addCost}
                 onChange={(e) => setAddCost(Number(e.target.value))}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg font-bold"
+                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg font-bold bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
               />
             </div>
             <div>
-              <label className="block text-slate-500 font-bold uppercase mb-1">Tax Rate (%)</label>
+              <label className="block text-slate-500 dark:text-slate-400 font-bold uppercase mb-1">Tax Rate (%)</label>
               <input
                 type="number"
                 value={taxRate}
                 onChange={(e) => setTaxRate(Number(e.target.value))}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg font-bold"
+                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg font-bold bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
               />
             </div>
             <div>
-              <label className="block text-slate-500 font-bold uppercase mb-1">Advance Req. (₹)</label>
+              <label className="block text-slate-500 dark:text-slate-400 font-bold uppercase mb-1">Advance Req. (₹)</label>
               <input
                 type="number"
                 value={advanceAmount}
                 onChange={(e) => setAdvanceAmount(Number(e.target.value))}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg font-bold text-emerald-700"
+                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg font-bold text-emerald-700 dark:text-emerald-400 bg-white dark:bg-slate-900"
               />
             </div>
           </div>
 
           {/* Computed Summary */}
-          <div className="p-3 sm:p-4 bg-blue-50/70 border border-blue-200 rounded-2xl flex flex-col sm:flex-row gap-2 sm:items-center justify-between text-xs sm:text-sm">
+          <div className="p-3 sm:p-4 bg-blue-50/70 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/60 rounded-2xl flex flex-col sm:flex-row gap-2 sm:items-center justify-between text-xs sm:text-sm">
             <div>
-              <span className="text-slate-500">Subtotal: ₹{calculatedSubtotal.toLocaleString()}</span>
-              <span className="text-slate-500 ml-4">Tax: ₹{calculatedTax.toLocaleString()}</span>
+              <span className="text-slate-500 dark:text-slate-400">Subtotal: ₹{calculatedSubtotal.toLocaleString()}</span>
+              <span className="text-slate-500 dark:text-slate-400 ml-4">Tax: ₹{calculatedTax.toLocaleString()}</span>
             </div>
-            <div className="font-extrabold text-blue-700 text-base sm:text-lg">
+            <div className="font-extrabold text-blue-700 dark:text-blue-400 text-base sm:text-lg">
               Total Amount: ₹{calculatedTotal.toLocaleString()}
             </div>
           </div>
@@ -519,7 +519,7 @@ export const AdminQuotationsPage: React.FC = () => {
             <button
               type="button"
               onClick={handleCloseCreateModal}
-              className="h-11 px-5 rounded-xl border border-slate-300 text-sm font-semibold text-slate-700 hover:bg-slate-100 shrink-0 cursor-pointer"
+              className="h-11 px-5 rounded-xl border border-slate-300 dark:border-slate-700 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 shrink-0 cursor-pointer"
             >
               Cancel
             </button>

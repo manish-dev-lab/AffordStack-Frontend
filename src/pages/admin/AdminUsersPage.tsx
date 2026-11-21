@@ -473,30 +473,45 @@ export const AdminUsersPage: React.FC = () => {
                     >
                       <div className="flex items-center justify-between">
                         <span className="font-mono font-bold text-blue-600 dark:text-blue-400">
-                          {enq.referenceNumber}
+                          {enq.projectNumber || enq.referenceNumber}
                         </span>
-                        <Badge status={enq.status} />
+                        <Badge status={enq.effectiveStatus || (enq.projectStatus ? String(enq.projectStatus) : (enq.quotationStatus === 'Accepted' ? 'Accepted' : enq.status))} />
                       </div>
 
                       <div className="font-bold text-slate-900 dark:text-white text-sm">
                         {enq.projectTitle}
                       </div>
 
-                      <div className="text-slate-500 text-[11px] line-clamp-2">
+                      <div className="text-slate-500 dark:text-slate-400 text-[11px] line-clamp-2">
                         {enq.projectDescription}
                       </div>
 
+                      {enq.projectNumber && (
+                        <div className="space-y-1 py-1">
+                          <div className="flex justify-between text-[11px]">
+                            <span className="text-slate-500 dark:text-slate-400 font-semibold">Progress</span>
+                            <span className="font-bold text-blue-600 dark:text-blue-400">{enq.progressPercentage || 0}%</span>
+                          </div>
+                          <div className="w-full h-1.5 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+                            <div
+                              className="h-full bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full"
+                              style={{ width: `${Math.min(Math.max(enq.progressPercentage || 0, 5), 100)}%` }}
+                            />
+                          </div>
+                        </div>
+                      )}
+
                       <div className="flex items-center justify-between pt-1 border-t border-slate-100 dark:border-slate-800">
-                        <span className="text-slate-400 text-[11px]">
+                        <span className="text-slate-400 dark:text-slate-500 text-[11px]">
                           Tech: {enq.requiredTechnology} &bull; Budget: {enq.estimatedBudget}
                         </span>
 
                         {enq.quotationNumber ? (
-                          <span className="text-emerald-600 font-bold text-[11px]">
+                          <span className="text-emerald-600 dark:text-emerald-400 font-bold text-[11px]">
                             Quote #{enq.quotationNumber} ({enq.quotationAmount ? `₹${enq.quotationAmount.toLocaleString()}` : ''})
                           </span>
                         ) : (
-                          <span className="text-slate-400 italic text-[11px]">No quotation yet</span>
+                          <span className="text-slate-400 dark:text-slate-500 italic text-[11px]">No quotation yet</span>
                         )}
                       </div>
                     </div>
