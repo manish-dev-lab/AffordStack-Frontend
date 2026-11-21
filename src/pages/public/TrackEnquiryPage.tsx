@@ -104,7 +104,9 @@ export const TrackEnquiryPage: React.FC = () => {
     { title: 'Delivered', desc: 'Codebase, demo & docs handed over' },
   ];
 
-  const currentStep = tracking ? Math.min(Math.max(tracking.stepIndex, 0), steps.length - 1) : 0;
+  const rawStep = tracking?.stepIndex ?? 1;
+  const isDeliveredState = rawStep >= 5 || tracking?.projectStatus === 'Completed' || String(tracking?.projectStatus) === '4' || tracking?.status === 'Closed' || String(tracking?.status) === '6';
+  const currentStep = isDeliveredState ? 4 : Math.min(Math.max(rawStep - 1, 0), steps.length - 1);
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-200">
@@ -229,8 +231,8 @@ export const TrackEnquiryPage: React.FC = () => {
                 <div className="py-2">
                   <div className="grid grid-cols-1 sm:grid-cols-5 gap-4 relative">
                     {steps.map((st, idx) => {
-                      const isPast = idx < currentStep;
-                      const isCurrent = idx === currentStep;
+                      const isPast = isDeliveredState ? true : idx < currentStep;
+                      const isCurrent = isDeliveredState ? (idx === 4) : idx === currentStep;
                       return (
                         <div
                           key={idx}

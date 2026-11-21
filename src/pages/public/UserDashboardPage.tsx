@@ -120,7 +120,7 @@ export const UserDashboardPage: React.FC = () => {
                 <FolderKanban className="w-5 h-5 text-indigo-600" />
               </div>
               <div className="text-3xl font-extrabold text-slate-900 dark:text-white mt-2">
-                {enquiries.filter(e => String(e.status) === 'Converted').length}
+                {enquiries.filter(e => e.projectStatus === 'InProgress' || String(e.projectStatus) === '2' || String(e.status) === 'Converted' || e.quotationStatus === 'Accepted' || String(e.quotationStatus) === '4').length}
               </div>
               <p className="text-[11px] text-slate-400 mt-1">Under active engineering</p>
             </div>
@@ -128,7 +128,7 @@ export const UserDashboardPage: React.FC = () => {
         </div>
 
         {/* Active Projects & Development Milestones Cards */}
-        {enquiries.some(e => (e.milestones && e.milestones.length > 0) || e.progressPercentage !== undefined) && (
+        {enquiries.some(e => (e.milestones && e.milestones.length > 0) || e.progressPercentage !== undefined || e.projectNumber) && (
           <Reveal animation="fade-up" delayMs={180}>
             <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200/80 dark:border-slate-800 shadow-xl space-y-6">
               <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
@@ -144,7 +144,7 @@ export const UserDashboardPage: React.FC = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {enquiries
-                  .filter(e => (e.milestones && e.milestones.length > 0) || e.progressPercentage !== undefined)
+                  .filter(e => (e.milestones && e.milestones.length > 0) || e.progressPercentage !== undefined || e.projectNumber)
                   .map(enq => (
                     <div
                       key={enq.id}
@@ -156,7 +156,7 @@ export const UserDashboardPage: React.FC = () => {
                             <span className="font-mono text-xs font-bold text-blue-600 dark:text-blue-400">
                               {enq.projectNumber || enq.referenceNumber}
                             </span>
-                            <Badge status={enq.status} />
+                            <Badge status={enq.effectiveStatus || (enq.projectStatus ? String(enq.projectStatus) : (enq.quotationStatus === 'Accepted' ? 'Accepted' : enq.status))} />
                           </div>
                           <h3 className="font-bold text-slate-900 dark:text-white text-base mt-1 line-clamp-1">
                             {enq.projectTitle}
@@ -311,7 +311,7 @@ export const UserDashboardPage: React.FC = () => {
                           </div>
                         </td>
                         <td className="p-4">
-                          <Badge status={enq.status} />
+                          <Badge status={enq.effectiveStatus || (enq.projectStatus ? String(enq.projectStatus) : (enq.quotationStatus === 'Accepted' ? 'Accepted' : enq.status))} />
                         </td>
                         <td className="p-4">
                           {enq.quotationNumber ? (
