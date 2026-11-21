@@ -116,14 +116,17 @@ export const PublicQuoteDecisionPage: React.FC = () => {
           </div>
 
           <div className="shrink-0 flex items-center gap-3">
-            <a
-              href={downloadPdfUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs sm:text-sm font-semibold px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 transition-colors"
+            <button
+              type="button"
+              onClick={() => {
+                if (secureToken) {
+                  quotationApi.downloadPublicPdfBlob(secureToken, quotation.quotationNumber);
+                }
+              }}
+              className="inline-flex items-center gap-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs sm:text-sm font-semibold px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 transition-colors cursor-pointer"
             >
               <Download className="w-4 h-4" /> Download PDF
-            </a>
+            </button>
           </div>
         </div>
 
@@ -146,15 +149,20 @@ export const PublicQuoteDecisionPage: React.FC = () => {
           {/* Items breakdown if present */}
           {quotation.items && quotation.items.length > 0 && (
             <div>
-              <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Itemized Deliverables</h2>
-              <div className="border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden">
-                <table className="w-full text-left text-sm">
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400">Itemized Deliverables</h2>
+                <span className="text-[11px] text-blue-600 dark:text-blue-400 sm:hidden font-medium">
+                  &larr; Swipe horizontally &rarr;
+                </span>
+              </div>
+              <div className="border border-slate-200 dark:border-slate-800 rounded-2xl overflow-x-auto touch-pan-x overscroll-contain shadow-xs">
+                <table className="w-full text-left text-sm min-w-[560px]">
                   <thead className="bg-slate-100 dark:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-300 uppercase">
                     <tr>
-                      <th className="p-3.5">Deliverable</th>
-                      <th className="p-3.5 text-center">Qty</th>
-                      <th className="p-3.5 text-right">Unit Price</th>
-                      <th className="p-3.5 text-right">Total</th>
+                      <th className="p-3.5 min-w-[220px]">Deliverable</th>
+                      <th className="p-3.5 text-center min-w-[60px]">Qty</th>
+                      <th className="p-3.5 text-right min-w-[120px]">Unit Price</th>
+                      <th className="p-3.5 text-right min-w-[120px]">Total</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 dark:divide-slate-800">

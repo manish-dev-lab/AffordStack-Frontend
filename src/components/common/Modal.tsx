@@ -42,32 +42,32 @@ export const Modal: React.FC<ModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
+    <div className="fixed inset-0 z-50 overflow-y-auto overflow-x-hidden touch-pan-y overscroll-contain">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity animate-in fade-in"
+        className="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-xs transition-opacity animate-in fade-in"
         onClick={onClose}
       />
 
       {/* Dialog container */}
-      <div className="flex min-h-full items-center justify-center p-2 sm:p-4 text-center">
+      <div className="flex min-h-full items-center justify-center p-2 sm:p-4 text-center overflow-x-hidden touch-pan-y">
         <div
-          className={`relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all my-2 sm:my-8 w-full ${widthMap[maxWidth]} animate-in zoom-in-95 duration-150`}
+          className={`relative transform overflow-hidden rounded-2xl bg-white dark:bg-slate-900 text-left shadow-2xl transition-all my-2 sm:my-8 w-full max-w-[calc(100vw-16px)] ${widthMap[maxWidth]} border border-slate-200 dark:border-slate-800 animate-in zoom-in-95 duration-150 touch-pan-y`}
         >
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-slate-100 px-4 sm:px-6 py-3.5 sm:py-4">
-            <h3 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">{title}</h3>
+          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 px-4 sm:px-6 py-3.5 sm:py-4">
+            <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight">{title}</h3>
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
+              className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
 
           {/* Content */}
-          <div className="p-4 sm:p-6 max-h-[85vh] overflow-y-auto">{children}</div>
+          <div className="p-4 sm:p-6 max-h-[85vh] overflow-y-auto overflow-x-hidden touch-pan-y overscroll-contain">{children}</div>
         </div>
       </div>
     </div>

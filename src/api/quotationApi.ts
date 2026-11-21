@@ -76,4 +76,34 @@ export const quotationApi = {
     const base = import.meta.env.VITE_API_BASE_URL || '/api';
     return `${base}/public/quotations/${secureToken}/pdf`;
   },
+
+  downloadAdminPdfBlob: async (id: number, quotationNumber?: string): Promise<void> => {
+    const res = await axiosInstance.get(`/admin/quotations/${id}/pdf`, {
+      responseType: 'blob',
+    });
+    const blob = new Blob([res.data], { type: 'application/pdf' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Quotation_${quotationNumber || id}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => window.URL.revokeObjectURL(url), 1000);
+  },
+
+  downloadPublicPdfBlob: async (secureToken: string, quotationNumber?: string): Promise<void> => {
+    const res = await axiosInstance.get(`/public/quotations/${secureToken}/pdf`, {
+      responseType: 'blob',
+    });
+    const blob = new Blob([res.data], { type: 'application/pdf' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Quotation_${quotationNumber || 'Proposal'}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => window.URL.revokeObjectURL(url), 1000);
+  },
 };

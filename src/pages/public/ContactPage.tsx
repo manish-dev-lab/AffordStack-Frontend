@@ -1,12 +1,16 @@
-import React, { useState } from 'react';
-import { Mail, Phone, MapPin, Clock, Send, CheckCircle2, Loader2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Mail, Phone, MapPin, Clock, Send, CheckCircle2, Loader2, UserCheck } from 'lucide-react';
 import { enquiryApi } from '../../api/enquiryApi';
 import { useCompanySettings } from '../../context/SettingsContext';
+import { useUserAuth } from '../../context/UserAuthContext';
+import { CountryCodeSelect } from '../../components/common/CountryCodeSelect';
 
 export const ContactPage: React.FC = () => {
   const settings = useCompanySettings();
+  const { user: clientUser, isUserAuthenticated } = useUserAuth();
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [countryCode, setCountryCode] = useState('+91');
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -15,14 +19,37 @@ export const ContactPage: React.FC = () => {
     message: '',
   });
 
+  // Pre-fill user details if logged in
+  useEffect(() => {
+    if (clientUser) {
+      let rawPhone = clientUser.phoneNumber || '';
+      if (rawPhone.startsWith('+')) {
+        const parts = rawPhone.split(' ');
+        if (parts.length > 1) {
+          setCountryCode(parts[0]);
+          rawPhone = parts.slice(1).join(' ');
+        }
+      }
+      setFormData((prev) => ({
+        ...prev,
+        fullName: prev.fullName || clientUser.fullName || '',
+        email: prev.email || clientUser.email || '',
+        phoneNumber: prev.phoneNumber || rawPhone,
+      }));
+    }
+  }, [clientUser]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
     try {
+      const cleanPhone = formData.phoneNumber.trim();
+      const fullPhone = cleanPhone.startsWith('+') ? cleanPhone : `${countryCode} ${cleanPhone}`;
+
       const data = new FormData();
       data.append('fullName', formData.fullName);
       data.append('email', formData.email);
-      data.append('phoneNumber', formData.phoneNumber);
+      data.append('phoneNumber', fullPhone);
       data.append('projectTitle', formData.subject || 'General Inquiry');
       data.append('projectDescription', formData.message);
       data.append('requiredTechnology', 'General');
@@ -30,9 +57,11 @@ export const ContactPage: React.FC = () => {
 
       await enquiryApi.submitEnquiryForm(data);
       setSubmitted(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch {
       // Still show success confirmation
       setSubmitted(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } finally {
       setSubmitting(false);
     }
@@ -101,7 +130,15 @@ export const ContactPage: React.FC = () => {
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6">
-              <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Send Us a Direct Message</h2>
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Send Us a Direct Message</h2>
+                {isUserAuthenticated && clientUser && (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <UserCheck className="w-3.5 h-3.5" />
+                    Auto-filled as {clientUser.fullName}
+                  </span>
+                )}
+              </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
@@ -138,14 +175,20 @@ export const ContactPage: React.FC = () => {
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
                     Phone / WhatsApp *
                   </label>
-                  <input
-                    type="tel"
-                    required
-                    value={formData.phoneNumber}
-                    onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:outline-hidden text-sm"
-                    placeholder="+91 98765 43210"
-                  />
+                  <div className="flex">
+                    <CountryCodeSelect
+                      value={countryCode}
+                      onChange={setCountryCode}
+                    />
+                    <input
+                      type="tel"
+                      required
+                      value={formData.phoneNumber}
+                      onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+                      className="w-full px-4 py-3 rounded-r-xl border border-l-0 border-slate-300 focus:ring-2 focus:ring-blue-500 focus:outline-hidden text-sm"
+                      placeholder="98765 43210"
+                    />
+                  </div>
                 </div>
 
                 <div>

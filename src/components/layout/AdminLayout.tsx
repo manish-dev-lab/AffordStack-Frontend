@@ -29,6 +29,22 @@ export const AdminLayout: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Close sidebar on navigation and lock body scroll when open on mobile
+  React.useEffect(() => {
+    setSidebarOpen(false);
+  }, [location.pathname]);
+
+  React.useEffect(() => {
+    if (sidebarOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [sidebarOpen]);
+
   const handleLogout = () => {
     logout();
     navigate('/admin/login');
@@ -70,6 +86,15 @@ export const AdminLayout: React.FC = () => {
           </button>
         </div>
       </div>
+
+      {/* Mobile Backdrop - closes sidebar when tapping outside */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-slate-950/70 backdrop-blur-xs z-40 lg:hidden animate-in fade-in duration-200"
+          onClick={() => setSidebarOpen(false)}
+          aria-hidden="true"
+        />
+      )}
 
       {/* Sidebar for Desktop / Mobile Drawer */}
       <aside

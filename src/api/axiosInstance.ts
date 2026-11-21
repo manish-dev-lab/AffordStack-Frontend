@@ -103,7 +103,9 @@ axiosInstance.interceptors.response.use(
 
     if (isServerOrTechnicalError) {
       friendlyMessage = 'Something went wrong while processing your request. Please try again shortly.';
-      if (typeof window !== 'undefined') {
+      // Avoid duplicate top toast if user is on login/registration pages that already show a modal popup
+      const isAuthPage = typeof window !== 'undefined' && (window.location.pathname.includes('/login') || window.location.pathname.includes('/register'));
+      if (typeof window !== 'undefined' && !isAuthPage) {
         window.dispatchEvent(
           new CustomEvent('app:toast', {
             detail: {

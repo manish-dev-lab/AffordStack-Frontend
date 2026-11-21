@@ -59,7 +59,41 @@ button {
   flex-shrink: 0;
 }
 
-/* Custom scrollbars */
+/* Explicit Cursor Rules across the application */
+button,
+a,
+select,
+input[type="checkbox"],
+input[type="radio"],
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+[role="button"],
+.cursor-pointer,
+.clickable {
+  cursor: pointer !important;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="url"],
+input[type="search"],
+textarea {
+  cursor: text !important;
+}
+
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled,
+.disabled {
+  cursor: not-allowed !important;
+}
+
+/* Custom scrollbars (Desktop only) */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -89,6 +123,19 @@ html.dark ::-webkit-scrollbar-thumb {
 
 html.dark ::-webkit-scrollbar-thumb:hover {
   background: #475569;
+}
+
+/* Hide disturbing custom scrollbar on mobile & touch screens */
+@media (max-width: 768px), (hover: none) and (pointer: coarse) {
+  ::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+  html, body {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
 }
 
 /* Infinite Marquee Animation */

@@ -4,6 +4,7 @@ import { useUserAuth } from '../../context/UserAuthContext';
 import { userAuthApi } from '../../api/userAuthApi';
 import { useToast } from '../../context/ToastContext';
 import { Reveal } from '../../components/common/Reveal';
+import { CountryCodeSelect } from '../../components/common/CountryCodeSelect';
 import {
   User,
   Mail,
@@ -34,6 +35,7 @@ export const UserLoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
+  const [countryCode, setCountryCode] = useState('+91');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [otp, setOtp] = useState('');
@@ -158,10 +160,13 @@ export const UserLoginPage: React.FC = () => {
     setServerErrorPopup(null);
 
     try {
+      const cleanPhone = phoneNumber.trim();
+      const fullPhone = cleanPhone.startsWith('+') ? cleanPhone : `${countryCode} ${cleanPhone}`;
+
       await register({
         fullName: fullName.trim(),
         email: email.trim().toLowerCase(),
-        phoneNumber: phoneNumber.trim(),
+        phoneNumber: fullPhone,
         companyName: companyName.trim() || undefined,
         password,
         otp: otp.trim(),
@@ -354,17 +359,23 @@ export const UserLoginPage: React.FC = () => {
                   <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
                     Phone Number *
                   </label>
-                  <div className="relative">
-                    <Phone className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                    <input
-                      type="tel"
-                      required
-                      value={phoneNumber}
-                      onChange={(e) => setPhoneNumber(e.target.value)}
-                      placeholder="+91 98765 43210"
-                      autoComplete="tel"
-                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
+                  <div className="flex">
+                    <CountryCodeSelect
+                      value={countryCode}
+                      onChange={setCountryCode}
                     />
+                    <div className="relative flex-1">
+                      <Phone className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                      <input
+                        type="tel"
+                        required
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        placeholder="98765 43210"
+                        autoComplete="tel"
+                        className="w-full pl-10 pr-4 py-2.5 rounded-r-xl border border-l-0 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
+                      />
+                    </div>
                   </div>
                 </div>
 

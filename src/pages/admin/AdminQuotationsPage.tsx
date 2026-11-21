@@ -294,15 +294,14 @@ export const AdminQuotationsPage: React.FC = () => {
                       </button>
 
                       {/* Download PDF */}
-                      <a
-                        href={quotationApi.downloadPdfUrl(q.id)}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="p-1.5 inline-block text-slate-600 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
-                        title="Download PDF"
+                      <button
+                        type="button"
+                        onClick={() => quotationApi.downloadAdminPdfBlob(q.id, q.quotationNumber)}
+                        className="p-1.5 inline-flex items-center text-slate-600 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/60 rounded-lg transition-colors cursor-pointer"
+                        title="Download PDF Quotation"
                       >
                         <Download className="w-4 h-4" />
-                      </a>
+                      </button>
 
                       {/* Customer Public Link */}
                       <a

@@ -17,7 +17,7 @@ export const Reveal: React.FC<RevealProps> = ({
   animation = 'fade-up',
   delayMs = 0,
   durationMs = 700,
-  threshold = 0.15,
+  threshold = 0.02,
   className = '',
   once = true,
 }) => {
@@ -27,6 +27,13 @@ export const Reveal: React.FC<RevealProps> = ({
   useEffect(() => {
     const node = elementRef.current;
     if (!node) return;
+
+    // Check if element is already within viewport on initial render
+    const rect = node.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      setIsVisible(true);
+      if (once) return;
+    }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -41,7 +48,7 @@ export const Reveal: React.FC<RevealProps> = ({
       },
       {
         threshold,
-        rootMargin: '0px 0px -40px 0px',
+        rootMargin: '0px 0px 50px 0px',
       }
     );
 
