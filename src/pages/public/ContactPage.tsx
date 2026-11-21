@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Mail, Phone, MapPin, Clock, Send, CheckCircle2, Loader2, UserCheck } from 'lucide-react';
 import { enquiryApi } from '../../api/enquiryApi';
 import { useCompanySettings } from '../../context/SettingsContext';
@@ -8,6 +8,7 @@ import { CountryCodeSelect } from '../../components/common/CountryCodeSelect';
 export const ContactPage: React.FC = () => {
   const settings = useCompanySettings();
   const { user: clientUser, isUserAuthenticated } = useUserAuth();
+  const formCardRef = useRef<HTMLDivElement>(null);
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [countryCode, setCountryCode] = useState('+91');
@@ -57,11 +58,15 @@ export const ContactPage: React.FC = () => {
 
       await enquiryApi.submitEnquiryForm(data);
       setSubmitted(true);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setTimeout(() => {
+        formCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 50);
     } catch {
       // Still show success confirmation
       setSubmitted(true);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setTimeout(() => {
+        formCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 50);
     } finally {
       setSubmitting(false);
     }
@@ -111,19 +116,22 @@ export const ContactPage: React.FC = () => {
         </div>
 
         {/* Message Form */}
-        <div className="lg:col-span-2 bg-white rounded-3xl p-8 sm:p-10 border border-slate-200/80 shadow-md">
+        <div 
+          ref={formCardRef} 
+          className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-3xl p-8 sm:p-10 border border-slate-200/80 dark:border-slate-800 shadow-md"
+        >
           {submitted ? (
             <div className="text-center py-12 space-y-4">
-              <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
+              <div className="w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto">
                 <CheckCircle2 className="w-8 h-8" />
               </div>
-              <h3 className="text-2xl font-bold text-slate-900">Message Received!</h3>
-              <p className="text-slate-600 max-w-md mx-auto text-sm">
+              <h3 className="text-2xl font-bold text-slate-900 dark:text-white">Message Received!</h3>
+              <p className="text-slate-600 dark:text-slate-300 max-w-md mx-auto text-sm">
                 Thank you for reaching out. A senior engineering coordinator has received your message and will contact you shortly.
               </p>
               <button
                 onClick={() => setSubmitted(false)}
-                className="mt-4 bg-slate-900 text-white text-xs font-bold px-5 py-2.5 rounded-xl hover:bg-slate-800"
+                className="mt-4 bg-slate-900 dark:bg-blue-600 text-white text-xs font-bold px-5 py-2.5 rounded-xl hover:bg-slate-800 dark:hover:bg-blue-700 cursor-pointer"
               >
                 Send Another Message
               </button>

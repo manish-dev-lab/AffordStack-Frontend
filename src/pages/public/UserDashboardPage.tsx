@@ -127,6 +127,117 @@ export const UserDashboardPage: React.FC = () => {
           </Reveal>
         </div>
 
+        {/* Active Projects & Development Milestones Cards */}
+        {enquiries.some(e => (e.milestones && e.milestones.length > 0) || e.progressPercentage !== undefined) && (
+          <Reveal animation="fade-up" delayMs={180}>
+            <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200/80 dark:border-slate-800 shadow-xl space-y-6">
+              <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
+                <div>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-900">
+                    <FolderKanban className="w-3.5 h-3.5" /> Active Projects &amp; Live Roadmaps
+                  </div>
+                  <h2 className="text-xl font-extrabold text-slate-900 dark:text-white mt-2">
+                    Ongoing Project Execution &amp; Milestones
+                  </h2>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {enquiries
+                  .filter(e => (e.milestones && e.milestones.length > 0) || e.progressPercentage !== undefined)
+                  .map(enq => (
+                    <div
+                      key={enq.id}
+                      className="p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/40 space-y-4"
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono text-xs font-bold text-blue-600 dark:text-blue-400">
+                              {enq.projectNumber || enq.referenceNumber}
+                            </span>
+                            <Badge status={enq.status} />
+                          </div>
+                          <h3 className="font-bold text-slate-900 dark:text-white text-base mt-1 line-clamp-1">
+                            {enq.projectTitle}
+                          </h3>
+                        </div>
+                        <div className="text-right shrink-0">
+                          <span className="text-2xl font-black text-blue-600 dark:text-blue-400">
+                            {enq.progressPercentage || 0}%
+                          </span>
+                          <span className="block text-[10px] font-bold uppercase text-slate-400">
+                            Completed
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Progress Bar */}
+                      <div className="w-full h-2.5 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+                        <div
+                          className="h-full bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full transition-all duration-500"
+                          style={{ width: `${Math.min(Math.max(enq.progressPercentage || 0, 5), 100)}%` }}
+                        />
+                      </div>
+
+                      {/* Milestones list */}
+                      {enq.milestones && enq.milestones.length > 0 && (
+                        <div className="space-y-2 pt-1">
+                          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                            Milestones Checklist ({enq.milestones.filter(m => m.isCompleted).length}/{enq.milestones.length})
+                          </span>
+                          <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
+                            {enq.milestones.map((m, idx) => (
+                              <div
+                                key={m.id || idx}
+                                className={`p-2.5 rounded-xl text-xs flex items-center justify-between gap-2 border ${
+                                  m.isCompleted
+                                    ? 'bg-emerald-50/80 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-900 text-emerald-900 dark:text-emerald-200'
+                                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300'
+                                }`}
+                              >
+                                <div className="flex items-center gap-2 truncate">
+                                  {m.isCompleted ? (
+                                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                                  ) : (
+                                    <Clock className="w-4 h-4 text-slate-400 shrink-0" />
+                                  )}
+                                  <span className="font-semibold truncate">{m.title}</span>
+                                </div>
+                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 ${
+                                  m.isCompleted
+                                    ? 'bg-emerald-200 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200'
+                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                                }`}>
+                                  {m.isCompleted ? 'Done' : new Date(m.dueDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="pt-2 flex items-center justify-between text-xs">
+                        {enq.expectedCompletionDate && (
+                          <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1 text-[11px]">
+                            <Calendar className="w-3.5 h-3.5 text-blue-500" />
+                            Target: {new Date(enq.expectedCompletionDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                          </span>
+                        )}
+                        <Link
+                          to={`/track-enquiry?ref=${enq.referenceNumber}&email=${encodeURIComponent(user?.email || '')}`}
+                          className="font-bold text-blue-600 dark:text-blue-400 hover:underline inline-flex items-center gap-1 ml-auto"
+                        >
+                          Detailed Tracker &rarr;
+                        </Link>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          </Reveal>
+        )}
+
         {/* Enquiries Table Section */}
         <Reveal animation="fade-up" delayMs={200}>
           <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-xl overflow-hidden">

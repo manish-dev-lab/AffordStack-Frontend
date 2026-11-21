@@ -126,12 +126,18 @@ export const AdminSettingsPage: React.FC = () => {
     setSuccessMsg(null);
 
     try {
-      await configurationApi.updateBatch({
-        TokenConfig: JSON.stringify(tokenConfig),
-        EmailConfig: JSON.stringify(emailConfig),
-        WebsiteConfig: JSON.stringify(websiteConfig),
-      });
+      await Promise.all([
+        configurationApi.updateBatch({
+          TokenConfig: JSON.stringify(tokenConfig),
+          EmailConfig: JSON.stringify(emailConfig),
+          WebsiteConfig: JSON.stringify(websiteConfig),
+        }),
+        contentApi.updateSettingsBatch({
+          'System:MaintenanceMode': String(websiteConfig.maintenanceMode),
+        }),
+      ]);
 
+      await refreshSettings();
       setSuccessMsg('System security, token, and email configurations updated in database successfully!');
       setTimeout(() => setSuccessMsg(null), 4000);
     } catch (err: unknown) {

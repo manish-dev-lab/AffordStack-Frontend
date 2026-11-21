@@ -14,7 +14,8 @@ import {
   User,
   LogIn,
   Layers,
-  Sparkles
+  Sparkles,
+  ArrowRight
 } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 import { useAuth } from '../../context/AuthContext';
@@ -68,15 +69,15 @@ export const Navbar: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20 items-center">
           {/* Brand Logo */}
-          <Link to="/" className="flex items-center gap-2.5 sm:gap-3 group shrink-0">
-            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-tr from-blue-700 via-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
+          <Link to="/" className="flex items-center gap-2 sm:gap-3 group shrink-0 min-w-0">
+            <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-tr from-blue-700 via-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform shrink-0">
               <Code className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
-            <div>
-              <span className="text-lg sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-1">
+            <div className="truncate">
+              <span className="text-base sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-1">
                 Software<span className="text-blue-600 dark:text-blue-400 font-extrabold">Services</span>
               </span>
-              <span className="block text-[10px] sm:text-xs font-medium text-slate-500 dark:text-slate-400 tracking-wider uppercase">
+              <span className="hidden sm:block text-[10px] sm:text-xs font-medium text-slate-500 dark:text-slate-400 tracking-wider uppercase">
                 Engineering &amp; Mentoring
               </span>
             </div>
@@ -260,58 +261,53 @@ export const Navbar: React.FC = () => {
           </div>
 
           {/* Mobile Menu Button & Quick Actions */}
-          <div className="lg:hidden flex items-center gap-1.5 sm:gap-2 mr-1 sm:mr-2">
+          <div className="lg:hidden flex items-center gap-1 sm:gap-2 shrink-0">
             <ThemeToggle />
 
             {/* If logged in on mobile, show user initial avatar circle */}
             {isUserAuthenticated && (
               <Link
                 to="/user/dashboard"
-                className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-xs shadow-xs uppercase cursor-pointer"
+                onClick={() => setIsOpen(false)}
+                className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-xs shadow-xs uppercase cursor-pointer shrink-0"
                 title="My Account"
               >
                 {userInitial}
               </Link>
             )}
 
+            {/* Track and Quote are hidden on narrow mobile to prevent any horizontal overflow, since both are prominently at top of drawer */}
             <Link
               to="/track-enquiry"
               onClick={handleTrackClick}
-              className="p-2 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+              className="hidden sm:inline-flex p-1.5 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
               title="Track Live Enquiry"
             >
-              <Search className="w-5 h-5" />
+              <Search className="w-4 h-4" />
             </Link>
 
             <Link
               to="/request-a-quote"
-              className="bg-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-xl cursor-pointer"
+              className="hidden sm:inline-flex bg-blue-600 text-white text-xs font-bold px-2.5 py-1.5 rounded-xl cursor-pointer"
             >
               Quote
             </Link>
 
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="p-2 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-hidden cursor-pointer"
+              className="p-1.5 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-hidden cursor-pointer"
               aria-label="Toggle menu"
             >
-              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isOpen ? <X className="w-6 h-6 text-slate-900 dark:text-white" /> : <Menu className="w-6 h-6 text-slate-900 dark:text-white" />}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Drawer Menu & Backdrop */}
+      {/* Mobile Drawer Menu: Solid full screen dropdown without gaps */}
       {isOpen && (
-        <>
-          {/* Backdrop: tapping outside closes menu */}
-          <div
-            className="fixed inset-0 top-20 z-40 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-xs lg:hidden animate-in fade-in duration-200"
-            onClick={() => setIsOpen(false)}
-            aria-hidden="true"
-          />
-
-          <div className="relative z-50 lg:hidden border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950 px-4 pt-3 pb-8 space-y-2 shadow-2xl max-h-[calc(100vh-80px)] overflow-y-auto animate-in slide-in-from-top-4 duration-200">
+        <div className="fixed inset-x-0 top-20 bottom-0 z-50 lg:hidden flex flex-col bg-white dark:bg-slate-950 border-t border-slate-200/80 dark:border-slate-800 shadow-2xl overflow-y-auto overscroll-contain animate-in slide-in-from-top-2 duration-150">
+          <div className="px-4 pt-3 pb-20 space-y-2.5">
             {/* 1. Home */}
             <Link
               to="/"
@@ -323,7 +319,7 @@ export const Navbar: React.FC = () => {
               Home
             </Link>
 
-            {/* 2. Customer Enquiries & Account (Prominently at the top right below Home) */}
+            {/* 2. Customer Enquiries & Account */}
             {isUserAuthenticated ? (
               <Link
                 to="/user/dashboard"
@@ -358,18 +354,30 @@ export const Navbar: React.FC = () => {
               </Link>
             )}
 
-            {/* 3. About Us */}
+            {/* 3. Quick Action: Request Quote Banner */}
             <Link
-              to="/about"
+              to="/request-a-quote"
               onClick={() => setIsOpen(false)}
-              className={`block px-3.5 py-2.5 rounded-xl text-base font-semibold ${
-                isActive('/about') ? 'text-blue-600 dark:text-blue-400 bg-blue-50/60 dark:bg-blue-950/40' : 'text-slate-800 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-900'
-              }`}
+              className="flex items-center justify-between px-4 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md shadow-blue-500/25 transition-all"
             >
-              About Us
+              <div className="flex items-center gap-2">
+                <FileText className="w-4 h-4" />
+                <span>Request a Custom Quote</span>
+              </div>
+              <ArrowRight className="w-4 h-4" />
             </Link>
 
-            {/* 4. Services Submenu */}
+            {/* 4. Track Project Enquiry */}
+            <Link
+              to="/track-enquiry"
+              onClick={handleTrackClick}
+              className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-base font-semibold text-blue-600 dark:text-blue-400 bg-blue-50/60 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-950/60"
+            >
+              <Search className="w-4 h-4" />
+              <span>Track Project Enquiry</span>
+            </Link>
+
+            {/* 5. Services Submenu */}
             <div className="border-t border-slate-100 dark:border-slate-800 pt-2 pb-1">
               <div className="px-3.5 text-xs font-bold uppercase text-slate-400 dark:text-slate-500 tracking-wider">Services</div>
               <Link
@@ -395,7 +403,7 @@ export const Navbar: React.FC = () => {
               </Link>
             </div>
 
-            {/* 5. Portfolio */}
+            {/* 6. Portfolio */}
             <Link
               to="/portfolio"
               onClick={() => setIsOpen(false)}
@@ -406,7 +414,7 @@ export const Navbar: React.FC = () => {
               Portfolio
             </Link>
 
-            {/* 6. Technologies */}
+            {/* 7. Technologies */}
             <Link
               to="/technologies"
               onClick={() => setIsOpen(false)}
@@ -417,7 +425,7 @@ export const Navbar: React.FC = () => {
               Technologies
             </Link>
 
-            {/* 7. Blog */}
+            {/* 8. Blog */}
             <Link
               to="/blog"
               onClick={() => setIsOpen(false)}
@@ -428,17 +436,18 @@ export const Navbar: React.FC = () => {
               Blog &amp; Articles
             </Link>
 
-            {/* 8. Track Project Enquiry */}
+            {/* 9. About Us */}
             <Link
-              to="/track-enquiry"
-              onClick={handleTrackClick}
-              className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-base font-semibold text-blue-600 dark:text-blue-400 bg-blue-50/60 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-950/60"
+              to="/about"
+              onClick={() => setIsOpen(false)}
+              className={`block px-3.5 py-2.5 rounded-xl text-base font-semibold ${
+                isActive('/about') ? 'text-blue-600 dark:text-blue-400 bg-blue-50/60 dark:bg-blue-950/40' : 'text-slate-800 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-900'
+              }`}
             >
-              <Search className="w-4 h-4" />
-              Track Project Enquiry
+              About Us
             </Link>
 
-            {/* 9. Contact Us */}
+            {/* 10. Contact Us */}
             <Link
               to="/contact"
               onClick={() => setIsOpen(false)}
@@ -449,7 +458,7 @@ export const Navbar: React.FC = () => {
               Contact Us
             </Link>
 
-            {/* 10. Admin Console Link */}
+            {/* 11. Admin Console Link */}
             <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
               <Link
                 to={isAdminAuthenticated ? "/admin/dashboard" : "/admin/login"}
@@ -461,7 +470,7 @@ export const Navbar: React.FC = () => {
               </Link>
             </div>
           </div>
-        </>
+        </div>
       )}
     </nav>
   );

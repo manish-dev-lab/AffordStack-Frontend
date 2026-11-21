@@ -65,10 +65,10 @@ export const AdminDashboardPage: React.FC = () => {
     <div className="space-y-8">
       {/* Page Title */}
       <div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
           Executive Analytics &amp; Operations Dashboard
         </h1>
-        <p className="text-xs sm:text-sm text-slate-500 mt-1">
+        <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
           Real-time metrics compiled dynamically from PostgreSQL database.
         </p>
       </div>
@@ -76,49 +76,49 @@ export const AdminDashboardPage: React.FC = () => {
       {/* KPI Stat Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {/* Total Enquiries */}
-        <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs flex items-center justify-between">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200/80 dark:border-slate-800 shadow-xs flex items-center justify-between">
           <div>
             <div className="text-xs font-bold uppercase text-slate-400">Total Enquiries</div>
-            <div className="text-2xl font-black text-slate-900 mt-1">{s.totalEnquiries}</div>
-            <div className="text-xs text-blue-600 font-semibold mt-1">{s.newEnquiries} New / Unreviewed</div>
+            <div className="text-2xl font-black text-slate-900 dark:text-white mt-1">{s.totalEnquiries}</div>
+            <div className="text-xs text-blue-600 dark:text-blue-400 font-semibold mt-1">{s.newEnquiries} New / Unreviewed</div>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+          <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center">
             <Inbox className="w-6 h-6" />
           </div>
         </div>
 
         {/* Quotations Pipeline */}
-        <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs flex items-center justify-between">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200/80 dark:border-slate-800 shadow-xs flex items-center justify-between">
           <div>
             <div className="text-xs font-bold uppercase text-slate-400">Accepted Quotes</div>
-            <div className="text-2xl font-black text-emerald-600 mt-1">{s.acceptedQuotations}</div>
-            <div className="text-xs text-slate-500 mt-1">{s.pendingQuotations} Pending &bull; {s.rejectedQuotations} Declined</div>
+            <div className="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1">{s.acceptedQuotations}</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">{s.pendingQuotations} Pending &bull; {s.rejectedQuotations} Declined</div>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+          <div className="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
             <FileCheck2 className="w-6 h-6" />
           </div>
         </div>
 
         {/* Active Projects */}
-        <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs flex items-center justify-between">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200/80 dark:border-slate-800 shadow-xs flex items-center justify-between">
           <div>
             <div className="text-xs font-bold uppercase text-slate-400">Active Projects</div>
-            <div className="text-2xl font-black text-slate-900 mt-1">{s.activeProjects}</div>
-            <div className="text-xs text-emerald-600 font-semibold mt-1">{s.completedProjects} Completed</div>
+            <div className="text-2xl font-black text-slate-900 dark:text-white mt-1">{s.activeProjects}</div>
+            <div className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold mt-1">{s.completedProjects} Completed</div>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+          <div className="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
             <FolderKanban className="w-6 h-6" />
           </div>
         </div>
 
         {/* Revenue Recorded */}
-        <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs flex items-center justify-between">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200/80 dark:border-slate-800 shadow-xs flex items-center justify-between">
           <div>
             <div className="text-xs font-bold uppercase text-slate-400">Revenue Recorded</div>
-            <div className="text-2xl font-black text-slate-900 mt-1">₹{s.totalRevenueRecorded.toLocaleString('en-IN')}</div>
-            <div className="text-xs text-amber-600 font-semibold mt-1">₹{s.pendingPayments.toLocaleString('en-IN')} Outstanding</div>
+            <div className="text-2xl font-black text-slate-900 dark:text-white mt-1">₹{s.totalRevenueRecorded.toLocaleString('en-IN')}</div>
+            <div className="text-xs text-amber-600 dark:text-amber-400 font-semibold mt-1">₹{s.pendingPayments.toLocaleString('en-IN')} Outstanding</div>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+          <div className="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center">
             <Coins className="w-6 h-6" />
           </div>
         </div>
@@ -127,10 +127,10 @@ export const AdminDashboardPage: React.FC = () => {
       {/* Row 1 Charts: Monthly Enquiries & Monthly Revenue */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Monthly Enquiries Chart */}
-        <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs space-y-4">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-blue-600" />
+            <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-blue-600 dark:text-blue-400" />
               Monthly Enquiries Trend
             </h2>
             <span className="text-xs text-slate-400">Last 6 Months</span>
@@ -139,11 +139,11 @@ export const AdminDashboardPage: React.FC = () => {
           <div className="h-72 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={s.monthlyEnquiries}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#94a3b8" opacity={0.2} />
                 <XAxis dataKey="month" stroke="#94a3b8" fontSize={12} />
                 <YAxis stroke="#94a3b8" fontSize={12} allowDecimals={false} />
                 <Tooltip
-                  contentStyle={{ backgroundColor: '#0f172a', borderRadius: '12px', border: 'none', color: '#fff', fontSize: '12px' }}
+                  contentStyle={{ backgroundColor: '#0f172a', borderRadius: '12px', border: '1px solid #334155', color: '#fff', fontSize: '12px' }}
                 />
                 <Bar dataKey="count" fill="#2563eb" radius={[6, 6, 0, 0]} name="Enquiries" />
               </BarChart>
@@ -152,10 +152,10 @@ export const AdminDashboardPage: React.FC = () => {
         </div>
 
         {/* Monthly Revenue Chart */}
-        <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs space-y-4">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-              <CreditCard className="w-4 h-4 text-emerald-600" />
+            <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <CreditCard className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               Monthly Revenue Collected (₹)
             </h2>
             <span className="text-xs text-slate-400">Last 6 Months</span>
@@ -164,12 +164,12 @@ export const AdminDashboardPage: React.FC = () => {
           <div className="h-72 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={s.monthlyRevenue}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#94a3b8" opacity={0.2} />
                 <XAxis dataKey="month" stroke="#94a3b8" fontSize={12} />
                 <YAxis stroke="#94a3b8" fontSize={12} />
                 <Tooltip
                   formatter={(val: unknown) => [`₹${Number(val).toLocaleString('en-IN')}`, 'Revenue']}
-                  contentStyle={{ backgroundColor: '#0f172a', borderRadius: '12px', border: 'none', color: '#fff', fontSize: '12px' }}
+                  contentStyle={{ backgroundColor: '#0f172a', borderRadius: '12px', border: '1px solid #334155', color: '#fff', fontSize: '12px' }}
                 />
                 <Line type="monotone" dataKey="revenue" stroke="#10b981" strokeWidth={3} dot={{ r: 4 }} name="Revenue" />
               </LineChart>
@@ -181,9 +181,9 @@ export const AdminDashboardPage: React.FC = () => {
       {/* Row 2 Charts: Service Categories & Project Statuses */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Service Category Breakdown */}
-        <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs space-y-4">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-base font-bold text-slate-900">Enquiries by Service Category</h2>
+            <h2 className="text-base font-bold text-slate-900 dark:text-white">Enquiries by Service Category</h2>
             <span className="text-xs text-slate-400">Distribution</span>
           </div>
 
@@ -208,7 +208,7 @@ export const AdminDashboardPage: React.FC = () => {
                     ))}
                   </Pie>
                   <Tooltip
-                    contentStyle={{ backgroundColor: '#0f172a', borderRadius: '12px', border: 'none', color: '#fff', fontSize: '12px' }}
+                    contentStyle={{ backgroundColor: '#0f172a', borderRadius: '12px', border: '1px solid #334155', color: '#fff', fontSize: '12px' }}
                   />
                 </PieChart>
               </ResponsiveContainer>
@@ -217,9 +217,9 @@ export const AdminDashboardPage: React.FC = () => {
         </div>
 
         {/* Project Status Distribution */}
-        <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs space-y-4">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-base font-bold text-slate-900">Projects by Execution Status</h2>
+            <h2 className="text-base font-bold text-slate-900 dark:text-white">Projects by Execution Status</h2>
             <span className="text-xs text-slate-400">Live Projects</span>
           </div>
 
@@ -231,11 +231,11 @@ export const AdminDashboardPage: React.FC = () => {
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={s.projectStatusDistribution} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#94a3b8" opacity={0.2} />
                   <XAxis type="number" stroke="#94a3b8" fontSize={12} allowDecimals={false} />
                   <YAxis dataKey="status" type="category" stroke="#94a3b8" fontSize={11} width={90} />
                   <Tooltip
-                    contentStyle={{ backgroundColor: '#0f172a', borderRadius: '12px', border: 'none', color: '#fff', fontSize: '12px' }}
+                    contentStyle={{ backgroundColor: '#0f172a', borderRadius: '12px', border: '1px solid #334155', color: '#fff', fontSize: '12px' }}
                   />
                   <Bar dataKey="count" fill="#8b5cf6" radius={[0, 6, 6, 0]} name="Projects" />
                 </BarChart>

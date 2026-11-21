@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useUserAuth } from '../../context/UserAuthContext';
+import { useCompanySettings } from '../../context/SettingsContext';
 import { userAuthApi } from '../../api/userAuthApi';
 import { useToast } from '../../context/ToastContext';
 import { Reveal } from '../../components/common/Reveal';
@@ -16,16 +17,19 @@ import {
   AlertTriangle,
   Loader2,
   Code,
-  CheckCircle2,
   KeyRound,
   RefreshCw,
   ArrowLeft,
-  ShieldCheck
+  ShieldCheck,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 
 export const UserLoginPage: React.FC = () => {
-  const [tab, setTab] = useState<'signin' | 'register'>('signin');
+  const settings = useCompanySettings();
+  const [tab, setTab] = useState<'signin' | 'register' | 'forgot'>('signin');
   const [regStep, setRegStep] = useState<'details' | 'otp'>('details');
+  const [forgotStep, setForgotStep] = useState<'email' | 'otp'>('email');
   const { login, register, isUserAuthenticated } = useUserAuth();
   const { showToast } = useToast();
   const navigate = useNavigate();
@@ -34,6 +38,10 @@ export const UserLoginPage: React.FC = () => {
   // Form states
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [fullName, setFullName] = useState('');
   const [countryCode, setCountryCode] = useState('+91');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -65,12 +73,14 @@ export const UserLoginPage: React.FC = () => {
   }, [resendCooldown]);
 
   // Handle switching tabs
-  const handleTabChange = (newTab: 'signin' | 'register') => {
+  const handleTabChange = (newTab: 'signin' | 'register' | 'forgot') => {
     setTab(newTab);
     setError(null);
     setServerErrorPopup(null);
     if (newTab === 'register') {
       setRegStep('details');
+    } else if (newTab === 'forgot') {
+      setForgotStep('email');
     }
   };
 
@@ -123,7 +133,7 @@ export const UserLoginPage: React.FC = () => {
     }
   };
 
-  // Resend OTP
+  // Resend OTP for registration
   const handleResendOtp = async () => {
     if (resendCooldown > 0 || sendingOtp) return;
     setSendingOtp(true);
@@ -189,6 +199,87 @@ export const UserLoginPage: React.FC = () => {
     }
   };
 
+  // Request OTP for Password Reset
+  const handleRequestPasswordResetOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setServerErrorPopup(null);
+
+    if (!email.trim() || !email.includes('@')) {
+      setError('Please enter a valid registered email address.');
+      return;
+    }
+
+    setSendingOtp(true);
+    try {
+      await userAuthApi.forgotPassword(email.trim().toLowerCase());
+      setForgotStep('otp');
+      setResendCooldown(60);
+      showToast({
+        type: 'success',
+        title: 'Reset Code Sent',
+        message: `A 6-digit verification code has been dispatched to ${email.trim()}.`,
+      });
+    } catch (err: unknown) {
+      const apiErr = err as { isServerError?: boolean; message?: string };
+      if (apiErr?.isServerError) {
+        setServerErrorPopup('Unable to connect to the authentication server. Please try again shortly.');
+      } else {
+        setError(apiErr?.message || (err instanceof Error ? err.message : 'Failed to send password reset code.'));
+      }
+    } finally {
+      setSendingOtp(false);
+    }
+  };
+
+  // Complete Password Reset
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setServerErrorPopup(null);
+
+    if (!otp.trim() || otp.trim().length !== 6) {
+      setError('Please enter the 6-digit verification code sent to your email.');
+      return;
+    }
+    if (newPassword.length < 6) {
+      setError('New password must be at least 6 characters long.');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setError('New password and confirm password do not match.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await userAuthApi.resetPassword({
+        email: email.trim().toLowerCase(),
+        otp: otp.trim(),
+        newPassword,
+      });
+      showToast({
+        type: 'success',
+        title: 'Password Reset Successful',
+        message: 'Your password has been reset! You may now sign in with your new credentials.',
+      });
+      setPassword(newPassword);
+      setTab('signin');
+      setNewPassword('');
+      setConfirmPassword('');
+      setOtp('');
+    } catch (err: unknown) {
+      const apiErr = err as { isServerError?: boolean; message?: string };
+      if (apiErr?.isServerError) {
+        setServerErrorPopup('Unable to complete password reset. Please try again in a few moments.');
+      } else {
+        setError(apiErr?.message || (err instanceof Error ? err.message : 'Password reset failed. Please check your verification code.'));
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Sign In submit
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -230,6 +321,8 @@ export const UserLoginPage: React.FC = () => {
         <h2 className="mt-4 text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
           {tab === 'signin'
             ? 'Sign In to Your Customer Account'
+            : tab === 'forgot'
+            ? 'Reset Account Password'
             : regStep === 'details'
             ? 'Create Your Customer Account'
             : 'Verify Your Email Address'}
@@ -237,13 +330,15 @@ export const UserLoginPage: React.FC = () => {
         <p className="mt-1 text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
           {tab === 'signin'
             ? 'Access your submitted project enquiries, proposals, and quotation history.'
+            : tab === 'forgot'
+            ? 'Receive a 6-digit verification code to reset your account password.'
             : regStep === 'details'
             ? 'Register to manage your project enquiries and receive live architectural updates.'
             : `Enter the 6-digit verification code sent to ${email}`}
         </p>
 
         {/* Tab switch pills (only in signin or details step) */}
-        {regStep === 'details' && (
+        {tab !== 'forgot' && regStep === 'details' && (
           <div className="mt-6 inline-flex p-1 rounded-2xl bg-slate-200/80 dark:bg-slate-900 border border-slate-300/80 dark:border-slate-800">
             <button
               type="button"
@@ -274,6 +369,16 @@ export const UserLoginPage: React.FC = () => {
       <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md relative z-10">
         <Reveal animation="scale-up" durationMs={400}>
           <div className="bg-white dark:bg-slate-900 py-8 px-6 shadow-xl rounded-3xl sm:px-10 border border-slate-200/80 dark:border-slate-800">
+            {/* Maintenance Mode notice if enabled */}
+            {settings.isUnderMaintenance && (
+              <div className="mb-5 p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800 text-amber-800 dark:text-amber-200 text-xs flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+                <span>
+                  <strong>Maintenance Notice:</strong> Scheduled upgrades are underway. Some customer account functions may be temporarily limited.
+                </span>
+              </div>
+            )}
+
             {error && (
               <div className="mb-6 p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-rose-800 dark:text-rose-200 text-xs sm:text-sm flex items-start gap-2.5">
                 <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
@@ -303,20 +408,37 @@ export const UserLoginPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
-                    Password *
-                  </label>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                      Password *
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => handleTabChange('forgot')}
+                      className="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
+                    >
+                      Forgot Password?
+                    </button>
+                  </div>
                   <div className="relative">
                     <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                     <input
-                      type="password"
+                      type={showPassword ? 'text' : 'password'}
                       required
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="••••••••"
                       autoComplete="current-password"
-                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
+                      className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer focus:outline-hidden"
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
                   </div>
                 </div>
 
@@ -421,14 +543,22 @@ export const UserLoginPage: React.FC = () => {
                   <div className="relative">
                     <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                     <input
-                      type="password"
+                      type={showPassword ? 'text' : 'password'}
                       required
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="At least 6 characters"
                       autoComplete="new-password"
-                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
+                      className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer focus:outline-hidden"
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
                   </div>
                 </div>
 
@@ -513,6 +643,175 @@ export const UserLoginPage: React.FC = () => {
                   </div>
                 </div>
               </form>
+            )}
+
+            {/* TAB: FORGOT PASSWORD */}
+            {tab === 'forgot' && (
+              <div className="space-y-4">
+                {forgotStep === 'email' ? (
+                  <form onSubmit={handleRequestPasswordResetOtp} className="space-y-4">
+                    <div className="text-center pb-1">
+                      <div className="w-12 h-12 mx-auto rounded-2xl bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-900 flex items-center justify-center text-amber-600 dark:text-amber-400 mb-2 shadow-xs">
+                        <KeyRound className="w-6 h-6" />
+                      </div>
+                      <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                        Reset Your Password
+                      </h3>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                        Enter your registered account email to receive a 6-digit verification code.
+                      </p>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+                        Registered Email Address *
+                      </label>
+                      <div className="relative">
+                        <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                        <input
+                          type="email"
+                          required
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          placeholder="name@example.com"
+                          className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="pt-2 space-y-2.5">
+                      <button
+                        type="submit"
+                        disabled={sendingOtp}
+                        className="w-full h-11 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-blue-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                      >
+                        {sendingOtp && <Loader2 className="w-4 h-4 animate-spin shrink-0" />}
+                        <span>{sendingOtp ? 'Sending Reset Code...' : 'Send Verification Code'}</span>
+                        {!sendingOtp && <ArrowRight className="w-4 h-4" />}
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleTabChange('signin')}
+                        className="w-full text-center text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white py-1.5 cursor-pointer"
+                      >
+                        &larr; Back to Sign In
+                      </button>
+                    </div>
+                  </form>
+                ) : (
+                  <form onSubmit={handleResetPassword} className="space-y-4">
+                    <div className="text-center pb-1">
+                      <div className="w-12 h-12 mx-auto rounded-2xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-900 flex items-center justify-center text-blue-600 dark:text-blue-400 mb-2 shadow-xs">
+                        <KeyRound className="w-6 h-6" />
+                      </div>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                        Enter the 6-digit reset code sent to:
+                      </p>
+                      <p className="text-sm font-bold text-slate-900 dark:text-white font-mono mt-0.5">
+                        {email}
+                      </p>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5 text-center">
+                        6-Digit Reset Code *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        maxLength={6}
+                        autoFocus
+                        value={otp}
+                        onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                        placeholder="••••••"
+                        className="w-full text-center tracking-[0.5em] text-2xl font-mono font-bold py-2 px-4 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+                        New Password *
+                      </label>
+                      <div className="relative">
+                        <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                        <input
+                          type={showPassword ? 'text' : 'password'}
+                          required
+                          value={newPassword}
+                          onChange={(e) => setNewPassword(e.target.value)}
+                          placeholder="At least 6 characters"
+                          className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer focus:outline-hidden"
+                        >
+                          {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+                        Confirm New Password *
+                      </label>
+                      <div className="relative">
+                        <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                        <input
+                          type={showConfirmPassword ? 'text' : 'password'}
+                          required
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                          placeholder="Re-enter new password"
+                          className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer focus:outline-hidden"
+                        >
+                          {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="pt-2 space-y-2.5">
+                      <button
+                        type="submit"
+                        disabled={loading || otp.length !== 6 || newPassword.length < 6}
+                        className="w-full h-11 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-emerald-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                      >
+                        {loading && <Loader2 className="w-4 h-4 animate-spin shrink-0" />}
+                        <span>{loading ? 'Updating Password...' : 'Reset Password & Sign In'}</span>
+                        {!loading && <ShieldCheck className="w-4 h-4" />}
+                      </button>
+
+                      <div className="flex items-center justify-between text-xs pt-1">
+                        <button
+                          type="button"
+                          onClick={() => { setForgotStep('email'); setError(null); }}
+                          className="inline-flex items-center gap-1 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 cursor-pointer"
+                        >
+                          <ArrowLeft className="w-3.5 h-3.5" />
+                          <span>Change Email</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          disabled={resendCooldown > 0 || sendingOtp}
+                          onClick={handleRequestPasswordResetOtp}
+                          className="inline-flex items-center gap-1 text-blue-600 dark:text-blue-400 font-bold hover:underline disabled:opacity-50 disabled:no-underline cursor-pointer"
+                        >
+                          <RefreshCw className={`w-3.5 h-3.5 ${sendingOtp ? 'animate-spin' : ''}`} />
+                          <span>{resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend Code'}</span>
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                )}
+              </div>
             )}
 
             <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 text-center text-xs text-slate-500 dark:text-slate-400">
