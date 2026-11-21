@@ -3,6 +3,7 @@ import { customerApi } from '../../api/customerApi';
 import type { CustomerItem } from '../../types';
 import { LoadingSpinner } from '../../components/common/LoadingSpinner';
 import { Modal } from '../../components/common/Modal';
+import { Pagination } from '../../components/common/Pagination';
 import {
   Users,
   Search,
@@ -22,6 +23,7 @@ export const AdminCustomersPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
 
@@ -32,7 +34,7 @@ export const AdminCustomersPage: React.FC = () => {
       setLoading(true);
       const res = await customerApi.getCustomers({
         page,
-        pageSize: 10,
+        pageSize,
         search: search || undefined,
       });
       setCustomers(res.items);
@@ -47,7 +49,7 @@ export const AdminCustomersPage: React.FC = () => {
 
   useEffect(() => {
     fetchCustomers();
-  }, [page, search]);
+  }, [page, pageSize, search]);
 
   return (
     <div className="space-y-6">
@@ -221,30 +223,18 @@ export const AdminCustomersPage: React.FC = () => {
           </div>
         )}
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="px-6 py-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs sm:text-sm">
-            <span className="text-slate-500 dark:text-slate-400">
-              Showing page {page} of {totalPages} ({totalCount} total)
-            </span>
-            <div className="flex gap-2">
-              <button
-                disabled={page <= 1}
-                onClick={() => setPage((p) => p - 1)}
-                className="px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-300 disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-slate-800 font-medium"
-              >
-                Previous
-              </button>
-              <button
-                disabled={page >= totalPages}
-                onClick={() => setPage((p) => p + 1)}
-                className="px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-300 disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-slate-800 font-medium"
-              >
-                Next
-              </button>
-            </div>
-          </div>
-        )}
+        {/* Pagination Controls */}
+        <Pagination
+          currentPage={page}
+          totalPages={Math.max(1, totalPages)}
+          totalCount={totalCount}
+          pageSize={pageSize}
+          onPageChange={setPage}
+          onPageSizeChange={(newSize) => {
+            setPageSize(newSize);
+            setPage(1);
+          }}
+        />
       </div>
 
       {/* Customer Detail Modal */}

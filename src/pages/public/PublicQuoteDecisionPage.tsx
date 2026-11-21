@@ -54,7 +54,7 @@ export const PublicQuoteDecisionPage: React.FC = () => {
       }
       setDecisionType(null);
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Error submitting decision');
+      setError(err instanceof Error ? err.message : 'Error submitting decision');
     } finally {
       setActionLoading(false);
     }

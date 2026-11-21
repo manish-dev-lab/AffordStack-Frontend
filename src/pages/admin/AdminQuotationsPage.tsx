@@ -6,6 +6,9 @@ import type { Quotation, QuotationItem, QuotationStatus, EnquiryListItem } from 
 import { LoadingSpinner } from '../../components/common/LoadingSpinner';
 import { Badge } from '../../components/common/Badge';
 import { Modal } from '../../components/common/Modal';
+import { Pagination } from '../../components/common/Pagination';
+import { ConfirmModal } from '../../components/common/ConfirmModal';
+import { useToast } from '../../context/ToastContext';
 import {
   Plus,
   Send,
@@ -21,12 +24,16 @@ import {
 } from 'lucide-react';
 
 export const AdminQuotationsPage: React.FC = () => {
+  const { showToast } = useToast();
   const [quotations, setQuotations] = useState<Quotation[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalCount, setTotalCount] = useState(0);
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [statusFilter, setStatusFilter] = useState<string>('All');
   const [search, setSearch] = useState('');
+  const [confirmSendId, setConfirmSendId] = useState<number | null>(null);
+  const [sendingEmail, setSendingEmail] = useState(false);
 
   // Create Modal
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -64,7 +71,7 @@ export const AdminQuotationsPage: React.FC = () => {
     const sFilter = statusFilter === 'All' ? undefined : (statusFilter as QuotationStatus);
     quotationApi.getAdminQuotations({
       page,
-      pageSize: 10,
+      pageSize,
       status: sFilter,
       search: search.trim() || undefined,
     })
@@ -78,7 +85,7 @@ export const AdminQuotationsPage: React.FC = () => {
 
   useEffect(() => {
     loadQuotations();
-  }, [page, statusFilter]);
+  }, [page, pageSize, statusFilter]);
 
   useEffect(() => {
     enquiryApi.getAdminEnquiries({ pageSize: 50 }).then((res) => {
@@ -142,7 +149,7 @@ export const AdminQuotationsPage: React.FC = () => {
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedEnquiryId) {
-      alert('Please select an enquiry.');
+      showToast({ type: 'warning', message: 'Please select an enquiry.' });
       return;
     }
     setSaving(true);
@@ -160,24 +167,33 @@ export const AdminQuotationsPage: React.FC = () => {
         termsAndConditions: terms,
         items,
       });
+      showToast({ type: 'success', message: 'Quotation proposal generated successfully!' });
       setCreateModalOpen(false);
       setSearchParams({}, { replace: true });
       loadQuotations();
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Error creating quotation');
+      showToast({ type: 'error', message: err instanceof Error ? err.message : 'Error creating quotation' });
     } finally {
       setSaving(false);
     }
   };
 
-  const handleSendQuotation = async (id: number) => {
-    if (!window.confirm('Generate official PDF and email quotation proposal to customer?')) return;
+  const handleSendQuotation = (id: number) => {
+    setConfirmSendId(id);
+  };
+
+  const executeSendQuotation = async () => {
+    if (!confirmSendId) return;
+    setSendingEmail(true);
     try {
-      await quotationApi.sendQuotationEmail(id);
-      alert('Quotation dispatched via email successfully!');
+      await quotationApi.sendQuotationEmail(confirmSendId);
+      showToast({ type: 'success', message: 'Official PDF quotation dispatched to client email successfully!' });
       loadQuotations();
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Error sending quotation');
+      showToast({ type: 'error', message: err instanceof Error ? err.message : 'Error sending quotation' });
+    } finally {
+      setSendingEmail(false);
+      setConfirmSendId(null);
     }
   };
 
@@ -321,6 +337,19 @@ export const AdminQuotationsPage: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Pagination Controls */}
+      <Pagination
+        currentPage={page}
+        totalPages={Math.max(1, Math.ceil(totalCount / pageSize))}
+        totalCount={totalCount}
+        pageSize={pageSize}
+        onPageChange={setPage}
+        onPageSizeChange={(newSize) => {
+          setPageSize(newSize);
+          setPage(1);
+        }}
+      />
 
       {/* Create Quotation Modal */}
       <Modal
@@ -470,8 +499,11 @@ export const AdminQuotationsPage: React.FC = () => {
               <label className="block text-slate-500 dark:text-slate-400 font-bold uppercase mb-1">Dev Cost (₹)</label>
               <input
                 type="number"
-                value={devCost}
+                min={0}
+                onKeyDown={(e) => { if (e.key === '-') e.preventDefault(); }}
+                value={devCost || ''}
                 onChange={(e) => setDevCost(Number(e.target.value))}
+                placeholder="0"
                 className="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg font-bold bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
               />
             </div>
@@ -479,8 +511,11 @@ export const AdminQuotationsPage: React.FC = () => {
               <label className="block text-slate-500 dark:text-slate-400 font-bold uppercase mb-1">Additional Cost (₹)</label>
               <input
                 type="number"
-                value={addCost}
+                min={0}
+                onKeyDown={(e) => { if (e.key === '-') e.preventDefault(); }}
+                value={addCost || ''}
                 onChange={(e) => setAddCost(Number(e.target.value))}
+                placeholder="0"
                 className="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg font-bold bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
               />
             </div>
@@ -488,8 +523,11 @@ export const AdminQuotationsPage: React.FC = () => {
               <label className="block text-slate-500 dark:text-slate-400 font-bold uppercase mb-1">Tax Rate (%)</label>
               <input
                 type="number"
-                value={taxRate}
+                min={0}
+                onKeyDown={(e) => { if (e.key === '-') e.preventDefault(); }}
+                value={taxRate || ''}
                 onChange={(e) => setTaxRate(Number(e.target.value))}
+                placeholder="0"
                 className="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg font-bold bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
               />
             </div>
@@ -497,8 +535,11 @@ export const AdminQuotationsPage: React.FC = () => {
               <label className="block text-slate-500 dark:text-slate-400 font-bold uppercase mb-1">Advance Req. (₹)</label>
               <input
                 type="number"
-                value={advanceAmount}
+                min={0}
+                onKeyDown={(e) => { if (e.key === '-') e.preventDefault(); }}
+                value={advanceAmount || ''}
                 onChange={(e) => setAdvanceAmount(Number(e.target.value))}
+                placeholder="0"
                 className="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg font-bold text-emerald-700 dark:text-emerald-400 bg-white dark:bg-slate-900"
               />
             </div>
@@ -540,6 +581,18 @@ export const AdminQuotationsPage: React.FC = () => {
           </div>
         </form>
       </Modal>
+
+      {/* Send Email Confirmation Modal */}
+      <ConfirmModal
+        isOpen={confirmSendId !== null}
+        title="Send Official PDF Quotation"
+        message="Generate official branded PDF and email the quotation proposal link directly to the customer's email address?"
+        confirmText="Send Quotation Email"
+        confirmVariant="primary"
+        isLoading={sendingEmail}
+        onConfirm={executeSendQuotation}
+        onCancel={() => setConfirmSendId(null)}
+      />
     </div>
   );
 };

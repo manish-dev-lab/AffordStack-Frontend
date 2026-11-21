@@ -3,6 +3,8 @@ import { contentApi } from '../../api/contentApi';
 import type { ServiceItem, ServiceCategory } from '../../types';
 import { LoadingSpinner } from '../../components/common/LoadingSpinner';
 import { Modal } from '../../components/common/Modal';
+import { ConfirmModal } from '../../components/common/ConfirmModal';
+import { useToast } from '../../context/ToastContext';
 import {
   Briefcase,
   Plus,
@@ -16,6 +18,7 @@ import {
 } from 'lucide-react';
 
 export const AdminServicesPage: React.FC = () => {
+  const { showToast } = useToast();
   const [services, setServices] = useState<ServiceItem[]>([]);
   const [categories, setCategories] = useState<ServiceCategory[]>([]);
   const [loading, setLoading] = useState(true);
@@ -28,6 +31,7 @@ export const AdminServicesPage: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
 
   const [formData, setFormData] = useState({
     serviceCategoryId: 1,
@@ -100,13 +104,16 @@ export const AdminServicesPage: React.FC = () => {
     setModalOpen(true);
   };
 
-  const handleDelete = async (id: number) => {
-    if (!window.confirm('Are you sure you want to delete this service?')) return;
+  const handleDelete = async () => {
+    if (!deleteId) return;
     try {
-      await contentApi.deleteService(id);
+      await contentApi.deleteService(deleteId);
+      showToast('Service deleted successfully', 'success');
       loadData();
     } catch (err) {
-      alert('Failed to delete service');
+      showToast('Failed to delete service', 'error');
+    } finally {
+      setDeleteId(null);
     }
   };
 
@@ -291,7 +298,7 @@ export const AdminServicesPage: React.FC = () => {
                         <Edit className="w-4 h-4" />
                       </button>
                       <button
-                        onClick={() => handleDelete(srv.id)}
+                        onClick={() => setDeleteId(srv.id)}
                         className="p-1.5 text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/50 rounded-lg transition-colors"
                         title="Delete Service"
                       >
@@ -459,6 +466,16 @@ export const AdminServicesPage: React.FC = () => {
           </div>
         </form>
       </Modal>
+
+      <ConfirmModal
+        isOpen={deleteId !== null}
+        title="Delete Service Item"
+        message="Are you sure you want to permanently delete this service offering? This action cannot be undone."
+        confirmText="Delete Service"
+        confirmVariant="danger"
+        onConfirm={handleDelete}
+        onCancel={() => setDeleteId(null)}
+      />
     </div>
   );
 };

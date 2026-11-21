@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { contentApi } from '../../api/contentApi';
 import { configurationApi } from '../../api/configurationApi';
 import { LoadingSpinner } from '../../components/common/LoadingSpinner';
@@ -26,11 +26,18 @@ import type { TokenConfig, EmailConfig, WebsiteConfig } from '../../types';
 
 export const AdminSettingsPage: React.FC = () => {
   const { refreshSettings } = useCompanySettings();
+  const alertRef = useRef<HTMLDivElement>(null);
   const [activeTab, setActiveTab] = useState<'system' | 'company'>('system');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (successMsg || errorMsg) {
+      alertRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [successMsg, errorMsg]);
 
   // System Configurations state
   const [tokenConfig, setTokenConfig] = useState<TokenConfig>({
@@ -207,19 +214,21 @@ export const AdminSettingsPage: React.FC = () => {
       </div>
 
       {/* Alerts */}
-      {successMsg && (
-        <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900 text-emerald-800 dark:text-emerald-200 text-xs sm:text-sm flex items-center gap-2.5 animate-in fade-in">
-          <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
-          <span>{successMsg}</span>
-        </div>
-      )}
+      <div ref={alertRef} className="space-y-3">
+        {successMsg && (
+          <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900 text-emerald-800 dark:text-emerald-200 text-xs sm:text-sm flex items-center gap-2.5 animate-in fade-in">
+            <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+            <span>{successMsg}</span>
+          </div>
+        )}
 
-      {errorMsg && (
-        <div className="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-rose-800 dark:text-rose-200 text-xs sm:text-sm flex items-center gap-2.5 animate-in fade-in">
-          <AlertCircle className="w-5 h-5 text-rose-600 shrink-0" />
-          <span>{errorMsg}</span>
-        </div>
-      )}
+        {errorMsg && (
+          <div className="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-rose-800 dark:text-rose-200 text-xs sm:text-sm flex items-center gap-2.5 animate-in fade-in">
+            <AlertCircle className="w-5 h-5 text-rose-600 shrink-0" />
+            <span>{errorMsg}</span>
+          </div>
+        )}
+      </div>
 
       {loading ? (
         <LoadingSpinner size="lg" text="Loading system configurations..." className="py-20" />

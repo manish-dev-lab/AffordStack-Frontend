@@ -5,6 +5,7 @@ import { useToast } from '../../context/ToastContext';
 import { LoadingSpinner } from '../../components/common/LoadingSpinner';
 import { Badge } from '../../components/common/Badge';
 import { Modal } from '../../components/common/Modal';
+import { Pagination } from '../../components/common/Pagination';
 import {
   Users,
   Search,
@@ -32,6 +33,7 @@ export const AdminUsersPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [totalCount, setTotalCount] = useState(0);
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [search, setSearch] = useState('');
   const { showToast } = useToast();
 
@@ -51,7 +53,7 @@ export const AdminUsersPage: React.FC = () => {
     setLoading(true);
     adminUsersApi.getAdminUsers({
       page,
-      pageSize: 10,
+      pageSize,
       search: search.trim() || undefined,
     })
       .then((res) => {
@@ -73,7 +75,7 @@ export const AdminUsersPage: React.FC = () => {
 
   useEffect(() => {
     loadUsers();
-  }, [page]);
+  }, [page, pageSize]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -295,28 +297,18 @@ export const AdminUsersPage: React.FC = () => {
           </div>
         )}
 
-        {/* Pagination bar */}
-        {totalCount > 10 && (
-          <div className="p-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500">
-            <div>Page {page} of {Math.ceil(totalCount / 10) || 1}</div>
-            <div className="flex gap-2">
-              <button
-                disabled={page <= 1}
-                onClick={() => setPage(page - 1)}
-                className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 disabled:opacity-40 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
-              >
-                Previous
-              </button>
-              <button
-                disabled={page >= Math.ceil(totalCount / 10)}
-                onClick={() => setPage(page + 1)}
-                className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 disabled:opacity-40 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
-              >
-                Next
-              </button>
-            </div>
-          </div>
-        )}
+        {/* Pagination Controls */}
+        <Pagination
+          currentPage={page}
+          totalPages={Math.max(1, Math.ceil(totalCount / pageSize))}
+          totalCount={totalCount}
+          pageSize={pageSize}
+          onPageChange={setPage}
+          onPageSizeChange={(newSize) => {
+            setPageSize(newSize);
+            setPage(1);
+          }}
+        />
       </div>
 
       {/* Confirmation Modal for Account Status Change */}
