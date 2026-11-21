@@ -13,6 +13,7 @@ interface UserAuthContextType {
     phoneNumber: string;
     companyName?: string;
     password: string;
+    otp?: string;
   }) => Promise<void>;
   logout: () => void;
   refreshProfile: () => Promise<void>;
@@ -61,6 +62,7 @@ export const UserAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     phoneNumber: string;
     companyName?: string;
     password: string;
+    otp?: string;
   }) => {
     const res = await userAuthApi.register(payload);
     handleAuthSuccess(res);
