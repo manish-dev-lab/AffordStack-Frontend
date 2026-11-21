@@ -272,7 +272,7 @@ export const AdminProjectsPage: React.FC = () => {
         {selectedProject && (
           <div className="space-y-6">
             <form onSubmit={handleUpdateSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
                     Project Status

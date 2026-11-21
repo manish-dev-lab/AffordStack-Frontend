@@ -211,24 +211,31 @@ export const AdminEnquiriesPage: React.FC = () => {
                     <td className="py-4 px-4">
                       <Badge status={e.status} />
                     </td>
-                    <td className="py-4 px-4 text-right space-x-1.5 whitespace-nowrap">
+                    <td className="py-4 px-4 text-right space-x-2 whitespace-nowrap">
                       <button
+                        type="button"
                         onClick={() => handleOpenDetail(e.id)}
-                        className="p-1.5 text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
+                        className="p-2 text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer inline-flex items-center justify-center"
                         title="View Full Details"
                       >
                         <Eye className="w-4 h-4" />
                       </button>
                       <button
-                        onClick={() => navigate(`/admin/quotations?createForEnquiry=${e.id}`)}
-                        className="p-1.5 text-slate-600 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
+                        type="button"
+                        onClick={() => {
+                          if (window.confirm(`Create official quotation proposal for enquiry #${e.referenceNumber}?`)) {
+                            navigate(`/admin/quotations?createForEnquiry=${e.id}`);
+                          }
+                        }}
+                        className="p-2 text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-slate-800 rounded-lg transition-colors inline-flex items-center justify-center cursor-pointer"
                         title="Create Quotation"
                       >
                         <FileSpreadsheet className="w-4 h-4" />
                       </button>
                       <button
+                        type="button"
                         onClick={() => handleDelete(e.id)}
-                        className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                        className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-slate-800 rounded-lg transition-colors inline-flex items-center justify-center cursor-pointer"
                         title="Delete"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -275,20 +282,20 @@ export const AdminEnquiriesPage: React.FC = () => {
         ) : (
           <div className="space-y-6">
             {/* Status change header */}
-            <div className="flex flex-wrap items-center justify-between p-3.5 bg-slate-50 dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 gap-3">
-              <div className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 bg-slate-50 dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 gap-3">
+              <div className="flex items-center gap-2 shrink-0">
                 <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Current Status:</span>
                 <Badge status={detail.status} />
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold">Update:</span>
+              <div className="flex items-center gap-2 w-full sm:w-auto min-w-0">
+                <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold shrink-0">Update:</span>
                 <select
                   value={String(detail.status)}
                   onChange={(e) => handleStatusChange(e.target.value as EnquiryStatus)}
-                  className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white text-xs font-semibold rounded-lg px-2.5 py-1 focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
+                  className="flex-1 sm:flex-initial w-full sm:w-auto min-w-0 max-w-full truncate bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white text-xs font-semibold rounded-lg px-2.5 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
                 >
                   <option value="New">1. New (Enquiry Received)</option>
-                  <option value="Reviewed">2. Reviewed (Under Technical Review)</option>
+                  <option value="Reviewed">2. Reviewed (Technical Review)</option>
                   <option value="Quoted">3. Quoted (Quotation Ready)</option>
                   <option value="FollowUp">Follow Up (Clarification &amp; Scope)</option>
                   <option value="Converted">4. Converted (Project Active)</option>
@@ -299,35 +306,35 @@ export const AdminEnquiriesPage: React.FC = () => {
             </div>
 
             {/* Customer Details */}
-            <div className="grid grid-cols-2 gap-4 text-xs bg-slate-50 dark:bg-slate-800/80 p-4 rounded-2xl border border-slate-200 dark:border-slate-700">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs bg-slate-50 dark:bg-slate-800/80 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 break-words">
               <div>
                 <span className="text-slate-400 dark:text-slate-400 block font-bold uppercase">Customer</span>
-                <span className="font-semibold text-slate-900 dark:text-white text-sm">{detail.customerName}</span>
-                <div className="text-slate-600 dark:text-slate-300 mt-0.5">{detail.customerEmail}</div>
-                <div className="text-slate-600 dark:text-slate-300">{detail.customerPhone}</div>
+                <span className="font-semibold text-slate-900 dark:text-white text-sm break-words">{detail.customerName}</span>
+                <div className="text-slate-600 dark:text-slate-300 mt-0.5 break-all">{detail.customerEmail}</div>
+                <div className="text-slate-600 dark:text-slate-300 break-all">{detail.customerPhone}</div>
               </div>
               <div>
                 <span className="text-slate-400 dark:text-slate-400 block font-bold uppercase">Company / College</span>
-                <span className="font-semibold text-slate-800 dark:text-slate-200">{detail.companyName || 'Not specified'}</span>
+                <span className="font-semibold text-slate-800 dark:text-slate-200 break-words">{detail.companyName || 'Not specified'}</span>
                 <span className="text-slate-400 dark:text-slate-400 block font-bold uppercase mt-2">Budget &amp; Target</span>
-                <span className="text-slate-800 dark:text-slate-200 font-medium">{detail.estimatedBudget}</span>
+                <span className="text-slate-800 dark:text-slate-200 font-medium break-words">{detail.estimatedBudget}</span>
               </div>
             </div>
 
             {/* Project Scope */}
-            <div>
+            <div className="break-words">
               <h3 className="text-xs font-bold uppercase text-slate-400 dark:text-slate-400 tracking-wider mb-1">Project Title</h3>
-              <p className="text-sm font-bold text-slate-900 dark:text-white">{detail.projectTitle}</p>
+              <p className="text-sm font-bold text-slate-900 dark:text-white break-words">{detail.projectTitle}</p>
 
               <h3 className="text-xs font-bold uppercase text-slate-400 dark:text-slate-400 tracking-wider mt-4 mb-1">Requirement Details</h3>
-              <div className="text-xs sm:text-sm text-slate-700 dark:text-slate-200 whitespace-pre-line bg-slate-50 dark:bg-slate-800/80 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 leading-relaxed max-h-40 overflow-y-auto">
+              <div className="text-xs sm:text-sm text-slate-700 dark:text-slate-200 whitespace-pre-line bg-slate-50 dark:bg-slate-800/80 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 leading-relaxed max-h-40 overflow-y-auto break-words">
                 {detail.projectDescription}
               </div>
 
               {detail.additionalRequirements && (
                 <div className="mt-3">
                   <h3 className="text-xs font-bold uppercase text-slate-400 dark:text-slate-400 tracking-wider mb-1">Additional Notes</h3>
-                  <p className="text-xs text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/80 p-2.5 rounded-lg border border-slate-200 dark:border-slate-700">
+                  <p className="text-xs text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/80 p-2.5 rounded-lg border border-slate-200 dark:border-slate-700 break-words">
                     {detail.additionalRequirements}
                   </p>
                 </div>
@@ -342,9 +349,9 @@ export const AdminEnquiriesPage: React.FC = () => {
                 </h3>
                 <div className="space-y-1.5">
                   {detail.attachments.map((a) => (
-                    <div key={a.id} className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs text-slate-800 dark:text-slate-200">
-                      <span className="font-semibold text-slate-800 dark:text-slate-200">{a.originalFileName}</span>
-                      <span className="text-slate-400 dark:text-slate-500 font-mono">{(a.fileSizeBytes / 1024).toFixed(1)} KB</span>
+                    <div key={a.id} className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs text-slate-800 dark:text-slate-200 break-words">
+                      <span className="font-semibold text-slate-800 dark:text-slate-200 break-all">{a.originalFileName}</span>
+                      <span className="text-slate-400 dark:text-slate-500 font-mono shrink-0 ml-2">{(a.fileSizeBytes / 1024).toFixed(1)} KB</span>
                     </div>
                   ))}
                 </div>
@@ -360,12 +367,12 @@ export const AdminEnquiriesPage: React.FC = () => {
               {detail.notes && detail.notes.length > 0 ? (
                 <div className="space-y-2 max-h-36 overflow-y-auto">
                   {detail.notes.map((note) => (
-                    <div key={note.id} className="p-2.5 bg-blue-50/50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl text-xs space-y-0.5">
+                    <div key={note.id} className="p-2.5 bg-blue-50/50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-xl text-xs space-y-0.5 break-words">
                       <div className="flex justify-between font-bold text-slate-700 dark:text-slate-300">
                         <span>{note.authorName || 'Admin'}</span>
                         <span className="text-slate-400 dark:text-slate-500 font-normal">{new Date(note.createdAt).toLocaleString()}</span>
                       </div>
-                      <p className="text-slate-600 dark:text-slate-400">{note.noteContent}</p>
+                      <p className="text-slate-600 dark:text-slate-400 break-words">{note.noteContent}</p>
                     </div>
                   ))}
                 </div>
@@ -386,7 +393,7 @@ export const AdminEnquiriesPage: React.FC = () => {
                 <button
                   type="submit"
                   disabled={noteSubmitting}
-                  className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition-colors disabled:opacity-50 cursor-pointer"
+                  className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition-colors disabled:opacity-50 cursor-pointer shrink-0"
                 >
                   Add Note
                 </button>
@@ -414,23 +421,25 @@ export const AdminEnquiriesPage: React.FC = () => {
                 )}
               </div>
 
-              <div className="flex items-center gap-2.5 w-full sm:w-auto justify-end">
+              <div className="flex flex-col sm:flex-row items-center gap-2.5 w-full sm:w-auto justify-end">
                 <button
                   type="button"
                   onClick={() => setSelectedEnquiryId(null)}
-                  className="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold transition-colors cursor-pointer"
+                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold transition-colors cursor-pointer text-center"
                 >
-                  Close
+                  Done / Close
                 </button>
 
                 <button
                   type="button"
                   onClick={() => {
-                    const enquiryId = detail.id;
-                    setSelectedEnquiryId(null);
-                    navigate(`/admin/quotations?createForEnquiry=${enquiryId}`);
+                    if (window.confirm('Leave Enquiries and navigate to Quotations proposal generator for this enquiry?')) {
+                      const enquiryId = detail.id;
+                      setSelectedEnquiryId(null);
+                      navigate(`/admin/quotations?createForEnquiry=${enquiryId}`);
+                    }
                   }}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-md flex items-center gap-1.5 cursor-pointer"
+                  className="w-full sm:w-auto border border-emerald-500/60 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 text-xs font-bold px-4 py-2.5 rounded-xl shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   <FileSpreadsheet className="w-4 h-4" /> Create Quotation Proposal
                 </button>
