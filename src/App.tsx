@@ -30,8 +30,10 @@ import { PublicQuoteDecisionPage } from './pages/public/PublicQuoteDecisionPage'
 import { TrackEnquiryPage } from './pages/public/TrackEnquiryPage';
 import { UserLoginPage } from './pages/public/UserLoginPage';
 import { UserDashboardPage } from './pages/public/UserDashboardPage';
+import { UserProfilePage } from './pages/public/UserProfilePage';
 import { PrivacyPolicyPage } from './pages/public/PrivacyPolicyPage';
 import { TermsPage } from './pages/public/TermsPage';
+import { ScrollToTop } from './components/common/ScrollToTop';
 
 // Admin Pages
 import { AdminLoginPage } from './pages/admin/AdminLoginPage';
@@ -57,7 +59,8 @@ export const App: React.FC = () => {
           <UserAuthProvider>
             <SettingsProvider>
               <BrowserRouter>
-              <Routes>
+                <ScrollToTop />
+                <Routes>
                 {/* Public Website Routes */}
                 <Route element={<PublicLayout />}>
                   <Route path="/" element={<HomePage />} />
@@ -86,6 +89,7 @@ export const App: React.FC = () => {
                   <Route path="/user" element={<UserProtectedRoute />}>
                     <Route index element={<Navigate to="/user/dashboard" replace />} />
                     <Route path="dashboard" element={<UserDashboardPage />} />
+                    <Route path="profile" element={<UserProfilePage />} />
                   </Route>
                 </Route>
 

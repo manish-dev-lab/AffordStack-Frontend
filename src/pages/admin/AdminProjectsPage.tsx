@@ -5,6 +5,8 @@ import type { Project, ProjectStatus, ProjectMilestone } from '../../types';
 import { LoadingSpinner } from '../../components/common/LoadingSpinner';
 import { Badge } from '../../components/common/Badge';
 import { Modal } from '../../components/common/Modal';
+import { Pagination } from '../../components/common/Pagination';
+import { useToast } from '../../context/ToastContext';
 import {
   FolderKanban,
   CheckCircle2,
@@ -19,10 +21,12 @@ import {
 } from 'lucide-react';
 
 export const AdminProjectsPage: React.FC = () => {
+  const { showToast } = useToast();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalCount, setTotalCount] = useState(0);
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [statusFilter, setStatusFilter] = useState<string>('All');
   const [search, setSearch] = useState('');
 
@@ -47,7 +51,7 @@ export const AdminProjectsPage: React.FC = () => {
     const sFilter = statusFilter === 'All' ? undefined : (statusFilter as ProjectStatus);
     projectApi.getProjects({
       page,
-      pageSize: 10,
+      pageSize,
       status: sFilter,
       search: search.trim() || undefined,
     })
@@ -61,7 +65,7 @@ export const AdminProjectsPage: React.FC = () => {
 
   useEffect(() => {
     loadProjects();
-  }, [page, statusFilter]);
+  }, [page, pageSize, statusFilter]);
 
   const handleOpenEdit = (p: Project) => {
     setSelectedProject(p);
@@ -87,9 +91,10 @@ export const AdminProjectsPage: React.FC = () => {
         internalNotes: editNotes.trim() || undefined,
       });
       setSelectedProject(null);
+      showToast('Project updated successfully', 'success');
       loadProjects();
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Error updating project');
+      showToast(err instanceof Error ? err.message : 'Error updating project', 'error');
     } finally {
       setSaving(false);
     }
@@ -102,9 +107,10 @@ export const AdminProjectsPage: React.FC = () => {
         const refreshed = await projectApi.getProjectById(selectedProject.id);
         setSelectedProject(refreshed);
       }
+      showToast('Milestone status updated', 'success');
       loadProjects();
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Error updating milestone');
+      showToast(err instanceof Error ? err.message : 'Error updating milestone', 'error');
     }
   };
 
@@ -123,9 +129,10 @@ export const AdminProjectsPage: React.FC = () => {
       setMilestoneAmount(0);
       const refreshed = await projectApi.getProjectById(selectedProject.id);
       setSelectedProject(refreshed);
+      showToast('Milestone added successfully', 'success');
       loadProjects();
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Error adding milestone');
+      showToast(err instanceof Error ? err.message : 'Error adding milestone', 'error');
     }
   };
 
@@ -258,6 +265,22 @@ export const AdminProjectsPage: React.FC = () => {
                 ))}
               </tbody>
             </table>
+          </div>
+        )}
+
+        {totalCount > 0 && (
+          <div className="border-t border-slate-200 dark:border-slate-800">
+            <Pagination
+              currentPage={page}
+              totalPages={Math.max(1, Math.ceil(totalCount / pageSize))}
+              totalCount={totalCount}
+              pageSize={pageSize}
+              onPageChange={setPage}
+              onPageSizeChange={(newSize) => {
+                setPageSize(newSize);
+                setPage(1);
+              }}
+            />
           </div>
         )}
       </div>

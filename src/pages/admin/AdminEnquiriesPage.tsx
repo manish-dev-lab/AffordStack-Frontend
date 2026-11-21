@@ -5,6 +5,9 @@ import type { EnquiryListItem, EnquiryDetail, EnquiryStatus } from '../../types'
 import { LoadingSpinner } from '../../components/common/LoadingSpinner';
 import { Badge } from '../../components/common/Badge';
 import { Modal } from '../../components/common/Modal';
+import { Pagination } from '../../components/common/Pagination';
+import { ConfirmModal } from '../../components/common/ConfirmModal';
+import { useToast } from '../../context/ToastContext';
 import {
   Search,
   Filter,
@@ -23,10 +26,12 @@ import {
 } from 'lucide-react';
 
 export const AdminEnquiriesPage: React.FC = () => {
+  const { showToast } = useToast();
   const [enquiries, setEnquiries] = useState<EnquiryListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalCount, setTotalCount] = useState(0);
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [statusFilter, setStatusFilter] = useState<string>('All');
   const [search, setSearch] = useState('');
 
@@ -37,6 +42,10 @@ export const AdminEnquiriesPage: React.FC = () => {
   const [newNote, setNewNote] = useState('');
   const [noteSubmitting, setNoteSubmitting] = useState(false);
 
+  // Modals confirmation state
+  const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null);
+  const [quotationRedirectEnquiry, setQuotationRedirectEnquiry] = useState<{ id: number; ref: string } | null>(null);
+
   const navigate = useNavigate();
 
   const loadEnquiries = () => {
@@ -44,7 +53,7 @@ export const AdminEnquiriesPage: React.FC = () => {
     const sFilter = statusFilter === 'All' ? undefined : (statusFilter as EnquiryStatus);
     enquiryApi.getAdminEnquiries({
       page,
-      pageSize: 10,
+      pageSize,
       status: sFilter,
       search: search.trim() || undefined,
     })
@@ -58,7 +67,7 @@ export const AdminEnquiriesPage: React.FC = () => {
 
   useEffect(() => {
     loadEnquiries();
-  }, [page, statusFilter]);
+  }, [page, pageSize, statusFilter]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,7 +80,7 @@ export const AdminEnquiriesPage: React.FC = () => {
     setDetailLoading(true);
     enquiryApi.getAdminEnquiryById(id)
       .then(setDetail)
-      .catch((err) => alert(err.message))
+      .catch((err) => showToast(err.message, 'error'))
       .finally(() => setDetailLoading(false));
   };
 
@@ -80,9 +89,10 @@ export const AdminEnquiriesPage: React.FC = () => {
     try {
       await enquiryApi.updateStatus(selectedEnquiryId, newStatus, `Status updated to ${newStatus}`);
       if (detail) setDetail({ ...detail, status: newStatus });
+      showToast(`Status updated to ${newStatus}`, 'success');
       loadEnquiries();
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Error updating status');
+      showToast(err instanceof Error ? err.message : 'Error updating status', 'error');
     }
   };
 
@@ -96,22 +106,26 @@ export const AdminEnquiriesPage: React.FC = () => {
       // Reload detail notes
       const updated = await enquiryApi.getAdminEnquiryById(selectedEnquiryId);
       setDetail(updated);
+      showToast('Note added successfully', 'success');
       loadEnquiries();
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Error adding note');
+      showToast(err instanceof Error ? err.message : 'Error adding note', 'error');
     } finally {
       setNoteSubmitting(false);
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!window.confirm(`Are you sure you want to delete enquiry #${id}?`)) return;
+  const handleDeleteConfirmed = async () => {
+    if (!deleteConfirmId) return;
     try {
-      await enquiryApi.deleteEnquiry(id);
+      await enquiryApi.deleteEnquiry(deleteConfirmId);
+      showToast('Enquiry deleted successfully', 'success');
       loadEnquiries();
-      if (selectedEnquiryId === id) setSelectedEnquiryId(null);
+      if (selectedEnquiryId === deleteConfirmId) setSelectedEnquiryId(null);
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Error deleting enquiry');
+      showToast(err instanceof Error ? err.message : 'Error deleting enquiry', 'error');
+    } finally {
+      setDeleteConfirmId(null);
     }
   };
 
@@ -222,11 +236,7 @@ export const AdminEnquiriesPage: React.FC = () => {
                       </button>
                       <button
                         type="button"
-                        onClick={() => {
-                          if (window.confirm(`Create official quotation proposal for enquiry #${e.referenceNumber}?`)) {
-                            navigate(`/admin/quotations?createForEnquiry=${e.id}`);
-                          }
-                        }}
+                        onClick={() => setQuotationRedirectEnquiry({ id: e.id, ref: e.referenceNumber })}
                         className="p-2 text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-slate-800 rounded-lg transition-colors inline-flex items-center justify-center cursor-pointer"
                         title="Create Quotation"
                       >
@@ -234,7 +244,7 @@ export const AdminEnquiriesPage: React.FC = () => {
                       </button>
                       <button
                         type="button"
-                        onClick={() => handleDelete(e.id)}
+                        onClick={() => setDeleteConfirmId(e.id)}
                         className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-slate-800 rounded-lg transition-colors inline-flex items-center justify-center cursor-pointer"
                         title="Delete"
                       >
@@ -248,26 +258,21 @@ export const AdminEnquiriesPage: React.FC = () => {
           </div>
         )}
 
-        {/* Pagination bar */}
-        <div className="p-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-          <div>Page {page} of {Math.ceil(totalCount / 10) || 1}</div>
-          <div className="flex gap-2">
-            <button
-              disabled={page <= 1}
-              onClick={() => setPage(page - 1)}
-              className="px-3 py-1.5 rounded-lg border border-slate-200 disabled:opacity-40 hover:bg-slate-100"
-            >
-              Previous
-            </button>
-            <button
-              disabled={page >= Math.ceil(totalCount / 10)}
-              onClick={() => setPage(page + 1)}
-              className="px-3 py-1.5 rounded-lg border border-slate-200 disabled:opacity-40 hover:bg-slate-100"
-            >
-              Next
-            </button>
+        {totalCount > 0 && (
+          <div className="border-t border-slate-200 dark:border-slate-800">
+            <Pagination
+              currentPage={page}
+              totalPages={Math.max(1, Math.ceil(totalCount / pageSize))}
+              totalCount={totalCount}
+              pageSize={pageSize}
+              onPageChange={setPage}
+              onPageSizeChange={(newSize) => {
+                setPageSize(newSize);
+                setPage(1);
+              }}
+            />
           </div>
-        </div>
+        )}
       </div>
 
       {/* Detail Modal */}
@@ -405,7 +410,7 @@ export const AdminEnquiriesPage: React.FC = () => {
               <div className="flex items-center gap-3 w-full sm:w-auto">
                 <button
                   type="button"
-                  onClick={() => handleDelete(detail.id)}
+                  onClick={() => setDeleteConfirmId(detail.id)}
                   className="text-xs font-bold text-rose-600 hover:text-rose-800 py-2 cursor-pointer"
                 >
                   Delete Enquiry
@@ -433,11 +438,7 @@ export const AdminEnquiriesPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => {
-                    if (window.confirm('Leave Enquiries and navigate to Quotations proposal generator for this enquiry?')) {
-                      const enquiryId = detail.id;
-                      setSelectedEnquiryId(null);
-                      navigate(`/admin/quotations?createForEnquiry=${enquiryId}`);
-                    }
+                    setQuotationRedirectEnquiry({ id: detail.id, ref: detail.referenceNumber });
                   }}
                   className="w-full sm:w-auto border border-emerald-500/60 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 text-xs font-bold px-4 py-2.5 rounded-xl shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
                 >
@@ -448,6 +449,35 @@ export const AdminEnquiriesPage: React.FC = () => {
           </div>
         )}
       </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={deleteConfirmId !== null}
+        title="Delete Customer Enquiry"
+        message={`Are you sure you want to permanently delete enquiry #${deleteConfirmId}? This action cannot be undone.`}
+        confirmText="Delete Enquiry"
+        confirmVariant="danger"
+        onConfirm={handleDeleteConfirmed}
+        onCancel={() => setDeleteConfirmId(null)}
+      />
+
+      {/* Navigate to Quotations Confirmation Modal */}
+      <ConfirmModal
+        isOpen={quotationRedirectEnquiry !== null}
+        title="Create Official Quotation"
+        message={`Leave Enquiries and navigate to Quotations proposal generator for enquiry #${quotationRedirectEnquiry?.ref}?`}
+        confirmText="Open Quotations Generator"
+        confirmVariant="primary"
+        onConfirm={() => {
+          if (quotationRedirectEnquiry) {
+            const eId = quotationRedirectEnquiry.id;
+            setQuotationRedirectEnquiry(null);
+            setSelectedEnquiryId(null);
+            navigate(`/admin/quotations?createForEnquiry=${eId}`);
+          }
+        }}
+        onCancel={() => setQuotationRedirectEnquiry(null)}
+      />
     </div>
   );
 };

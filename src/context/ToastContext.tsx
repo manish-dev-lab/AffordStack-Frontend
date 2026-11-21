@@ -12,7 +12,7 @@ export interface ToastMessage {
 }
 
 interface ToastContextType {
-  showToast: (toast: Omit<ToastMessage, 'id'>) => void;
+  showToast: (toastOrMessage: Omit<ToastMessage, 'id'> | string, type?: ToastType) => void;
   removeToast: (id: string) => void;
 }
 
@@ -26,7 +26,19 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, []);
 
   const showToast = useCallback(
-    ({ type, title, message, duration = 4000 }: Omit<ToastMessage, 'id'>) => {
+    (toastOrMessage: Omit<ToastMessage, 'id'> | string, explicitType?: ToastType) => {
+      let toastObj: Omit<ToastMessage, 'id'>;
+      if (typeof toastOrMessage === 'string') {
+        toastObj = {
+          message: toastOrMessage,
+          type: explicitType || 'info',
+          duration: 4000,
+        };
+      } else {
+        toastObj = toastOrMessage;
+      }
+
+      const { type, title, message, duration = 4000 } = toastObj;
       setToasts((prev) => {
         // Prevent duplicate toast if message is already displayed
         if (prev.some((t) => t.message === message)) {

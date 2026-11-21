@@ -17,6 +17,8 @@ interface UserAuthContextType {
   }) => Promise<void>;
   logout: () => void;
   refreshProfile: () => Promise<void>;
+  updateUser: (user: UserProfile) => void;
+  setAuthSession: (res: UserLoginResponse) => void;
 }
 
 const UserAuthContext = createContext<UserAuthContextType | undefined>(undefined);
@@ -86,6 +88,15 @@ export const UserAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   };
 
+  const updateUser = (updated: UserProfile) => {
+    setUser(updated);
+    localStorage.setItem('ss_user', JSON.stringify(updated));
+  };
+
+  const setAuthSession = (res: UserLoginResponse) => {
+    handleAuthSuccess(res);
+  };
+
   return (
     <UserAuthContext.Provider
       value={{
@@ -96,6 +107,8 @@ export const UserAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         register,
         logout,
         refreshProfile,
+        updateUser,
+        setAuthSession,
       }}
     >
       {children}

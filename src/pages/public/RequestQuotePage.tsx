@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -43,6 +43,7 @@ export const RequestQuotePage: React.FC = () => {
   const prefillCategory = searchParams.get('category') || '';
   const prefillService = searchParams.get('service') || '';
   const { user: clientUser, isUserAuthenticated } = useUserAuth();
+  const alertRef = useRef<HTMLDivElement>(null);
 
   const [countryCode, setCountryCode] = useState('+91');
   const [isCustomBudget, setIsCustomBudget] = useState(false);
@@ -156,10 +157,15 @@ export const RequestQuotePage: React.FC = () => {
         message: res.message,
         customerEmail: values.email,
       });
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setTimeout(() => {
+        alertRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 50);
     } catch (err: unknown) {
       const errorMsg = err instanceof Error ? err.message : 'An error occurred while submitting your quotation. Please try again.';
       setSubmitError(errorMsg);
+      setTimeout(() => {
+        alertRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 50);
     } finally {
       setIsSubmitting(false);
     }
@@ -169,7 +175,10 @@ export const RequestQuotePage: React.FC = () => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       if (file.size > 20 * 1024 * 1024) {
-        alert('File size exceeds 20MB limit.');
+        setSubmitError('File size exceeds the 20MB limit. Please upload a smaller file or send code via repository link.');
+        setTimeout(() => {
+          alertRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 50);
         return;
       }
       setFileAttachment(file);
@@ -194,7 +203,7 @@ export const RequestQuotePage: React.FC = () => {
       {/* Confirmation View */}
       {confirmation ? (
         <Reveal animation="scale-up">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 sm:p-12 border border-slate-200/90 dark:border-slate-800 shadow-2xl text-center space-y-6 animate-in zoom-in-95 duration-200">
+          <div ref={alertRef} className="bg-white dark:bg-slate-900 rounded-3xl p-8 sm:p-12 border border-slate-200/90 dark:border-slate-800 shadow-2xl text-center space-y-6 animate-in zoom-in-95 duration-200">
             <div className="w-20 h-20 rounded-full bg-emerald-100 dark:bg-emerald-950/70 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto shadow-md">
               <CheckCircle2 className="w-10 h-10" />
             </div>
@@ -257,7 +266,7 @@ export const RequestQuotePage: React.FC = () => {
             )}
 
             {submitError && (
-              <div className="p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-rose-800 dark:text-rose-200 text-sm flex items-center gap-3">
+              <div ref={alertRef} className="p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-rose-800 dark:text-rose-200 text-sm flex items-center gap-3">
                 <AlertCircle className="w-5 h-5 text-rose-600 shrink-0" />
                 <span>{submitError}</span>
               </div>
@@ -296,6 +305,7 @@ export const RequestQuotePage: React.FC = () => {
                     </label>
                     <input
                       type="email"
+                      inputMode="email"
                       {...register('email')}
                       className={`w-full px-4 py-3 rounded-xl border bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:outline-hidden ${
                         errors.email ? 'border-rose-400 bg-rose-50/30' : 'border-slate-300 dark:border-slate-700'
@@ -318,6 +328,7 @@ export const RequestQuotePage: React.FC = () => {
                       />
                       <input
                         type="tel"
+                        inputMode="tel"
                         {...register('phoneNumber')}
                         className={`w-full px-4 py-3 rounded-r-xl border border-l-0 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:outline-hidden ${
                           errors.phoneNumber ? 'border-rose-400 bg-rose-50/30' : 'border-slate-300 dark:border-slate-700'
@@ -453,8 +464,9 @@ export const RequestQuotePage: React.FC = () => {
                         </label>
                         <input
                           type="text"
+                          inputMode="numeric"
                           {...register('customBudgetAmount')}
-                          placeholder="e.g. ₹45,000 or $1,200"
+                          placeholder="Enter your estimated project budget (e.g. ₹50,000)"
                           className="w-full px-4 py-2.5 rounded-xl border border-blue-300 dark:border-blue-700 bg-blue-50/40 dark:bg-blue-950/40 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
                         />
                       </div>
@@ -467,6 +479,7 @@ export const RequestQuotePage: React.FC = () => {
                     </label>
                     <input
                       type="date"
+                      min={new Date(Date.now() + 86400000).toISOString().split('T')[0]}
                       {...register('expectedCompletionDate')}
                       className="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:outline-hidden cursor-pointer"
                     />
@@ -516,7 +529,7 @@ export const RequestQuotePage: React.FC = () => {
                   <textarea
                     rows={4}
                     {...register('additionalRequirements')}
-                    className="w-full min-h-[105px] px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:outline-hidden leading-relaxed resize-y placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                    className="w-full min-h-[125px] p-4 sm:p-5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-base sm:text-sm focus:ring-2 focus:ring-blue-500 focus:outline-hidden leading-relaxed resize-y placeholder:text-slate-400 dark:placeholder:text-slate-500"
                     placeholder="Mention specific framework versions, database requirements, or presentation slides needed..."
                   />
                 </div>

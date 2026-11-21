@@ -41,6 +41,30 @@ export const userAuthApi = {
     return res.data.data;
   },
 
+  updateProfile: async (payload: { fullName: string; phoneNumber?: string; companyName?: string }): Promise<UserProfile> => {
+    const res = await axiosInstance.put<ApiResponse<UserProfile>>('/user/auth/profile', payload);
+    if (!res.data.success || !res.data.data) {
+      throw new Error(res.data.message || 'Failed to update profile');
+    }
+    return res.data.data;
+  },
+
+  requestEmailChangeOtp: async (newEmail: string): Promise<boolean> => {
+    const res = await axiosInstance.post<ApiResponse<boolean>>('/user/auth/profile/request-email-change', { newEmail });
+    if (!res.data.success) {
+      throw new Error(res.data.message || 'Failed to send email verification code');
+    }
+    return res.data.data ?? true;
+  },
+
+  confirmEmailChange: async (newEmail: string, otp: string): Promise<UserLoginResponse> => {
+    const res = await axiosInstance.post<ApiResponse<UserLoginResponse>>('/user/auth/profile/confirm-email-change', { newEmail, otp });
+    if (!res.data.success || !res.data.data) {
+      throw new Error(res.data.message || 'Failed to verify and update email');
+    }
+    return res.data.data;
+  },
+
   getMyEnquiries: async (): Promise<UserEnquirySummary[]> => {
     const res = await axiosInstance.get<ApiResponse<UserEnquirySummary[]>>('/user/auth/enquiries');
     if (!res.data.success || !res.data.data) {

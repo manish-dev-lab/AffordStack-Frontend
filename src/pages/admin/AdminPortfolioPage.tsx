@@ -3,6 +3,8 @@ import { contentApi } from '../../api/contentApi';
 import type { PortfolioProject } from '../../types';
 import { LoadingSpinner } from '../../components/common/LoadingSpinner';
 import { Modal } from '../../components/common/Modal';
+import { ConfirmModal } from '../../components/common/ConfirmModal';
+import { useToast } from '../../context/ToastContext';
 import {
   Layers,
   Plus,
@@ -16,6 +18,7 @@ import {
 import { GithubIcon } from '../../components/common/GithubIcon';
 
 export const AdminPortfolioPage: React.FC = () => {
+  const { showToast } = useToast();
   const [projects, setProjects] = useState<PortfolioProject[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -27,6 +30,7 @@ export const AdminPortfolioPage: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -104,13 +108,16 @@ export const AdminPortfolioPage: React.FC = () => {
     setModalOpen(true);
   };
 
-  const handleDelete = async (id: number) => {
-    if (!window.confirm('Are you sure you want to delete this portfolio project?')) return;
+  const handleDelete = async () => {
+    if (!deleteId) return;
     try {
-      await contentApi.deletePortfolio(id);
+      await contentApi.deletePortfolio(deleteId);
+      showToast('Portfolio item deleted successfully', 'success');
       loadProjects();
     } catch (err) {
-      alert('Failed to delete portfolio item');
+      showToast('Failed to delete portfolio item', 'error');
+    } finally {
+      setDeleteId(null);
     }
   };
 
@@ -312,7 +319,7 @@ export const AdminPortfolioPage: React.FC = () => {
                         Edit
                       </button>
                       <button
-                        onClick={() => handleDelete(p.id)}
+                        onClick={() => setDeleteId(p.id)}
                         className="px-2.5 py-1 text-xs font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/50 rounded-md"
                       >
                         Delete
@@ -519,6 +526,16 @@ export const AdminPortfolioPage: React.FC = () => {
           </div>
         </form>
       </Modal>
+
+      <ConfirmModal
+        isOpen={deleteId !== null}
+        title="Delete Portfolio Project"
+        message="Are you sure you want to permanently delete this portfolio project? This action cannot be undone."
+        confirmText="Delete Project"
+        confirmVariant="danger"
+        onConfirm={handleDelete}
+        onCancel={() => setDeleteId(null)}
+      />
     </div>
   );
 };

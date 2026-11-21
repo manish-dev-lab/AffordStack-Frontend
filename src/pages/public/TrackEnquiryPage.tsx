@@ -90,7 +90,7 @@ export const TrackEnquiryPage: React.FC = () => {
       // Refresh status
       await fetchTracking(referenceNumber, email);
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Error updating proposal status');
+      setError(err instanceof Error ? err.message : 'Error updating proposal status');
     } finally {
       setActionLoading(false);
     }
