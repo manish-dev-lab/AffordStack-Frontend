@@ -2,12 +2,21 @@ import axiosInstance from './axiosInstance';
 import type { ApiResponse, UserLoginResponse, UserProfile, UserEnquirySummary } from '../types';
 
 export const userAuthApi = {
+  sendRegistrationOtp: async (payload: { email: string; fullName: string }): Promise<boolean> => {
+    const res = await axiosInstance.post<ApiResponse<boolean>>('/user/auth/send-otp', payload);
+    if (!res.data.success) {
+      throw new Error(res.data.message || 'Failed to send verification code');
+    }
+    return res.data.data ?? true;
+  },
+
   register: async (payload: {
     fullName: string;
     email: string;
     phoneNumber: string;
     companyName?: string;
     password: string;
+    otp?: string;
   }): Promise<UserLoginResponse> => {
     const res = await axiosInstance.post<ApiResponse<UserLoginResponse>>('/user/auth/register', payload);
     if (!res.data.success || !res.data.data) {
