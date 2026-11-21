@@ -11,7 +11,7 @@ export const TechSupportPage: React.FC = () => {
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 mb-6">
             <Wrench className="w-4 h-4" /> Senior Engineering Assistance
           </div>
-          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight max-w-4xl">
+          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight max-w-4xl text-white">
             Developer Technical Support &amp; Production Bug Fixing
           </h1>
           <p className="mt-6 text-base sm:text-lg text-slate-300 max-w-3xl leading-relaxed">
@@ -20,7 +20,7 @@ export const TechSupportPage: React.FC = () => {
           <div className="mt-8 flex flex-wrap gap-4">
             <Link
               to="/request-a-quote?category=Bug%20Fixing"
-              className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-7 py-3 rounded-xl shadow-lg shadow-indigo-600/30 transition-all flex items-center gap-2"
+              className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-7 py-3 rounded-xl shadow-lg shadow-indigo-600/30 transition-all flex items-center gap-2 cursor-pointer"
             >
               Request Debugging Support
               <ArrowRight className="w-4 h-4" />
@@ -66,12 +66,12 @@ export const TechSupportPage: React.FC = () => {
           ].map((item) => {
             const Icon = item.icon;
             return (
-              <div key={item.title} className="bg-white rounded-3xl p-8 border border-slate-200/80 shadow-md">
-                <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-6">
+              <div key={item.title} className="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200/80 dark:border-slate-800 shadow-md hover:border-indigo-500/40 transition-colors">
+                <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-6">
                   <Icon className="w-6 h-6" />
                 </div>
-                <h3 className="text-xl font-bold text-slate-900">{item.title}</h3>
-                <p className="mt-3 text-sm text-slate-600 leading-relaxed">{item.desc}</p>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white">{item.title}</h3>
+                <p className="mt-3 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">{item.desc}</p>
               </div>
             );
           })}
@@ -80,19 +80,19 @@ export const TechSupportPage: React.FC = () => {
 
       {/* CTA */}
       <section className="max-w-4xl mx-auto px-4 text-center">
-        <div className="bg-indigo-50 rounded-3xl p-10 border border-indigo-100">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+        <div className="bg-indigo-50 dark:bg-slate-900/90 rounded-3xl p-10 border border-indigo-100 dark:border-slate-800 shadow-md">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
             Have a blocker slowing down your release?
           </h2>
-          <p className="text-slate-600 mt-2 text-sm sm:text-base">
+          <p className="text-slate-600 dark:text-slate-300 mt-2 text-sm sm:text-base">
             Attach error logs, stack traces, or code snippets through our quotation form for a fast technical consultation.
           </p>
           <div className="mt-6">
             <Link
               to="/request-a-quote?category=Bug%20Fixing"
-              className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-7 py-3 rounded-xl shadow-md"
+              className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-8 py-3.5 rounded-xl shadow-md transition-colors cursor-pointer"
             >
-              Submit Technical Issue
+              Get In Touch With Senior Engineers
             </Link>
           </div>
         </div>

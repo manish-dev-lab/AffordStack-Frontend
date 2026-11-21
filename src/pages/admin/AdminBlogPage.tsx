@@ -101,24 +101,21 @@ export const AdminBlogPage: React.FC = () => {
   };
 
   const handleDelete = async (id: number) => {
-    if (!window.confirm('Are you sure you want to delete this article?')) return;
+    if (!window.confirm('Are you sure you want to delete this blog article?')) return;
     try {
       await contentApi.deleteBlogPost(id);
       loadData();
     } catch (err) {
-      alert('Failed to delete blog post');
+      alert('Failed to delete blog article');
     }
   };
 
-  const handleTogglePublish = async (post: BlogPost) => {
+  const handleTogglePublish = async (p: BlogPost) => {
     try {
-      await contentApi.updateBlogPost(post.id, {
-        isPublished: !post.isPublished,
-        publishedAt: !post.isPublished ? new Date().toISOString() : undefined,
-      });
+      await contentApi.updateBlogPost(p.id, { isPublished: !p.isPublished });
       loadData();
     } catch (err) {
-      alert('Failed to update publish state');
+      alert('Failed to toggle publish status');
     }
   };
 
@@ -135,10 +132,9 @@ export const AdminBlogPage: React.FC = () => {
       slug: formData.slug || formData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
       summary: formData.summary,
       content: formData.content,
-      thumbnailUrl: formData.thumbnailUrl,
-      authorName: formData.authorName,
+      thumbnailUrl: formData.thumbnailUrl || undefined,
+      authorName: formData.authorName || 'Engineering Team',
       isPublished: formData.isPublished,
-      publishedAt: formData.isPublished ? new Date().toISOString() : undefined,
       tags: formData.tagsText
         .split(',')
         .map((t) => t.trim())
@@ -179,17 +175,17 @@ export const AdminBlogPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2.5">
-            <BookOpen className="w-6 h-6 text-purple-600" />
-            Technical Blog & Articles
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-2.5">
+            <BookOpen className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+            Technical Blog &amp; Articles
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
             Publish educational guides, architectural deep dives, and company technical articles.
           </p>
         </div>
         <button
           onClick={handleOpenCreate}
-          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-medium text-sm rounded-lg shadow-sm transition-colors"
+          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-medium text-sm rounded-xl shadow-xs transition-colors"
         >
           <Plus className="w-4 h-4" />
           Write New Article
@@ -197,7 +193,7 @@ export const AdminBlogPage: React.FC = () => {
       </div>
 
       {/* Filters Bar */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex flex-col sm:flex-row items-center gap-3">
+      <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs flex flex-col sm:flex-row items-center gap-3">
         <div className="relative flex-1 w-full">
           <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
@@ -205,14 +201,14 @@ export const AdminBlogPage: React.FC = () => {
             placeholder="Search articles by title or summary..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-purple-500"
           />
         </div>
 
         <select
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value)}
-          className="w-full sm:w-64 px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+          className="w-full sm:w-64 px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-purple-500"
         >
           <option value="">All Categories ({categories.length})</option>
           {categories.map((c) => (
@@ -224,20 +220,20 @@ export const AdminBlogPage: React.FC = () => {
       </div>
 
       {/* Articles Table */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden">
         {loading ? (
           <div className="py-20 flex justify-center">
             <LoadingSpinner size="lg" />
           </div>
         ) : filteredPosts.length === 0 ? (
-          <div className="py-16 text-center text-slate-500">
-            <BookOpen className="w-12 h-12 mx-auto text-slate-300 mb-3" />
-            <p className="font-medium text-slate-700">No blog articles found.</p>
+          <div className="py-16 text-center text-slate-500 dark:text-slate-400">
+            <BookOpen className="w-12 h-12 mx-auto text-slate-300 dark:text-slate-600 mb-3" />
+            <p className="font-medium text-slate-700 dark:text-slate-300">No blog articles found.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-slate-600">
-              <thead className="bg-slate-50 text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-200">
+            <table className="w-full text-left text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+              <thead className="bg-slate-50 dark:bg-slate-800/80 text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider border-b border-slate-200 dark:border-slate-800">
                 <tr>
                   <th className="px-6 py-3.5">Article Title</th>
                   <th className="px-6 py-3.5">Category</th>
@@ -247,29 +243,29 @@ export const AdminBlogPage: React.FC = () => {
                   <th className="px-6 py-3.5 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                 {filteredPosts.map((post) => (
-                  <tr key={post.id} className="hover:bg-slate-50/70 transition-colors">
+                  <tr key={post.id} className="hover:bg-slate-50/70 dark:hover:bg-slate-800/50 transition-colors">
                     <td className="px-6 py-4">
-                      <div className="font-semibold text-slate-900 line-clamp-1 max-w-md">
+                      <div className="font-semibold text-slate-900 dark:text-white line-clamp-1 max-w-md">
                         {post.title}
                       </div>
-                      <div className="text-xs text-slate-400 mt-0.5 line-clamp-1 max-w-md">
+                      <div className="text-xs text-slate-400 dark:text-slate-500 mt-0.5 line-clamp-1 max-w-md">
                         {post.summary}
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-purple-50 text-purple-700 border border-purple-200">
+                      <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
                         {post.categoryName || 'General'}
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-1.5 text-xs text-slate-700">
+                      <div className="flex items-center gap-1.5 text-xs text-slate-700 dark:text-slate-300">
                         <User className="w-3.5 h-3.5 text-slate-400" />
                         {post.authorName || 'Admin'}
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-xs text-slate-500">
+                    <td className="px-6 py-4 text-xs text-slate-500 dark:text-slate-400">
                       {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : 'Draft'}
                     </td>
                     <td className="px-6 py-4">
@@ -277,8 +273,8 @@ export const AdminBlogPage: React.FC = () => {
                         onClick={() => handleTogglePublish(post)}
                         className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold transition-colors ${
                           post.isPublished
-                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100'
-                            : 'bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200'
+                            ? 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100'
+                            : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-200'
                         }`}
                         title="Click to toggle publish status"
                       >
@@ -296,14 +292,14 @@ export const AdminBlogPage: React.FC = () => {
                     <td className="px-6 py-4 text-right space-x-2">
                       <button
                         onClick={() => handleOpenEdit(post)}
-                        className="p-1.5 text-slate-500 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+                        className="p-1.5 text-slate-500 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-950/50 rounded-lg transition-colors"
                         title="Edit Article"
                       >
                         <Edit className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleDelete(post.id)}
-                        className="p-1.5 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        className="p-1.5 text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/50 rounded-lg transition-colors"
                         title="Delete Article"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -325,14 +321,14 @@ export const AdminBlogPage: React.FC = () => {
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-xs flex items-center gap-2">
+            <div className="p-3 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 rounded-lg text-red-700 dark:text-red-300 text-xs flex items-center gap-2">
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{error}</span>
             </div>
           )}
 
           {success && (
-            <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-700 text-xs flex items-center gap-2">
+            <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-lg text-emerald-700 dark:text-emerald-300 text-xs flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 shrink-0" />
               <span>{success}</span>
             </div>
@@ -340,13 +336,13 @@ export const AdminBlogPage: React.FC = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
                 Category *
               </label>
               <select
                 value={formData.blogCategoryId}
                 onChange={(e) => setFormData({ ...formData, blogCategoryId: Number(e.target.value) })}
-                className="w-full px-3.5 py-2.5 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-3.5 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-purple-500"
                 required
               >
                 {categories.map((c) => (
@@ -358,7 +354,7 @@ export const AdminBlogPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
                 Author Name
               </label>
               <input
@@ -366,13 +362,13 @@ export const AdminBlogPage: React.FC = () => {
                 placeholder="Engineering Team / Chief Architect"
                 value={formData.authorName}
                 onChange={(e) => setFormData({ ...formData, authorName: e.target.value })}
-                className="w-full px-3.5 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-purple-500"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
               Article Title *
             </label>
             <input
@@ -380,14 +376,14 @@ export const AdminBlogPage: React.FC = () => {
               placeholder="e.g. Clean Architecture in ASP.NET Core & PostgreSQL"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-3.5 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-purple-500"
               required
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
                 URL Slug
               </label>
               <input
@@ -395,12 +391,12 @@ export const AdminBlogPage: React.FC = () => {
                 placeholder="clean-architecture-aspnet-core"
                 value={formData.slug}
                 onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                className="w-full px-3.5 py-2.5 border border-slate-200 rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-mono text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-purple-500"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
                 Cover Image URL
               </label>
               <input
@@ -408,13 +404,13 @@ export const AdminBlogPage: React.FC = () => {
                 placeholder="https://images.unsplash.com/..."
                 value={formData.thumbnailUrl}
                 onChange={(e) => setFormData({ ...formData, thumbnailUrl: e.target.value })}
-                className="w-full px-3.5 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-purple-500"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
               Summary / Short Excerpt *
             </label>
             <textarea
@@ -422,13 +418,13 @@ export const AdminBlogPage: React.FC = () => {
               placeholder="A brief teaser for the blog card and search previews..."
               value={formData.summary}
               onChange={(e) => setFormData({ ...formData, summary: e.target.value })}
-              className="w-full px-3.5 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full px-3.5 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-purple-500"
               required
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
               Article Content (Markdown Supported) *
             </label>
             <textarea
@@ -436,13 +432,13 @@ export const AdminBlogPage: React.FC = () => {
               placeholder="Write the article content here. You can write paragraphs, bullet points, and code snippets..."
               value={formData.content}
               onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-              className="w-full px-3.5 py-2.5 border border-slate-200 rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-mono text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-purple-500"
               required
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
               Tags (Comma-separated)
             </label>
             <input
@@ -450,7 +446,7 @@ export const AdminBlogPage: React.FC = () => {
               placeholder="DotNet, React, Architecture, Performance"
               value={formData.tagsText}
               onChange={(e) => setFormData({ ...formData, tagsText: e.target.value })}
-              className="w-full px-3.5 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-purple-500"
             />
           </div>
 
@@ -460,25 +456,25 @@ export const AdminBlogPage: React.FC = () => {
               id="isPublished"
               checked={formData.isPublished}
               onChange={(e) => setFormData({ ...formData, isPublished: e.target.checked })}
-              className="w-4 h-4 text-purple-600 rounded border-slate-300"
+              className="w-4 h-4 text-purple-600 rounded border-slate-300 dark:border-slate-700"
             />
-            <label htmlFor="isPublished" className="text-sm font-medium text-slate-700">
+            <label htmlFor="isPublished" className="text-sm font-medium text-slate-700 dark:text-slate-300">
               Publish immediately on website
             </label>
           </div>
 
-          <div className="flex justify-end gap-3 pt-3 border-t border-slate-100">
+          <div className="flex justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
             <button
               type="button"
               onClick={() => setModalOpen(false)}
-              className="px-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-600 hover:bg-slate-50"
+              className="px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-medium"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={submitting}
-              className="px-5 h-10 shrink-0 bg-purple-600 hover:bg-purple-700 text-white font-medium text-sm rounded-lg shadow-sm disabled:opacity-50 flex items-center justify-center gap-2"
+              className="px-5 h-10 shrink-0 bg-purple-600 hover:bg-purple-700 text-white font-medium text-xs sm:text-sm rounded-xl shadow-xs disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {submitting && <LoadingSpinner size="sm" />}
               {editingId ? 'Update Article' : 'Publish Article'}

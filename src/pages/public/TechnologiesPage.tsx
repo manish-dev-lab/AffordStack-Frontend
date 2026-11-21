@@ -48,11 +48,11 @@ export const TechnologiesPage: React.FC = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-16">
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto">
-        <span className="text-xs font-bold uppercase tracking-wider text-blue-600">Architectural Standards</span>
-        <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight mt-2">
+        <span className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">Architectural Standards</span>
+        <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight mt-2">
           Technology Stack &amp; Architecture
         </h1>
-        <p className="mt-4 text-base sm:text-lg text-slate-600">
+        <p className="mt-4 text-base sm:text-lg text-slate-600 dark:text-slate-300">
           We adhere to modern Clean Architecture and SOLID design principles, guaranteeing maintainable, secure, and easily testable software systems.
         </p>
       </div>
@@ -61,8 +61,8 @@ export const TechnologiesPage: React.FC = () => {
       <div className="space-y-16">
         {stack.map((group) => (
           <div key={group.category} className="space-y-6">
-            <h2 className="text-2xl font-bold text-slate-900 tracking-tight border-b border-slate-200 pb-3 flex items-center gap-2.5">
-              <Code className="w-5 h-5 text-blue-600" />
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight border-b border-slate-200 dark:border-slate-800 pb-3 flex items-center gap-2.5">
+              <Code className="w-5 h-5 text-blue-600 dark:text-blue-400" />
               {group.category}
             </h2>
 
@@ -70,16 +70,16 @@ export const TechnologiesPage: React.FC = () => {
               {group.technologies.map((item) => (
                 <div
                   key={item.name}
-                  className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-md flex flex-col justify-between"
+                  className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-md flex flex-col justify-between hover:border-blue-500/40 transition-colors"
                 >
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <h3 className="text-base font-bold text-slate-900">{item.name}</h3>
-                      <span className="text-xs font-semibold bg-blue-50 text-blue-700 px-2.5 py-0.5 rounded-full border border-blue-200/60">
+                      <h3 className="text-base font-bold text-slate-900 dark:text-white">{item.name}</h3>
+                      <span className="text-xs font-semibold bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 px-2.5 py-0.5 rounded-full border border-blue-200/60 dark:border-blue-800">
                         {item.level}
                       </span>
                     </div>
-                    <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mt-2">{item.desc}</p>
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mt-2">{item.desc}</p>
                   </div>
                 </div>
               ))}
@@ -89,15 +89,15 @@ export const TechnologiesPage: React.FC = () => {
       </div>
 
       {/* CTA */}
-      <div className="bg-slate-900 text-white rounded-3xl p-8 sm:p-12 text-center max-w-4xl mx-auto space-y-4">
-        <h3 className="text-2xl sm:text-3xl font-extrabold">Need a project built in one of these stacks?</h3>
+      <div className="bg-slate-900 dark:bg-slate-900/90 border border-slate-800 text-white rounded-3xl p-8 sm:p-12 text-center max-w-4xl mx-auto space-y-4 shadow-xl">
+        <h3 className="text-2xl sm:text-3xl font-extrabold text-white">Need a project built in one of these stacks?</h3>
         <p className="text-slate-300 text-sm sm:text-base max-w-xl mx-auto">
           We configure the repository, database schema, CI/CD, and architecture tailored to your specific requirements.
         </p>
         <div className="pt-2">
           <Link
             to="/request-a-quote"
-            className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold px-7 py-3 rounded-xl shadow-lg"
+            className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold px-7 py-3 rounded-xl shadow-lg transition-colors"
           >
             Request Project Architecture &amp; Quote <ArrowRight className="w-4 h-4" />
           </Link>

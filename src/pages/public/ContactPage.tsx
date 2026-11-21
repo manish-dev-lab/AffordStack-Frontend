@@ -75,11 +75,11 @@ export const ContactPage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-16">
       <div className="text-center max-w-3xl mx-auto">
-        <span className="text-xs font-bold uppercase tracking-wider text-blue-600">Get In Touch</span>
-        <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight mt-2">
+        <span className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">Get In Touch</span>
+        <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight mt-2">
           Contact Our Engineering &amp; Mentoring Team
         </h1>
-        <p className="mt-4 text-base sm:text-lg text-slate-600">
+        <p className="mt-4 text-base sm:text-lg text-slate-600 dark:text-slate-300">
           Have a question about college project topics, production bug fixing, or bespoke enterprise development? Reach out directly.
         </p>
       </div>
@@ -87,31 +87,31 @@ export const ContactPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
         {/* Contact info cards */}
         <div className="space-y-6">
-          <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-md">
-            <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-4">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-md">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-4">
               <Mail className="w-5 h-5" />
             </div>
-            <h3 className="font-bold text-slate-900 text-base">Direct Email</h3>
-            <p className="text-slate-500 text-xs mt-1">Our technical coordinators respond within 24 hours.</p>
-            <a href={`mailto:${settings.email}`} className="text-blue-600 font-semibold text-sm mt-3 block hover:underline">{settings.email}</a>
+            <h3 className="font-bold text-slate-900 dark:text-white text-base">Direct Email</h3>
+            <p className="text-slate-500 dark:text-slate-400 text-xs mt-1">Our technical coordinators respond within 24 hours.</p>
+            <a href={`mailto:${settings.email}`} className="text-blue-600 dark:text-blue-400 font-semibold text-sm mt-3 block hover:underline">{settings.email}</a>
           </div>
 
-          <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-md">
-            <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-md">
+            <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-4">
               <Phone className="w-5 h-5" />
             </div>
-            <h3 className="font-bold text-slate-900 text-base">Phone &amp; WhatsApp</h3>
-            <p className="text-slate-500 text-xs mt-1">{settings.workingHours}</p>
-            <a href={`tel:${settings.phone}`} className="text-indigo-600 font-semibold text-sm mt-3 block hover:underline">{settings.phone}</a>
+            <h3 className="font-bold text-slate-900 dark:text-white text-base">Phone &amp; WhatsApp</h3>
+            <p className="text-slate-500 dark:text-slate-400 text-xs mt-1">{settings.workingHours}</p>
+            <a href={`tel:${settings.phone}`} className="text-indigo-600 dark:text-indigo-400 font-semibold text-sm mt-3 block hover:underline">{settings.phone}</a>
           </div>
 
-          <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-md">
-            <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-md">
+            <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-4">
               <MapPin className="w-5 h-5" />
             </div>
-            <h3 className="font-bold text-slate-900 text-base">Office &amp; Technical Lab</h3>
-            <p className="text-slate-500 text-xs mt-1">Software development &amp; mentoring center.</p>
-            <p className="text-slate-800 font-semibold text-sm mt-3">{settings.address}</p>
+            <h3 className="font-bold text-slate-900 dark:text-white text-base">Office &amp; Technical Lab</h3>
+            <p className="text-slate-500 dark:text-slate-400 text-xs mt-1">Software development &amp; mentoring center.</p>
+            <p className="text-slate-800 dark:text-slate-200 font-semibold text-sm mt-3">{settings.address}</p>
           </div>
         </div>
 
