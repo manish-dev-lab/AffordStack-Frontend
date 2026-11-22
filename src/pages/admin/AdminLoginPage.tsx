@@ -75,7 +75,7 @@ export const AdminLoginPage: React.FC = () => {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-5" autoComplete="off">
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
                 Username or Email
@@ -87,10 +87,11 @@ export const AdminLoginPage: React.FC = () => {
                 <input
                   type="text"
                   required
+                  autoComplete="username"
                   value={usernameOrEmail}
                   onChange={(e) => setUsernameOrEmail(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white text-sm focus:outline-hidden focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
-                  placeholder="admin or admin@affordstack.com"
+                  placeholder="Enter username or email"
                 />
               </div>
             </div>
@@ -106,10 +107,11 @@ export const AdminLoginPage: React.FC = () => {
                 <input
                   type={showPassword ? 'text' : 'password'}
                   required
+                  autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full pl-10 pr-11 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white text-sm focus:outline-hidden focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
-                  placeholder="••••••••••••"
+                  placeholder="Enter your password"
                 />
                 <button
                   type="button"
