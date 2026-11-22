@@ -153,6 +153,16 @@ export const Footer: React.FC = () => {
                 </Link>
               </li>
               <li>
+                <Link to="/refund-policy" className="hover:text-blue-400 transition-colors">
+                  Cancellation &amp; Refund
+                </Link>
+              </li>
+              <li>
+                <Link to="/delivery-policy" className="hover:text-blue-400 transition-colors">
+                  Shipping &amp; Delivery
+                </Link>
+              </li>
+              <li>
                 <Link to="/admin/login" className="hover:text-blue-400 transition-colors text-slate-500">
                   Staff Administration
                 </Link>
@@ -166,9 +176,11 @@ export const Footer: React.FC = () => {
           <div>
             &copy; {new Date().getFullYear()} AffordStack Platform. All rights reserved. Built with ASP.NET Core (.NET 10 LTS), React &amp; PostgreSQL.
           </div>
-          <div className="flex items-center gap-6">
+          <div className="flex flex-wrap items-center gap-6">
             <Link to="/privacy-policy" className="hover:underline">Privacy</Link>
             <Link to="/terms-and-conditions" className="hover:underline">Terms</Link>
+            <Link to="/refund-policy" className="hover:underline">Cancellation &amp; Refund</Link>
+            <Link to="/delivery-policy" className="hover:underline">Shipping &amp; Delivery</Link>
             <Link to="/contact" className="hover:underline">Support</Link>
           </div>
         </div>

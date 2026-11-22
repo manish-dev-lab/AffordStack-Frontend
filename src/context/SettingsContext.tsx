@@ -15,12 +15,12 @@ export interface CompanySettings {
 }
 
 const defaultSettings: CompanySettings = {
-  name: 'Soft Solutions',
+  name: 'AffordStack',
   email: 'manishkiran8464@gmail.com',
   phone: '+91 8464992957',
   address: 'Rc puram Hyd',
   workingHours: 'Mon - Sat: 9:00 AM - 8:00 PM IST',
-  whatsapp: '+91 8464992957',
+  whatsapp: '+91 8464992958',
   currency: 'INR (₹)',
   isUnderMaintenance: false,
   rawSettings: {},

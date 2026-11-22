@@ -33,6 +33,8 @@ import { UserDashboardPage } from './pages/public/UserDashboardPage';
 import { UserProfilePage } from './pages/public/UserProfilePage';
 import { PrivacyPolicyPage } from './pages/public/PrivacyPolicyPage';
 import { TermsPage } from './pages/public/TermsPage';
+import { RefundPolicyPage } from './pages/public/RefundPolicyPage';
+import { ShippingDeliveryPolicyPage } from './pages/public/ShippingDeliveryPolicyPage';
 import { ScrollToTop } from './components/common/ScrollToTop';
 
 // Admin Pages
@@ -82,7 +84,15 @@ export const App: React.FC = () => {
                   <Route path="/quote/:token" element={<PublicQuoteDecisionPage />} />
                   <Route path="/quote/:secureToken" element={<PublicQuoteDecisionPage />} />
                   <Route path="/privacy" element={<PrivacyPolicyPage />} />
+                  <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
                   <Route path="/terms" element={<TermsPage />} />
+                  <Route path="/terms-and-conditions" element={<TermsPage />} />
+                  <Route path="/refund-policy" element={<RefundPolicyPage />} />
+                  <Route path="/cancellation-policy" element={<RefundPolicyPage />} />
+                  <Route path="/cancellation-and-refund-policy" element={<RefundPolicyPage />} />
+                  <Route path="/delivery-policy" element={<ShippingDeliveryPolicyPage />} />
+                  <Route path="/shipping-policy" element={<ShippingDeliveryPolicyPage />} />
+                  <Route path="/shipping-and-delivery-policy" element={<ShippingDeliveryPolicyPage />} />
 
                   {/* Customer Auth & Account Pages */}
                   <Route path="/user/login" element={<UserLoginPage />} />
