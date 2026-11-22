@@ -243,6 +243,8 @@ export interface PublicQuotation {
   validUntil: string;
   termsAndConditions: string;
   status: QuotationStatus | number;
+  isAdvancePaid?: boolean;
+  advancePaidAt?: string;
   respondedAt?: string;
   responseRemarks?: string;
   items: QuotationItem[];
@@ -287,6 +289,9 @@ export interface ProjectMilestone {
   isCompleted: boolean;
   completedAt?: string;
   amount: number;
+  isPaid?: boolean;
+  paidAt?: string;
+  paymentReference?: string;
 }
 
 export interface Project {
@@ -320,19 +325,63 @@ export type PaymentStatus = 'Pending' | 'Received' | 'Refunded';
 
 export interface Payment {
   id: number;
-  projectId: number;
-  projectNumber: string;
-  projectTitle: string;
+  projectId?: number;
+  projectNumber?: string;
+  projectTitle?: string;
   customerId: number;
   customerName: string;
+  quotationId?: number;
+  quotationNumber?: string;
   paymentType: PaymentType | number;
   paymentDate: string;
   amount: number;
   paymentMethod: string;
   transactionReference?: string;
+  cashfreeOrderId?: string;
+  cashfreePaymentId?: string;
   status: PaymentStatus | number;
   notes?: string;
   createdAt: string;
+}
+
+export interface CustomerPayment {
+  id: number;
+  projectId?: number;
+  projectNumber?: string;
+  projectTitle?: string;
+  customerId?: number;
+  customerName?: string;
+  quotationId?: number;
+  quotationNumber?: string;
+  paymentType: PaymentType | number;
+  paymentDate: string;
+  amount: number;
+  paymentMethod: string;
+  transactionReference?: string;
+  cashfreeOrderId?: string;
+  cashfreePaymentId?: string;
+  status: PaymentStatus | number;
+  notes?: string;
+  createdAt: string;
+}
+
+export interface CashfreeOrderResponse {
+  orderId: string;
+  paymentSessionId?: string;
+  orderAmount: number;
+  orderCurrency: string;
+  orderStatus: string;
+  environment: string;
+}
+
+export interface PaymentVerificationResponse {
+  success: boolean;
+  orderId: string;
+  paymentId?: string;
+  status: string;
+  amount: number;
+  message: string;
+  paidAt?: string;
 }
 
 // Customers

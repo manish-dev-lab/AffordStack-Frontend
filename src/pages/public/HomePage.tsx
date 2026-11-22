@@ -20,6 +20,7 @@ import { contentApi } from '../../api/contentApi';
 import type { PortfolioProject, Testimonial } from '../../types';
 import { Reveal } from '../../components/common/Reveal';
 import { MovingBanner } from '../../components/common/MovingBanner';
+import { HeroBannerCarousel } from '../../components/home/HeroBannerCarousel';
 
 export const HomePage: React.FC = () => {
   const [featuredProjects, setFeaturedProjects] = useState<PortfolioProject[]>([]);
@@ -32,74 +33,8 @@ export const HomePage: React.FC = () => {
 
   return (
     <div className="space-y-20 sm:space-y-28 pb-24 overflow-x-hidden transition-colors duration-200">
-      {/* 1. HERO SECTION */}
-      <section className="relative overflow-hidden bg-slate-950 text-white pt-24 pb-32">
-        {/* Ambient lighting effects */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-blue-600/20 blur-[130px] rounded-full pointer-events-none" />
-        <div className="absolute top-10 right-10 w-72 h-72 bg-indigo-600/15 blur-[100px] rounded-full pointer-events-none" />
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-          <Reveal animation="fade-up" durationMs={600}>
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/30 mb-8 backdrop-blur-md">
-              <Zap className="w-3.5 h-3.5 text-blue-400" />
-              <span>AffordStack Custom Engineering &bull; Unbeatable Low-Cost &bull; .NET 10 LTS &bull; React &bull; PostgreSQL</span>
-            </div>
-          </Reveal>
-
-          <Reveal animation="fade-up" delayMs={150} durationMs={700}>
-            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight max-w-5xl mx-auto leading-[1.12]">
-              Engineering High-Performance <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-sky-300 to-indigo-400">Custom Software</span> &amp; Mentoring at Unbeatable Value
-            </h1>
-          </Reveal>
-
-          <Reveal animation="fade-up" delayMs={250} durationMs={700}>
-            <p className="mt-7 text-lg sm:text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
-              From MCA &amp; B.Tech university project defense to bespoke enterprise software and on-demand developer bug fixing — engineered with excellence at transparent, market-beating low prices.
-            </p>
-          </Reveal>
-
-          <Reveal animation="scale-up" delayMs={350} durationMs={600}>
-            <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link
-                to="/request-a-quote"
-                className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold text-base px-8 py-4 rounded-2xl shadow-xl shadow-blue-600/30 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
-              >
-                Request a Custom Quote
-                <ArrowRight className="w-5 h-5" />
-              </Link>
-              <Link
-                to="/track-enquiry"
-                className="w-full sm:w-auto bg-slate-900/90 hover:bg-slate-800 text-slate-200 font-bold text-base px-7 py-4 rounded-2xl border border-slate-700/80 transition-all hover:border-blue-500/50 flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <Search className="w-4 h-4 text-blue-400" />
-                Track Live Proposal
-              </Link>
-            </div>
-          </Reveal>
-
-          {/* Quick Metrics Bar */}
-          <Reveal animation="fade-up" delayMs={450} durationMs={800}>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto mt-20 pt-12 border-t border-slate-800/80">
-              <div>
-                <div className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">100%</div>
-                <div className="text-xs sm:text-sm text-slate-400 mt-1">Project Viva Success Rate</div>
-              </div>
-              <div>
-                <div className="text-3xl sm:text-4xl font-extrabold text-blue-400 tracking-tight">&lt; 24h</div>
-                <div className="text-xs sm:text-sm text-slate-400 mt-1">Quotation Turnaround</div>
-              </div>
-              <div>
-                <div className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Enterprise</div>
-                <div className="text-xs sm:text-sm text-slate-400 mt-1">Clean Architecture Standard</div>
-              </div>
-              <div>
-                <div className="text-3xl sm:text-4xl font-extrabold text-indigo-400 tracking-tight">PostgreSQL</div>
-                <div className="text-xs sm:text-sm text-slate-400 mt-1">Optimized Database Schemas</div>
-              </div>
-            </div>
-          </Reveal>
-        </div>
-      </section>
+      {/* 1. AMAZON-STYLE AUTO-SCROLLING HERO BANNER CAROUSEL */}
+      <HeroBannerCarousel />
 
       {/* LIVE MOVING MARQUEE TICKER */}
       <MovingBanner />

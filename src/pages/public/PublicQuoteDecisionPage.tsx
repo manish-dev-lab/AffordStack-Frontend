@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { quotationApi } from '../../api/quotationApi';
+import { paymentApi } from '../../api/paymentApi';
+import { openCashfreeCheckout } from '../../utils/cashfree';
 import type { PublicQuotation } from '../../types';
 import { LoadingSpinner } from '../../components/common/LoadingSpinner';
 import { Badge } from '../../components/common/Badge';
@@ -14,7 +16,9 @@ import {
   ShieldCheck, 
   FileText,
   AlertCircle,
-  Loader2
+  Loader2,
+  CreditCard,
+  Lock
 } from 'lucide-react';
 
 export const PublicQuoteDecisionPage: React.FC = () => {
@@ -29,6 +33,8 @@ export const PublicQuoteDecisionPage: React.FC = () => {
   const [remarks, setRemarks] = useState('');
   const [actionLoading, setActionLoading] = useState(false);
   const [actionSuccess, setActionSuccess] = useState<string | null>(null);
+  const [isPayingWithCashfree, setIsPayingWithCashfree] = useState(false);
+  const [cashfreeError, setCashfreeError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!secureToken) return;
@@ -38,6 +44,44 @@ export const PublicQuoteDecisionPage: React.FC = () => {
       .catch((err) => setError(err.message || 'Quotation not found or link has expired.'))
       .finally(() => setLoading(false));
   }, [secureToken]);
+
+  const handlePayAdvanceWithCashfree = async () => {
+    if (!secureToken || !quotation) return;
+    setIsPayingWithCashfree(true);
+    setCashfreeError(null);
+    try {
+      const order = await paymentApi.createQuoteAdvanceOrder(secureToken);
+      if (!order.paymentSessionId) {
+        throw new Error('Cashfree payment session ID was not received from server.');
+      }
+
+      await openCashfreeCheckout({
+        paymentSessionId: order.paymentSessionId,
+        environment: order.environment,
+        redirectTarget: '_modal'
+      });
+
+      // Verify payment with server after modal closure
+      const verifyRes = await paymentApi.verifyPayment(order.orderId);
+      if (verifyRes.success) {
+        setActionSuccess(`Advance payment of ₹${verifyRes.amount.toLocaleString('en-IN')} received! Project kickoff initiated. Payment Ref: ${verifyRes.paymentId || order.orderId}`);
+        setQuotation((prev) => prev ? {
+          ...prev,
+          status: 'Accepted',
+          isAdvancePaid: true,
+          advancePaidAt: new Date().toISOString()
+        } : null);
+        setDecisionType(null);
+      } else {
+        setCashfreeError(`Payment status: ${verifyRes.message || 'Payment was not completed. Please try again.'}`);
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error processing Cashfree checkout';
+      setCashfreeError(msg);
+    } finally {
+      setIsPayingWithCashfree(false);
+    }
+  };
 
   const handleDecisionSubmit = async () => {
     if (!secureToken || !decisionType) return;
@@ -105,9 +149,14 @@ export const PublicQuoteDecisionPage: React.FC = () => {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-8 border-b border-slate-200 dark:border-slate-800 gap-4">
           <div>
-            <div className="flex items-center gap-2 mb-1">
+            <div className="flex items-center gap-2 mb-1 flex-wrap">
               <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Official Proposal</span>
               <Badge status={quotation.status} />
+              {quotation.isAdvancePaid && (
+                <span className="inline-flex items-center gap-1 px-3 py-0.5 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
+                  <CheckCircle2 className="w-3.5 h-3.5" /> Advance Paid (₹{quotation.advancePaymentAmount.toLocaleString('en-IN')})
+                </span>
+              )}
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
               Quotation #{quotation.quotationNumber}
@@ -234,7 +283,10 @@ export const PublicQuoteDecisionPage: React.FC = () => {
             </div>
             <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400 pt-1">
               <span>Advance Payable:</span>
-              <span className="font-semibold text-emerald-600 dark:text-emerald-400">₹{quotation.advancePaymentAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+              <span className={`font-semibold ${quotation.isAdvancePaid ? 'text-emerald-600 dark:text-emerald-400 line-through' : 'text-emerald-600 dark:text-emerald-400'}`}>
+                ₹{quotation.advancePaymentAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                {quotation.isAdvancePaid && ' (PAID)'}
+              </span>
             </div>
             <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400">
               <span>Remaining Balance:</span>
@@ -279,6 +331,48 @@ export const PublicQuoteDecisionPage: React.FC = () => {
                 ? 'By accepting, you confirm approval of the scope and deliverables. Our engineering team will immediately initiate the project plan.'
                 : 'Please provide any feedback or constraints regarding why this quotation does not fit your requirements.'}
             </p>
+
+            {/* Cashfree Advance Payment Option */}
+            {decisionType === 'accept' && quotation.advancePaymentAmount > 0 && !quotation.isAdvancePaid && (
+              <div className="p-4 rounded-2xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold uppercase tracking-wider text-blue-700 dark:text-blue-300 flex items-center gap-1.5">
+                    <CreditCard className="w-4 h-4" /> Advance Milestone Payment
+                  </span>
+                  <span className="text-base font-extrabold text-blue-900 dark:text-blue-200">
+                    ₹{quotation.advancePaymentAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                  </span>
+                </div>
+                <p className="text-[11px] text-blue-800/80 dark:text-blue-300/80 leading-relaxed">
+                  Pay instantly via Cashfree Gateway (UPI, Cards, NetBanking). Your project will be provisioned immediately and kickoff milestone marked paid.
+                </p>
+
+                {cashfreeError && (
+                  <div className="p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-900 text-rose-700 dark:text-rose-300 text-xs">
+                    {cashfreeError}
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  disabled={isPayingWithCashfree}
+                  onClick={handlePayAdvanceWithCashfree}
+                  className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold text-xs shadow-md shadow-blue-500/25 flex items-center justify-center gap-2 cursor-pointer transition-all"
+                >
+                  {isPayingWithCashfree ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin shrink-0" />
+                      Connecting to Cashfree Gateway...
+                    </>
+                  ) : (
+                    <>
+                      <Lock className="w-3.5 h-3.5" />
+                      Pay ₹{quotation.advancePaymentAmount.toLocaleString('en-IN')} via Cashfree &amp; Start
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
 
             <div>
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">

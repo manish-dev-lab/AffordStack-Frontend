@@ -279,15 +279,6 @@ export const UserProfilePage: React.FC = () => {
                   </p>
                 </div>
               </div>
-
-              <div className="flex items-center gap-2">
-                <Link
-                  to="/user/dashboard"
-                  className="px-4 py-2 rounded-xl bg-blue-50 dark:bg-blue-950/60 hover:bg-blue-100 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-300 font-bold text-xs border border-blue-200 dark:border-blue-900 flex items-center gap-1.5 transition-colors"
-                >
-                  <FolderKanban className="w-4 h-4" /> View Enquiries &amp; Projects
-                </Link>
-              </div>
             </div>
 
             {/* Profile Information Section */}
