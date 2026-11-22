@@ -13,7 +13,7 @@ export const AboutPage: React.FC = () => {
             Engineering Excellence, Academic Guidance &amp; Developer Support
           </h1>
           <p className="mt-6 text-base sm:text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
-            We are a team of senior software architects, full-stack developers, and academic mentors dedicated to delivering real-world code that performs under pressure.
+            Welcome to <span className="text-white font-bold">AffordStack</span>. We are a team of senior software architects, full-stack developers, and academic mentors dedicated to delivering real-world custom software and project mentoring at market-leading affordable rates.
           </p>
         </div>
       </section>
@@ -60,10 +60,10 @@ export const AboutPage: React.FC = () => {
             Bridging Industry Architecture and Academic Practicality
           </h2>
           <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed">
-            Founded by veteran engineers with hands-on enterprise experience in Microsoft .NET, PostgreSQL, and modern React, our consultancy was formed to address a major gap in the tech ecosystem: developers and students often lack dedicated, professional support for real-world architecture.
+            Founded by veteran engineers with hands-on enterprise experience in Microsoft .NET, PostgreSQL, and modern React, <span className="font-semibold text-slate-900 dark:text-white">AffordStack</span> was formed to eliminate excessive agency markups and provide transparent, high-performance custom development for everyone.
           </p>
           <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed">
-            Today, we serve a dual mission: empowering businesses with bespoke, high-efficiency enterprise software, and coaching university students to achieve academic distinction through industry-standard software engineering.
+            Today, we serve a dual mission: empowering businesses with bespoke, high-efficiency software at truly affordable costs, and coaching university students to achieve academic distinction through industry-standard software engineering.
           </p>
 
           <div className="pt-4 flex flex-wrap gap-4">

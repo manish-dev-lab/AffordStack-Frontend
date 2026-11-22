@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Code, Mail, Phone, MapPin, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Mail, Phone, MapPin, ArrowRight, ShieldCheck } from 'lucide-react';
+import { BrandLogo } from './BrandLogo';
 import { useCompanySettings } from '../../context/SettingsContext';
 
 export const Footer: React.FC = () => {
@@ -34,16 +35,13 @@ export const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mt-16 pt-12 border-t border-slate-900">
           {/* Brand Info */}
           <div className="lg:col-span-2">
-            <Link to="/" className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white">
-                <Code className="w-6 h-6" />
-              </div>
-              <span className="text-xl font-bold tracking-tight text-white">
-                Software<span className="text-blue-500">Services</span>
-              </span>
-            </Link>
+            <BrandLogo
+              to="/"
+              subtitleText="Low-Cost Custom Software & Mentoring"
+              className="[&_span]:text-white"
+            />
             <p className="mt-4 text-sm leading-relaxed text-slate-400 max-w-sm">
-              Premier software engineering consultancy and academic project mentoring platform. Dedicated to delivering production-grade systems, resolving complex technical challenges, and mentoring the next generation of engineers.
+              Premier low-cost custom software development and academic project mentoring platform. Dedicated to delivering production-grade systems, resolving complex technical challenges, and mentoring the next generation of engineers at unbeatable market rates.
             </p>
             <div className="mt-6 space-y-2.5 text-sm">
               <div className="flex items-center gap-3 text-slate-300">
@@ -166,7 +164,7 @@ export const Footer: React.FC = () => {
         {/* Bottom Bar */}
         <div className="mt-14 pt-8 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
           <div>
-            &copy; {new Date().getFullYear()} Software Services Platform. All rights reserved. Built with ASP.NET Core (.NET 10 LTS), React &amp; PostgreSQL.
+            &copy; {new Date().getFullYear()} AffordStack Platform. All rights reserved. Built with ASP.NET Core (.NET 10 LTS), React &amp; PostgreSQL.
           </div>
           <div className="flex items-center gap-6">
             <Link to="/privacy-policy" className="hover:underline">Privacy</Link>

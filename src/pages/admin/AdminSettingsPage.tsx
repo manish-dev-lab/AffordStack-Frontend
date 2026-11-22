@@ -54,13 +54,13 @@ export const AdminSettingsPage: React.FC = () => {
     username: 'softwareservices2001@gmail.com',
     password: '••••••••',
     fromEmail: 'softwareservices2001@gmail.com',
-    fromName: 'Software Services',
+    fromName: 'AffordStack',
     adminNotificationEmail: 'softwareservices2001@gmail.com',
     enableSsl: true,
   });
 
   const [websiteConfig, setWebsiteConfig] = useState<WebsiteConfig>({
-    siteName: 'Software Services Platform',
+    siteName: 'AffordStack Platform',
     supportEmail: 'manishkiran8464@gmail.com',
     supportPhone: '+91 8464992957',
     contactAddress: 'Rc puram Hyd',
@@ -69,7 +69,7 @@ export const AdminSettingsPage: React.FC = () => {
 
   // Company / Contact settings
   const [companySettings, setCompanySettings] = useState({
-    'Company:Name': 'Soft Solutions',
+    'Company:Name': 'AffordStack',
     'Company:Email': 'manishkiran8464@gmail.com',
     'Company:Phone': '+91 8464992957',
     'Company:Address': 'Rc puram Hyd',
@@ -93,12 +93,12 @@ export const AdminSettingsPage: React.FC = () => {
           smtpPort: 587,
           username: '',
           fromEmail: '',
-          fromName: 'Software Services',
+          fromName: 'AffordStack',
           adminNotificationEmail: '',
           enableSsl: true,
         })),
         configurationApi.getWebsiteConfig().catch(() => ({
-          siteName: 'Software Services Platform',
+          siteName: 'AffordStack Platform',
           supportEmail: '',
           supportPhone: '',
           contactAddress: '',

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Lock, User, AlertCircle, AlertTriangle, ArrowRight, Code, Loader2, Eye, EyeOff } from 'lucide-react';
+import { Lock, User, AlertCircle, AlertTriangle, ArrowRight, Loader2, Eye, EyeOff } from 'lucide-react';
+import { BrandLogoIcon } from '../../components/common/BrandLogo';
 
 export const AdminLoginPage: React.FC = () => {
   const [usernameOrEmail, setUsernameOrEmail] = useState('admin');
@@ -52,11 +53,9 @@ export const AdminLoginPage: React.FC = () => {
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10 text-center">
         <Link to="/" className="inline-flex items-center gap-2.5 group">
-          <div className="w-12 h-12 rounded-2xl bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/30 group-hover:scale-105 transition-transform">
-            <Code className="w-6 h-6" />
-          </div>
+          <BrandLogoIcon size={44} />
           <span className="text-2xl font-bold tracking-tight text-white">
-            Software<span className="text-blue-500">Services</span>
+            Afford<span className="text-blue-500">Stack</span>
           </span>
         </Link>
         <h2 className="mt-4 text-xl font-bold text-white tracking-tight">
@@ -91,7 +90,7 @@ export const AdminLoginPage: React.FC = () => {
                   value={usernameOrEmail}
                   onChange={(e) => setUsernameOrEmail(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white text-sm focus:outline-hidden focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
-                  placeholder="admin or admin@softwareservices.com"
+                  placeholder="admin or admin@affordstack.com"
                 />
               </div>
             </div>

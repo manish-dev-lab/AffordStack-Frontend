@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { ThemeToggle } from '../common/ThemeToggle';
+import { BrandLogoIcon } from '../common/BrandLogo';
 import {
   LayoutDashboard,
   Inbox,
@@ -71,10 +72,8 @@ export const AdminLayout: React.FC = () => {
       {/* Mobile Header */}
       <div className="lg:hidden bg-slate-900 text-white px-4 py-3 flex items-center justify-between shadow-md sticky top-0 z-40">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white">
-            <Code className="w-5 h-5" />
-          </div>
-          <span className="font-bold text-base tracking-tight">Admin Console</span>
+          <BrandLogoIcon size={30} />
+          <span className="font-bold text-base tracking-tight">AffordStack <span className="text-blue-400">Admin</span></span>
         </div>
         <div className="flex items-center gap-2">
           <ThemeToggle className="bg-slate-800 border-slate-700 text-slate-200" />
@@ -105,12 +104,10 @@ export const AdminLayout: React.FC = () => {
         {/* Brand Area */}
         <div className="h-16 px-6 border-b border-slate-800/80 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white shadow-xs">
-              <Code className="w-4 h-4" />
-            </div>
+            <BrandLogoIcon size={32} />
             <div>
               <span className="text-base font-bold text-white tracking-tight flex items-center gap-1">
-                Software<span className="text-blue-500">Admin</span>
+                Afford<span className="text-blue-500">Admin</span>
               </span>
             </div>
           </Link>

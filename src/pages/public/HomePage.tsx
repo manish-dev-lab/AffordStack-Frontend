@@ -42,19 +42,19 @@ export const HomePage: React.FC = () => {
           <Reveal animation="fade-up" durationMs={600}>
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/30 mb-8 backdrop-blur-md">
               <Zap className="w-3.5 h-3.5 text-blue-400" />
-              <span>Modern Full-Stack Engineering &bull; .NET 10 LTS &bull; React &bull; PostgreSQL</span>
+              <span>AffordStack Custom Engineering &bull; Unbeatable Low-Cost &bull; .NET 10 LTS &bull; React &bull; PostgreSQL</span>
             </div>
           </Reveal>
 
           <Reveal animation="fade-up" delayMs={150} durationMs={700}>
             <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight max-w-5xl mx-auto leading-[1.12]">
-              Engineering High-Performance <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-sky-300 to-indigo-400">Software Solutions</span> &amp; Academic Mentoring
+              Engineering High-Performance <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-sky-300 to-indigo-400">Custom Software</span> &amp; Mentoring at Unbeatable Value
             </h1>
           </Reveal>
 
           <Reveal animation="fade-up" delayMs={250} durationMs={700}>
             <p className="mt-7 text-lg sm:text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
-              From MCA &amp; B.Tech university project defense to mission-critical ASP.NET Core enterprise systems and on-demand developer bug fixing with live status tracking.
+              From MCA &amp; B.Tech university project defense to bespoke enterprise software and on-demand developer bug fixing — engineered with excellence at transparent, market-beating low prices.
             </p>
           </Reveal>
 
