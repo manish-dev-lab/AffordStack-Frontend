@@ -5,8 +5,8 @@ import { Lock, User, AlertCircle, AlertTriangle, ArrowRight, Loader2, Eye, EyeOf
 import { BrandLogoIcon } from '../../components/common/BrandLogo';
 
 export const AdminLoginPage: React.FC = () => {
-  const [usernameOrEmail, setUsernameOrEmail] = useState('admin');
-  const [password, setPassword] = useState('admin@123');
+  const [usernameOrEmail, setUsernameOrEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [serverErrorPopup, setServerErrorPopup] = useState<string | null>(null);
@@ -140,16 +140,6 @@ export const AdminLoginPage: React.FC = () => {
               )}
             </button>
           </form>
-
-          {/* Dev Hint Box */}
-          <div className="mt-8 pt-6 border-t border-slate-800 text-center">
-            <div className="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800 text-xs text-slate-400 text-left">
-              <span className="font-bold text-blue-400 block mb-1">Development Initial Credentials:</span>
-              <div>Username: <code className="text-white">admin</code></div>
-              <div>Password: <code className="text-white">admin@123</code></div>
-              <div className="mt-1 text-[11px] text-slate-500">Change password in Admin Profile once signed in.</div>
-            </div>
-          </div>
         </div>
 
         <div className="text-center mt-6">
