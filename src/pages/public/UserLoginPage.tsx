@@ -6,6 +6,7 @@ import { userAuthApi } from '../../api/userAuthApi';
 import { useToast } from '../../context/ToastContext';
 import { Reveal } from '../../components/common/Reveal';
 import { CountryCodeSelect } from '../../components/common/CountryCodeSelect';
+import { BrandLogoIcon } from '../../components/common/BrandLogo';
 import {
   User,
   Mail,
@@ -311,11 +312,9 @@ export const UserLoginPage: React.FC = () => {
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden transition-colors">
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10 text-center">
         <Link to="/" className="inline-flex items-center gap-2.5 group">
-          <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-700 via-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/25 group-hover:scale-105 transition-transform">
-            <Code className="w-6 h-6" />
-          </div>
+          <BrandLogoIcon size={44} />
           <span className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-            Software<span className="text-blue-600 dark:text-blue-400">Services</span>
+            Afford<span className="text-blue-600 dark:text-blue-400">Stack</span>
           </span>
         </Link>
         <h2 className="mt-4 text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">

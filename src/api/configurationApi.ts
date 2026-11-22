@@ -22,7 +22,7 @@ export const configurationApi = {
       smtpPort: 587,
       username: '',
       fromEmail: '',
-      fromName: 'Software Services',
+      fromName: 'AffordStack',
       adminNotificationEmail: '',
       enableSsl: true,
     };
@@ -31,7 +31,7 @@ export const configurationApi = {
   getWebsiteConfig: async (): Promise<WebsiteConfig> => {
     const res = await axiosInstance.get<ApiResponse<WebsiteConfig>>('/admin/configurations/website');
     return res.data.data || {
-      siteName: 'Software Services Platform',
+      siteName: 'AffordStack Platform',
       supportEmail: '',
       supportPhone: '',
       contactAddress: '',

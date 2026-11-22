@@ -22,6 +22,7 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
+import { BrandLogo } from './BrandLogo';
 import { useAuth } from '../../context/AuthContext';
 import { useUserAuth } from '../../context/UserAuthContext';
 
@@ -114,23 +115,11 @@ export const Navbar: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-20 items-center">
             {/* Brand Logo */}
-            <Link 
-              to="/" 
+            <BrandLogo
+              to="/"
               onClick={(e) => handleNavClick('/', e)}
-              className="flex items-center gap-2 sm:gap-3 group shrink-0 min-w-0"
-            >
-              <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-tr from-blue-700 via-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform shrink-0">
-                <Code className="w-5 h-5 sm:w-6 sm:h-6" />
-              </div>
-              <div className="truncate">
-                <span className="text-base sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-1">
-                  Software<span className="text-blue-600 dark:text-blue-400 font-extrabold">Services</span>
-                </span>
-                <span className="hidden sm:block text-[10px] sm:text-xs font-medium text-slate-500 dark:text-slate-400 tracking-wider uppercase">
-                  Engineering &amp; Mentoring
-                </span>
-              </div>
-            </Link>
+              subtitleText="Low-Cost Custom Software"
+            />
 
             {/* Desktop Navigation Links */}
             <div className="hidden lg:flex items-center lg:gap-3 xl:gap-5 text-xs xl:text-sm font-semibold">
