@@ -1,0 +1,31 @@
+name: Cloudflare Tunnel Control
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to perform on Cloudflare Tunnel'
+        required: true
+        default: 'stop'
+        type: choice
+        options:
+          - stop
+          - start
+
+jobs:
+  control:
+    runs-on: self-hosted
+    steps:
+      - name: Control Tunnel Container
+        run: |
+          if [ "${{ github.event.inputs.action }}" = "stop" ]; then
+            echo "Stopping Cloudflare Tunnel (taking live site offline)..."
+            docker stop affordstack-cloudflared || true
+          elif [ "${{ github.event.inputs.action }}" = "start" ]; then
+            echo "Starting Cloudflare Tunnel (bringing live site online)..."
+            docker start affordstack-cloudflared || docker run -d \
+              --name affordstack-cloudflared \
+              --restart always \
+              --network app-network \
+              cloudflare/cloudflared:latest tunnel --no-autoupdate run --url http://affordstack-prod-frontend:80 --token eyJhIjoiZWJmYWIzYmYzYTMzMDhiNGFjMTI5ZGU4OWRmNTk5ZjMiLCJzIjoiNGdXRnZybVZadFVPOFBRS3lLS3JlcmNPNGtZOWs5SFZYS1NuTjFtL2sxYz0iLCJ0IjoiNjI2NzIxODctMWU0My00ZjIxLWFlOGYtYzA5MmY0NmUxZjNmIn0=
+          fi
