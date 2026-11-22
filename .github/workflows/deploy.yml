@@ -15,13 +15,13 @@ jobs:
 
       - name: Build & Update Frontend Container
         run: |
-          docker build -t softwareservices-frontend:latest .
-          docker stop frontend_app || true
-          docker rm frontend_app || true
+          docker build -t affordstack-frontend:latest .
+          docker stop affordstack-frontend frontend_app || true
+          docker rm affordstack-frontend frontend_app || true
           docker run -d \
-            --name frontend_app \
+            --name affordstack-frontend \
             --restart always \
             --network app-network \
             -p 80:80 \
-            softwareservices-frontend:latest
+            affordstack-frontend:latest
           docker image prune -f
