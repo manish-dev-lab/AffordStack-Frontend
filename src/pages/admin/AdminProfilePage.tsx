@@ -88,13 +88,13 @@ export const AdminProfilePage: React.FC = () => {
             <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
               <User className="w-4 h-4 text-slate-400 shrink-0" />
               <span className="text-xs text-slate-400">Username:</span>
-              <span className="font-semibold text-slate-800 dark:text-slate-200 text-xs ml-auto font-mono">{user?.username || 'admin'}</span>
+              <span className="font-semibold text-slate-800 dark:text-slate-200 text-xs ml-auto font-mono">{user?.username || '—'}</span>
             </div>
             <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
               <Mail className="w-4 h-4 text-slate-400 shrink-0" />
               <span className="text-xs text-slate-400">Email:</span>
               <span className="font-semibold text-slate-800 dark:text-slate-200 text-xs ml-auto truncate max-w-[130px] font-mono">
-                {user?.email || 'admin@affordstack.com'}
+                {user?.email || '—'}
               </span>
             </div>
             <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
