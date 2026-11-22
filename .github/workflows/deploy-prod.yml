@@ -1,0 +1,37 @@
+name: Deploy Production Frontend & Cloudflare Tunnel to Raspberry Pi
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy-prod:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Build & Deploy Production Frontend Container
+        run: |
+          docker build -f Dockerfile.prod -t affordstack-prod-frontend:latest .
+          docker stop affordstack-prod-frontend || true
+          docker rm affordstack-prod-frontend || true
+          docker run -d \
+            --name affordstack-prod-frontend \
+            --restart always \
+            --network app-network \
+            -p 8080:80 \
+            affordstack-prod-frontend:latest
+
+      - name: Deploy Cloudflare Tunnel Container
+        run: |
+          docker stop affordstack-cloudflared cloudflared || true
+          docker rm affordstack-cloudflared cloudflared || true
+          docker run -d \
+            --name affordstack-cloudflared \
+            --restart always \
+            --network app-network \
+            cloudflare/cloudflared:latest tunnel --no-autoupdate run --url http://affordstack-prod-frontend:80 --token eyJhIjoiZWJmYWIzYmYzYTMzMDhiNGFjMTI5ZGU4OWRmNTk5ZjMiLCJzIjoiNGdXRnZybVZadFVPOFBRS3lLS3JlcmNPNGtZOWs5SFZYS1NuTjFtL2sxYz0iLCJ0IjoiNjI2NzIxODctMWU0My00ZjIxLWFlOGYtYzA5MmY0NmUxZjNmIn0=
+          docker image prune -f
