@@ -9,22 +9,43 @@ export const axiosInstance = axios.create({
   },
 });
 
-// Request Interceptor: Attach JWT Token dynamically (Admin vs User)
+// Request Interceptor: Attach JWT Token with strict isolation between Customer and Admin sessions
 axiosInstance.interceptors.request.use(
   (config) => {
+    const url = config.url || '';
     const adminToken = localStorage.getItem('authToken');
     const userToken = localStorage.getItem('ss_user_token');
 
-    // For user auth endpoints or public user calls, prefer user token
-    let token = adminToken;
-    if (config.url?.startsWith('/user/') || (userToken && !adminToken)) {
-      token = userToken || adminToken;
-    } else if (config.url?.startsWith('/enquiries') && userToken && !adminToken) {
-      token = userToken;
+    let tokenToAttach: string | null = null;
+
+    // 1. Customer User Endpoints: ONLY attach userToken, NEVER fall back to adminToken
+    if (url.startsWith('/user/')) {
+      tokenToAttach = userToken;
+    }
+    // 2. Admin & Staff Endpoints: ONLY attach adminToken, NEVER fall back to userToken
+    else if (
+      url.startsWith('/auth/') ||
+      url.startsWith('/admin') ||
+      url.startsWith('/configurations') ||
+      url.startsWith('/dashboard') ||
+      url.startsWith('/customers') ||
+      url.startsWith('/payments') ||
+      url.startsWith('/users')
+    ) {
+      tokenToAttach = adminToken;
+    }
+    // 3. Other protected resources (enquiries/quotations/projects):
+    // Determine context strictly based on current window path
+    else if (url.startsWith('/enquiries') || url.startsWith('/quotations') || url.startsWith('/projects')) {
+      if (typeof window !== 'undefined' && window.location.pathname.startsWith('/admin')) {
+        tokenToAttach = adminToken;
+      } else {
+        tokenToAttach = userToken;
+      }
     }
 
-    if (token && config.headers) {
-      config.headers.Authorization = `Bearer ${token}`;
+    if (tokenToAttach && config.headers) {
+      config.headers.Authorization = `Bearer ${tokenToAttach}`;
     }
     return config;
   },
@@ -44,22 +65,32 @@ axiosInstance.interceptors.response.use(
       error,
     });
 
-    // 1. Session expiration: redirect to appropriate login if unauthorized
-    if (error.response?.status === 401) {
-      if (window.location.pathname.startsWith('/admin') && window.location.pathname !== '/admin/login') {
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('authUser');
-        window.location.href = '/admin/login';
-      } else if (window.location.pathname.startsWith('/user') && window.location.pathname !== '/user/login') {
+    // 1. Session expiration: redirect to appropriate login if unauthorized or forbidden
+    const status = error.response?.status;
+    if (status === 401 || status === 403) {
+      const isUserEndpoint = error.config?.url?.startsWith('/user/');
+      const isAdminEndpoint =
+        error.config?.url?.startsWith('/admin') ||
+        error.config?.url?.startsWith('/auth/') ||
+        (typeof window !== 'undefined' && window.location.pathname.startsWith('/admin'));
+
+      if (isUserEndpoint) {
         localStorage.removeItem('ss_user_token');
         localStorage.removeItem('ss_user');
-        window.location.href = '/user/login';
+        if (typeof window !== 'undefined' && window.location.pathname.startsWith('/user') && window.location.pathname !== '/user/login') {
+          window.location.href = '/user/login';
+        }
+      } else if (isAdminEndpoint) {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('authUser');
+        if (typeof window !== 'undefined' && window.location.pathname.startsWith('/admin') && window.location.pathname !== '/admin/login') {
+          window.location.href = '/admin/login';
+        }
       }
     }
 
     // 2. Extract human-readable error message from backend
     let friendlyMessage = '';
-    const status = error.response?.status;
     const resData = error.response?.data;
 
     let isServerOrTechnicalError = false;

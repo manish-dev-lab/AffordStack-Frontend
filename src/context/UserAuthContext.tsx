@@ -33,17 +33,21 @@ export const UserAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const isUserAuthenticated = !!token && !!user;
 
   useEffect(() => {
-    if (token) {
-      userAuthApi.getProfile()
-        .then((profile) => {
-          setUser(profile);
-          localStorage.setItem('ss_user', JSON.stringify(profile));
-        })
-        .catch(() => {
-          // Token expired or invalid
-          logout();
-        });
+    if (!token) {
+      setUser(null);
+      localStorage.removeItem('ss_user');
+      return;
     }
+
+    userAuthApi.getProfile()
+      .then((profile) => {
+        setUser(profile);
+        localStorage.setItem('ss_user', JSON.stringify(profile));
+      })
+      .catch(() => {
+        // Token expired or invalid
+        logout();
+      });
   }, [token]);
 
   const handleAuthSuccess = (res: UserLoginResponse) => {
