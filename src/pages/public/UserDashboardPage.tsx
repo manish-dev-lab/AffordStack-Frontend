@@ -31,6 +31,21 @@ import {
   Lock
 } from 'lucide-react';
 
+const formatISTDateTime = (dateVal: string | Date | undefined | null) => {
+  if (!dateVal) return 'N/A';
+  const str = typeof dateVal === 'string' ? dateVal : dateVal.toISOString();
+  const d = new Date(!str.endsWith('Z') && !str.includes('+') ? `${str}Z` : str);
+  return d.toLocaleString('en-IN', {
+    timeZone: 'Asia/Kolkata',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true
+  });
+};
+
 export const UserDashboardPage: React.FC = () => {
   const { user, logout, refreshProfile } = useUserAuth();
   const navigate = useNavigate();
@@ -303,13 +318,13 @@ export const UserDashboardPage: React.FC = () => {
                                   <div
                                     key={m.id || idx}
                                     className={`p-3 rounded-xl text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 border ${
-                                      m.isCompleted
+                                      m.isCompleted || m.isPaid
                                         ? 'bg-emerald-50/80 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-900 text-emerald-900 dark:text-emerald-200'
                                         : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300'
                                     }`}
                                   >
                                     <div className="flex items-center gap-2 truncate">
-                                      {m.isCompleted ? (
+                                      {m.isCompleted || m.isPaid ? (
                                         <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                                       ) : (
                                         <Clock className="w-4 h-4 text-slate-400 shrink-0" />
@@ -348,11 +363,11 @@ export const UserDashboardPage: React.FC = () => {
                                       )}
 
                                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 ${
-                                        m.isCompleted
+                                        m.isCompleted || m.isPaid
                                           ? 'bg-emerald-200 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200'
                                           : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
                                       }`}>
-                                        {m.isCompleted ? 'Delivered' : 'In Progress'}
+                                        {m.isCompleted || m.isPaid ? 'Completed' : 'In Progress'}
                                       </span>
                                     </div>
                                   </div>
@@ -600,7 +615,7 @@ export const UserDashboardPage: React.FC = () => {
                             {p.projectTitle || (p.quotationNumber ? `Quotation #${p.quotationNumber}` : 'Custom Software Service')}
                           </div>
                           <div className="text-[11px] text-slate-400 mt-0.5">
-                            {new Date(p.paymentDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })} &bull; {p.paymentMethod || 'Cashfree PG'}
+                            {formatISTDateTime(p.paymentDate)} &bull; {p.paymentMethod || 'Online Payment'}
                           </div>
                         </div>
                         <div className="flex items-center justify-between pt-1">
@@ -623,7 +638,7 @@ export const UserDashboardPage: React.FC = () => {
                     <table className="w-full text-left text-xs">
                       <thead className="bg-slate-50 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800 uppercase font-bold text-[11px] tracking-wider">
                         <tr>
-                          <th className="p-4">Date</th>
+                          <th className="p-4">Date &amp; Time (IST)</th>
                           <th className="p-4">Reference / Order ID</th>
                           <th className="p-4">Description</th>
                           <th className="p-4">Amount</th>
@@ -636,7 +651,7 @@ export const UserDashboardPage: React.FC = () => {
                         {payments.map((p) => (
                           <tr key={p.id} className="hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors">
                             <td className="p-4 whitespace-nowrap text-slate-500 font-medium">
-                              {new Date(p.paymentDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                              {formatISTDateTime(p.paymentDate)}
                             </td>
                             <td className="p-4 font-mono font-bold text-slate-900 dark:text-white">
                               {p.cashfreeOrderId || p.transactionReference || `#PAY-${p.id}`}
@@ -795,9 +810,9 @@ export const UserDashboardPage: React.FC = () => {
                   </span>
                 </div>
                 <div>
-                  <span className="text-slate-400 block text-[10px] uppercase font-bold">Payment Date</span>
+                  <span className="text-slate-400 block text-[10px] uppercase font-bold">Payment Date &amp; Time (IST)</span>
                   <span className="font-semibold text-slate-900 dark:text-white">
-                    {new Date(selectedReceipt.paymentDate).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}
+                    {formatISTDateTime(selectedReceipt.paymentDate)}
                   </span>
                 </div>
                 <div>
@@ -809,7 +824,7 @@ export const UserDashboardPage: React.FC = () => {
                 <div>
                   <span className="text-slate-400 block text-[10px] uppercase font-bold">Payment Method</span>
                   <span className="font-semibold text-slate-900 dark:text-white">
-                    {selectedReceipt.paymentMethod || 'Cashfree PG'}
+                    {selectedReceipt.paymentMethod || 'Online Payment'}
                   </span>
                 </div>
               </div>

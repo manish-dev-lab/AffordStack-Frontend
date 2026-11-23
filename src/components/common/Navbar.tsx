@@ -30,8 +30,10 @@ export const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [servicesDropdown, setServicesDropdown] = useState(false);
   const [userDropdown, setUserDropdown] = useState(false);
+  const [mobileUserDropdown, setMobileUserDropdown] = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const mobileUserMenuRef = useRef<HTMLDivElement>(null);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -57,13 +59,17 @@ export const Navbar: React.FC = () => {
     setIsOpen(false);
     setServicesDropdown(false);
     setUserDropdown(false);
+    setMobileUserDropdown(false);
   }, [location.pathname]);
 
-  // Click outside listener for user avatar dropdown
+  // Click outside listener for user avatar dropdown (both desktop and mobile)
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
         setUserDropdown(false);
+      }
+      if (mobileUserMenuRef.current && !mobileUserMenuRef.current.contains(event.target as Node)) {
+        setMobileUserDropdown(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -75,6 +81,7 @@ export const Navbar: React.FC = () => {
     setIsOpen(false);
     setServicesDropdown(false);
     setUserDropdown(false);
+    setMobileUserDropdown(false);
 
     if (location.pathname === path) {
       e?.preventDefault();
@@ -87,6 +94,7 @@ export const Navbar: React.FC = () => {
     setIsOpen(false);
     setServicesDropdown(false);
     setUserDropdown(false);
+    setMobileUserDropdown(false);
 
     if (location.pathname === '/track-enquiry' || location.pathname === '/track') {
       e.preventDefault();
@@ -102,6 +110,7 @@ export const Navbar: React.FC = () => {
 
   const handleUserSignOut = () => {
     setUserDropdown(false);
+    setMobileUserDropdown(false);
     setIsOpen(false);
     userLogout();
     navigate('/user/login');
@@ -264,83 +273,99 @@ export const Navbar: React.FC = () => {
             <div className="hidden lg:flex items-center gap-1.5 xl:gap-2.5 shrink-0 whitespace-nowrap">
               <ThemeToggle />
 
-              {/* Client Account: Avatar Dropdown (When Logged In) */}
-              {isUserAuthenticated ? (
-                <div className="relative shrink-0" ref={userMenuRef}>
-                  <button
-                    type="button"
-                    onClick={() => setUserDropdown((prev) => !prev)}
-                    className="flex items-center gap-1.5 py-1.5 px-2 xl:px-2.5 rounded-full bg-blue-50 dark:bg-blue-950/60 hover:bg-blue-100 dark:hover:bg-blue-900/60 border border-blue-200/80 dark:border-blue-900 transition-colors group cursor-pointer focus:outline-hidden shrink-0"
-                    title={`${clientUser?.fullName || 'User'} - Click for Account Menu`}
-                  >
-                    <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-blue-600 via-indigo-600 to-blue-700 text-white flex items-center justify-center font-bold text-xs shadow-xs uppercase shrink-0">
+              {/* Client Account: Round Avatar Dropdown (Always visible on Desktop) */}
+              <div className="relative shrink-0" ref={userMenuRef}>
+                <button
+                  type="button"
+                  onClick={() => setUserDropdown((prev) => !prev)}
+                  className="w-9 h-9 rounded-full flex items-center justify-center transition-all cursor-pointer focus:outline-hidden shrink-0 border border-slate-200 dark:border-slate-800 hover:ring-2 hover:ring-blue-500/30 shadow-xs"
+                  title={isUserAuthenticated ? `${clientUser?.fullName || 'User'} - Click for Account Menu` : 'Guest Account - Click to Sign In'}
+                >
+                  {isUserAuthenticated ? (
+                    <div className="w-full h-full rounded-full bg-gradient-to-tr from-blue-600 via-indigo-600 to-blue-700 text-white flex items-center justify-center font-extrabold text-xs uppercase shadow-xs">
                       {userInitial}
                     </div>
-                    <span className="text-xs font-bold text-slate-800 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 max-w-[80px] xl:max-w-[110px] truncate">
-                      {clientUser?.fullName?.split(' ')[0] || 'Account'}
-                    </span>
-                    <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 shrink-0 ${userDropdown ? 'rotate-180' : ''}`} />
-                  </button>
-
-                  {/* Dropdown Menu */}
-                  {userDropdown && (
-                    <div className="absolute right-0 top-full mt-2 w-64 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 p-2 animate-in fade-in slide-in-from-top-2 duration-150 z-50">
-                      {/* User Header */}
-                      <div className="px-3 py-2.5 border-b border-slate-100 dark:border-slate-800">
-                        <div className="text-sm font-extrabold text-slate-900 dark:text-white truncate">
-                          {clientUser?.fullName || 'Client User'}
-                        </div>
-                        <div className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">
-                          {clientUser?.email}
-                        </div>
-                      </div>
-
-                      {/* Menu Items */}
-                      <div className="py-1 space-y-1">
-                        <Link
-                          to="/user/dashboard"
-                          onClick={(e) => handleNavClick('/user/dashboard', e)}
-                          className="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-slate-800/80 hover:text-blue-600 dark:hover:text-blue-400 rounded-xl transition-colors cursor-pointer"
-                        >
-                          <FolderKanban className="w-4 h-4 text-blue-500" />
-                          <span>Dashboard</span>
-                        </Link>
-
-                        <Link
-                          to="/user/profile"
-                          onClick={(e) => handleNavClick('/user/profile', e)}
-                          className="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-slate-800/80 hover:text-blue-600 dark:hover:text-blue-400 rounded-xl transition-colors cursor-pointer"
-                        >
-                          <User className="w-4 h-4 text-indigo-500" />
-                          <span>Profile &amp; Settings</span>
-                        </Link>
-                      </div>
-
-                      {/* Sign Out */}
-                      <div className="pt-1 border-t border-slate-100 dark:border-slate-800">
-                        <button
-                          type="button"
-                          onClick={handleUserSignOut}
-                          className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition-colors cursor-pointer text-left"
-                        >
-                          <LogOut className="w-4 h-4" />
-                          <span>Sign Out</span>
-                        </button>
-                      </div>
+                  ) : (
+                    <div className="w-full h-full rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 flex items-center justify-center">
+                      <User className="w-4 h-4" />
                     </div>
                   )}
-                </div>
-              ) : (
-                <Link
-                  to="/user/login"
-                  onClick={(e) => handleNavClick('/user/login', e)}
-                  className="text-xs font-semibold text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-1.5 py-2 px-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-                  title="Client Sign In / Register"
-                >
-                  <LogIn className="w-3.5 h-3.5" />
-                  <span>Sign In</span>
-                </Link>
-              )}
+                </button>
+
+                {/* Desktop Account Dropdown */}
+                {userDropdown && (
+                  <div className="absolute right-0 top-full mt-2 w-60 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200/90 dark:border-slate-800 p-2 animate-in fade-in slide-in-from-top-2 duration-150 z-50">
+                    {isUserAuthenticated ? (
+                      <>
+                        <div className="px-3 py-2.5 border-b border-slate-100 dark:border-slate-800">
+                          <div className="text-xs font-bold text-slate-900 dark:text-white truncate">
+                            {clientUser?.fullName || 'Client User'}
+                          </div>
+                          <div className="text-[11px] text-slate-400 truncate mt-0.5">
+                            {clientUser?.email}
+                          </div>
+                        </div>
+
+                        <div className="py-1 space-y-1">
+                          <Link
+                            to="/user/dashboard"
+                            onClick={(e) => handleNavClick('/user/dashboard', e)}
+                            className="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-slate-800/80 hover:text-blue-600 dark:hover:text-blue-400 rounded-xl transition-colors cursor-pointer"
+                          >
+                            <FolderKanban className="w-4 h-4 text-blue-500" />
+                            <span>Dashboard</span>
+                          </Link>
+
+                          <Link
+                            to="/user/profile"
+                            onClick={(e) => handleNavClick('/user/profile', e)}
+                            className="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-slate-800/80 hover:text-blue-600 dark:hover:text-blue-400 rounded-xl transition-colors cursor-pointer"
+                          >
+                            <User className="w-4 h-4 text-indigo-500" />
+                            <span>Profile</span>
+                          </Link>
+                        </div>
+
+                        <div className="pt-1 border-t border-slate-100 dark:border-slate-800">
+                          <button
+                            type="button"
+                            onClick={handleUserSignOut}
+                            className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition-colors cursor-pointer text-left"
+                          >
+                            <LogOut className="w-4 h-4" />
+                            <span>Sign Out</span>
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-800">
+                          <div className="text-xs font-bold text-slate-900 dark:text-white">Customer Account</div>
+                          <div className="text-[11px] text-slate-400">Sign in to track live project status</div>
+                        </div>
+                        <div className="py-1 space-y-1">
+                          <Link
+                            to="/user/login"
+                            onClick={(e) => handleNavClick('/user/login', e)}
+                            className="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-slate-800/80 hover:text-blue-600 dark:hover:text-blue-400 rounded-xl transition-colors cursor-pointer"
+                          >
+                            <LogIn className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                            <span>Sign In</span>
+                          </Link>
+                          <Link
+                            to="/user/login"
+                            onClick={(e) => handleNavClick('/user/login', e)}
+                            className="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-slate-800/80 hover:text-blue-600 dark:hover:text-blue-400 rounded-xl transition-colors cursor-pointer"
+                          >
+                            <Sparkles className="w-4 h-4 text-indigo-500" />
+                            <span>Create Account</span>
+                          </Link>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
 
               {/* Admin Portal Button */}
               <Link
@@ -363,38 +388,115 @@ export const Navbar: React.FC = () => {
               </Link>
             </div>
 
-            {/* Mobile Menu Button & Quick Actions */}
-            <div className="lg:hidden flex items-center gap-1 sm:gap-2 shrink-0">
+            {/* Mobile Actions: ThemeToggle, Persistent Round Avatar Icon with Dropdown, Hamburger Button */}
+            <div className="lg:hidden flex items-center gap-2 shrink-0">
               <ThemeToggle />
 
-              {/* If logged in on mobile, show user initial avatar circle linking to profile/dashboard */}
-              {isUserAuthenticated && (
-                <Link
-                  to="/user/profile"
-                  onClick={() => setIsOpen(false)}
-                  className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-xs shadow-xs uppercase cursor-pointer shrink-0"
-                  title="My Profile"
+              {/* Persistent Round Avatar Circle with Dropdown on Mobile (Human icon if guest, initial if logged in) */}
+              <div className="relative shrink-0" ref={mobileUserMenuRef}>
+                <button
+                  type="button"
+                  onClick={() => setMobileUserDropdown((prev) => !prev)}
+                  className="w-8 h-8 rounded-full flex items-center justify-center transition-all cursor-pointer focus:outline-hidden shrink-0 border border-slate-200 dark:border-slate-800 shadow-xs"
+                  aria-label="Account Menu"
                 >
-                  {userInitial}
-                </Link>
-              )}
+                  {isUserAuthenticated ? (
+                    <div className="w-full h-full rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-extrabold text-xs uppercase shadow-xs">
+                      {userInitial}
+                    </div>
+                  ) : (
+                    <div className="w-full h-full rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center">
+                      <User className="w-4 h-4" />
+                    </div>
+                  )}
+                </button>
 
-              <Link
-                to="/track-enquiry"
-                onClick={handleTrackClick}
-                className="hidden sm:inline-flex p-1.5 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
-                title="Track Live Enquiry"
-              >
-                <Search className="w-4 h-4" />
-              </Link>
-
-              <Link
-                to="/request-a-quote"
-                onClick={(e) => handleNavClick('/request-a-quote', e)}
-                className="hidden sm:inline-flex bg-blue-600 text-white text-xs font-bold px-2.5 py-1.5 rounded-xl cursor-pointer"
-              >
-                Quote
-              </Link>
+                {/* Mobile Account Dropdown */}
+                {mobileUserDropdown && (
+                  <div className="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 p-2 animate-in fade-in slide-in-from-top-2 duration-150 z-50">
+                    {isUserAuthenticated ? (
+                      <>
+                        <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-800">
+                          <div className="text-xs font-bold text-slate-900 dark:text-white truncate">
+                            {clientUser?.fullName || 'Client User'}
+                          </div>
+                          <div className="text-[11px] text-slate-400 truncate">
+                            {clientUser?.email}
+                          </div>
+                        </div>
+                        <div className="py-1 space-y-1">
+                          <Link
+                            to="/user/dashboard"
+                            onClick={(e) => {
+                              setMobileUserDropdown(false);
+                              handleNavClick('/user/dashboard', e);
+                            }}
+                            className="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-slate-800 rounded-xl transition-colors"
+                          >
+                            <FolderKanban className="w-4 h-4 text-blue-500" />
+                            <span>Dashboard</span>
+                          </Link>
+                          <Link
+                            to="/user/profile"
+                            onClick={(e) => {
+                              setMobileUserDropdown(false);
+                              handleNavClick('/user/profile', e);
+                            }}
+                            className="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-slate-800 rounded-xl transition-colors"
+                          >
+                            <User className="w-4 h-4 text-indigo-500" />
+                            <span>Profile</span>
+                          </Link>
+                        </div>
+                        <div className="pt-1 border-t border-slate-100 dark:border-slate-800">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setMobileUserDropdown(false);
+                              handleUserSignOut();
+                            }}
+                            className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition-colors text-left"
+                          >
+                            <LogOut className="w-4 h-4" />
+                            <span>Sign Out</span>
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-800">
+                          <div className="text-xs font-bold text-slate-900 dark:text-white">Account</div>
+                          <div className="text-[11px] text-slate-400">Sign in to track enquiries</div>
+                        </div>
+                        <div className="py-1 space-y-1">
+                          <Link
+                            to="/user/login"
+                            onClick={(e) => {
+                              setMobileUserDropdown(false);
+                              handleNavClick('/user/login', e);
+                            }}
+                            className="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-slate-800 rounded-xl transition-colors"
+                          >
+                            <LogIn className="w-4 h-4 text-blue-500" />
+                            <span>Sign In</span>
+                          </Link>
+                          <Link
+                            to="/user/login"
+                            onClick={(e) => {
+                              setMobileUserDropdown(false);
+                              handleNavClick('/user/login', e);
+                            }}
+                            className="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-slate-800 rounded-xl transition-colors"
+                          >
+                            <Sparkles className="w-4 h-4 text-indigo-500" />
+                            <span>Create Account</span>
+                          </Link>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
 
               <button
                 type="button"
@@ -409,7 +511,7 @@ export const Navbar: React.FC = () => {
         </div>
       </nav>
 
-      {/* Mobile Drawer Menu */}
+      {/* Mobile Drawer Menu (Public Navigation Only - User Profile removed as requested) */}
       {isOpen && (
         <div 
           className="fixed inset-x-0 top-20 bottom-0 z-40 lg:hidden flex flex-col bg-white dark:bg-slate-950 border-t border-slate-200/80 dark:border-slate-800 shadow-2xl overflow-y-auto overscroll-contain animate-in slide-in-from-top-2 duration-150"
@@ -426,64 +528,6 @@ export const Navbar: React.FC = () => {
             >
               Home
             </Link>
-
-            {/* 2. Customer Enquiries & Account Profile */}
-            {isUserAuthenticated ? (
-              <div className="p-3.5 rounded-2xl bg-blue-50/80 dark:bg-blue-950/40 border border-blue-200/70 dark:border-blue-900/60 space-y-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-blue-600 via-indigo-600 to-blue-700 text-white flex items-center justify-center font-bold text-xs uppercase shadow-xs shrink-0">
-                    {userInitial}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="text-sm font-extrabold text-slate-900 dark:text-white truncate">
-                      {clientUser?.fullName || 'Client User'}
-                    </div>
-                    <div className="text-xs text-slate-500 dark:text-slate-400 truncate">
-                      {clientUser?.email}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2 pt-1 border-t border-blue-200/60 dark:border-blue-900/50">
-                  <Link
-                    to="/user/dashboard"
-                    onClick={(e) => handleNavClick('/user/dashboard', e)}
-                    className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-white dark:bg-slate-900 text-xs font-bold text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 shadow-xs"
-                  >
-                    <FolderKanban className="w-3.5 h-3.5" /> Dashboard
-                  </Link>
-                  <Link
-                    to="/user/profile"
-                    onClick={(e) => handleNavClick('/user/profile', e)}
-                    className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-white dark:bg-slate-900 text-xs font-bold text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 shadow-xs"
-                  >
-                    <User className="w-3.5 h-3.5" /> Profile
-                  </Link>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={handleUserSignOut}
-                  className="w-full flex items-center justify-center gap-1.5 py-1.5 text-xs font-bold text-rose-600 dark:text-rose-400 hover:underline"
-                >
-                  <LogOut className="w-3.5 h-3.5" /> Sign Out
-                </button>
-              </div>
-            ) : (
-              <Link
-                to="/user/login"
-                onClick={(e) => handleNavClick('/user/login', e)}
-                className="flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-sm font-bold text-slate-800 dark:text-slate-100 bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800"
-              >
-                <div className="w-7 h-7 rounded-lg bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
-                  <User className="w-4 h-4" />
-                </div>
-                <div>
-                  <span className="block font-bold">Client Sign In / Register</span>
-                  <span className="block text-[11px] font-normal text-slate-500 dark:text-slate-400">Track all past &amp; live enquiries</span>
-                </div>
-              </Link>
-            )}
 
             {/* 3. Quick Action: Request Quote Banner */}
             <Link

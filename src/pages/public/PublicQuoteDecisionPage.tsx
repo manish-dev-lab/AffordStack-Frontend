@@ -321,10 +321,32 @@ export const PublicQuoteDecisionPage: React.FC = () => {
               <XCircle className="w-4 h-4" /> Decline Proposal
             </button>
             <button
-              onClick={() => { setDecisionType('accept'); setRemarks(''); }}
-              className="w-full sm:w-auto px-8 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm shadow-lg shadow-emerald-600/30 transition-all flex items-center justify-center gap-2 cursor-pointer"
+              onClick={() => {
+                if (quotation.advancePaymentAmount > 0 && !quotation.isAdvancePaid) {
+                  handlePayAdvanceWithCashfree();
+                } else {
+                  setDecisionType('accept');
+                  setRemarks('');
+                }
+              }}
+              disabled={isPayingWithCashfree}
+              className="w-full sm:w-auto px-8 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm shadow-lg shadow-emerald-600/30 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
             >
-              <CheckCircle2 className="w-4 h-4" /> Accept Quotation Proposal
+              {isPayingWithCashfree ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin shrink-0" />
+                  <span>Connecting to Cashfree Gateway...</span>
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>
+                    {quotation.advancePaymentAmount > 0 && !quotation.isAdvancePaid
+                      ? `Accept Proposal & Pay Advance (₹${quotation.advancePaymentAmount.toLocaleString('en-IN')})`
+                      : 'Accept Quotation Proposal'}
+                  </span>
+                </>
+              )}
             </button>
           </div>
         ) : (
