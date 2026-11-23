@@ -217,19 +217,13 @@ export const UserProfilePage: React.FC = () => {
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-10 px-4 sm:px-6 lg:px-8 transition-colors">
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Navigation Breadcrumb */}
-        <div className="flex items-center justify-between">
+        <div>
           <Link
             to="/user/dashboard"
             className="inline-flex items-center gap-2 text-sm font-bold text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" /> Back to Dashboard
           </Link>
-          <button
-            onClick={handleSignOut}
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 px-3 py-1.5 rounded-xl border border-rose-200 dark:border-rose-900 transition-colors cursor-pointer"
-          >
-            <LogOut className="w-3.5 h-3.5" /> Sign Out
-          </button>
         </div>
 
         {/* Status Message Banner with Ref for Auto-Scroll */}
