@@ -1,125 +1,53 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  ArrowRight, 
-  ChevronLeft, 
-  ChevronRight, 
-  Zap, 
-  GraduationCap, 
-  Wrench, 
-  ShieldCheck, 
-  CreditCard,
-  Search,
-  Sparkles,
-  CheckCircle2
-} from 'lucide-react';
+import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 
 interface BannerSlide {
   id: string;
-  tag: string;
-  tagIcon: React.ReactNode;
-  tagColor: string;
+  image: string;
+  alt: string;
+  badge: string;
   title: string;
-  highlightedTitle: string;
-  description: string;
-  primaryCtaText: string;
-  primaryCtaLink: string;
-  secondaryCtaText: string;
-  secondaryCtaLink: string;
-  secondaryIcon?: React.ReactNode;
-  accentGradient: string;
-  stats: { label: string; value: string }[];
+  subtitle: string;
+  link: string;
+  ctaText: string;
 }
 
-const SLIDES: BannerSlide[] = [
+const BANNERS: BannerSlide[] = [
   {
     id: 'enterprise-custom-software',
-    tag: 'ENTERPRISE ARCHITECTURE',
-    tagIcon: <Zap className="w-3.5 h-3.5" />,
-    tagColor: 'text-blue-400 border-blue-500/30 bg-blue-500/10',
-    title: 'High-Performance Custom Software & Web Platforms at ',
-    highlightedTitle: 'Unbeatable Low Cost',
-    description: 'Production-ready .NET 10 LTS APIs, React & TypeScript web applications, and PostgreSQL data pipelines built with clean architecture — saving you 60% compared to typical agencies.',
-    primaryCtaText: 'Request a Custom Quote',
-    primaryCtaLink: '/request-a-quote',
-    secondaryCtaText: 'Track Live Proposal',
-    secondaryCtaLink: '/track-enquiry',
-    secondaryIcon: <Search className="w-4 h-4 text-blue-400" />,
-    accentGradient: 'from-blue-600/30 via-indigo-600/20 to-sky-500/10',
-    stats: [
-      { value: '< 24h', label: 'Quotation Turnaround' },
-      { value: '100%', label: 'Clean Architecture' },
-      { value: '0', label: 'Hidden Maintenance Fees' },
-      { value: '.NET 10', label: 'LTS Modern Stack' }
-    ]
+    image: '/banners/banner-enterprise.jpg',
+    alt: 'AffordStack Enterprise Custom Software Development',
+    badge: 'Enterprise .NET & React',
+    title: 'High-Performance Custom Software & Cloud Platforms',
+    subtitle: 'Scalable .NET 10 LTS APIs, React Web Applications & Clean Architecture at Low Cost',
+    link: '/request-a-quote',
+    ctaText: 'Request a Custom Quote'
   },
   {
-    id: 'student-project-guidance',
-    tag: 'ACADEMIC CONSULTING & VIVA DEFENSE',
-    tagIcon: <GraduationCap className="w-3.5 h-3.5" />,
-    tagColor: 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10',
-    title: 'Final Year Major & Minor Projects with ',
-    highlightedTitle: '100% Viva Success Rate',
-    description: 'Comprehensive 1-on-1 source code explanation, IEEE-standard documentation, system diagrams, and external viva mock drills for MCA, B.Tech, BCA, and M.Tech students.',
-    primaryCtaText: 'Start Your Student Project',
-    primaryCtaLink: '/request-a-quote',
-    secondaryCtaText: 'Explore Student Guidance',
-    secondaryCtaLink: '/services',
-    secondaryIcon: <GraduationCap className="w-4 h-4 text-emerald-400" />,
-    accentGradient: 'from-emerald-600/30 via-teal-600/20 to-blue-500/10',
-    stats: [
-      { value: '100%', label: 'External Viva Success' },
-      { value: '1-on-1', label: 'Live Code Mentoring' },
-      { value: 'Full', label: 'Docs & IEEE Reports' },
-      { value: 'Budget', label: 'Student-Friendly Pricing' }
-    ]
+    id: 'student-academic-mentoring',
+    image: '/banners/banner-students.jpg',
+    alt: 'Academic Project Mentoring & 1-on-1 Viva Preparation',
+    badge: 'MCA & B.Tech Project Guidance',
+    title: '100% Viva Success Rate: Major & Minor Projects',
+    subtitle: '1-on-1 Code Mentoring, IEEE Standards Documentation & Viva Coaching',
+    link: '/services',
+    ctaText: 'Explore Student Projects'
   },
   {
     id: 'developer-bug-fixing',
-    tag: 'ON-DEMAND PROBLEM SOLVING',
-    tagIcon: <Wrench className="w-3.5 h-3.5" />,
-    tagColor: 'text-amber-400 border-amber-500/30 bg-amber-500/10',
-    title: 'Stuck on a Stubborn Bug or Architecture Issue? ',
-    highlightedTitle: 'We Fix It in Hours',
-    description: 'Live pair-debugging with senior architects. From complex EF Core database bottlenecks and memory leaks to Docker container issues and third-party API breakages.',
-    primaryCtaText: 'Get Developer Help Now',
-    primaryCtaLink: '/request-a-quote',
-    secondaryCtaText: 'View Tech Support',
-    secondaryCtaLink: '/services',
-    secondaryIcon: <Wrench className="w-4 h-4 text-amber-400" />,
-    accentGradient: 'from-amber-600/25 via-orange-600/20 to-rose-500/10',
-    stats: [
-      { value: '< 2h', label: 'Initial Triage Response' },
-      { value: '100%', label: 'Root Cause Resolution' },
-      { value: 'Direct', label: 'Senior Engineer Pair-Fix' },
-      { value: 'Fair', label: 'Milestone-Based Billing' }
-    ]
-  },
-  {
-    id: 'cashfree-milestone-payments',
-    tag: 'SECURE CASHFREE PAYMENTS',
-    tagIcon: <CreditCard className="w-3.5 h-3.5" />,
-    tagColor: 'text-purple-400 border-purple-500/30 bg-purple-500/10',
-    title: 'Zero Financial Risk: Pay Strictly with ',
-    highlightedTitle: 'Milestone-Based Approvals',
-    description: 'Powered by Cashfree Payments with UPI, NetBanking, and Cards. Pay an agreed advance to kickoff, then inspect source code and deliverables before releasing each milestone.',
-    primaryCtaText: 'View Transparent Process',
-    primaryCtaLink: '/about',
-    secondaryCtaText: 'Track Your Project',
-    secondaryCtaLink: '/track-enquiry',
-    secondaryIcon: <ShieldCheck className="w-4 h-4 text-purple-400" />,
-    accentGradient: 'from-purple-600/30 via-indigo-600/20 to-blue-500/10',
-    stats: [
-      { value: 'UPI / Cards', label: 'Cashfree PG Supported' },
-      { value: 'Instant', label: 'Digital GST Invoices' },
-      { value: '100%', label: 'Deliverable Transparency' },
-      { value: 'Zero', label: 'Advance Lock-in Risk' }
-    ]
+    image: '/banners/banner-debugging.jpg',
+    alt: 'On-Demand Developer Bug Fixing & Milestone Engineering',
+    badge: 'Expert Developer Support',
+    title: 'Fast Bug Fixing, Database Tuning & Milestone Billing',
+    subtitle: 'Resolve Critical Production Bugs & Pay Zero-Risk Milestone by Milestone',
+    link: '/request-a-quote',
+    ctaText: 'Get Bug Fixed Fast'
   }
 ];
 
 const INITIAL_DELAY_MS = 3500; // Delay before first auto-scroll starts
-const CYCLE_INTERVAL_MS = 5500; // Normal cycle interval
+const CYCLE_INTERVAL_MS = 5000; // Normal Amazon auto-scroll interval
 
 export const HeroBannerCarousel: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -127,16 +55,16 @@ export const HeroBannerCarousel: React.FC = () => {
   const [hasStartedAuto, setHasStartedAuto] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Touch swipe handling
+  // Touch swipe handling for iPhone / Mobile
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
 
   const nextSlide = useCallback(() => {
-    setCurrentIndex((prev) => (prev + 1) % SLIDES.length);
+    setCurrentIndex((prev) => (prev + 1) % BANNERS.length);
   }, []);
 
   const prevSlide = useCallback(() => {
-    setCurrentIndex((prev) => (prev - 1 + SLIDES.length) % SLIDES.length);
+    setCurrentIndex((prev) => (prev - 1 + BANNERS.length) % BANNERS.length);
   }, []);
 
   // Initial delay trigger
@@ -148,7 +76,7 @@ export const HeroBannerCarousel: React.FC = () => {
     return () => clearTimeout(initTimer);
   }, []);
 
-  // Recurring auto-scroll (Amazon style: pauses on hover)
+  // Recurring auto-scroll (Amazon style: pauses on hover/touch)
   useEffect(() => {
     if (!hasStartedAuto || isPaused) {
       if (timerRef.current) clearInterval(timerRef.current);
@@ -166,6 +94,7 @@ export const HeroBannerCarousel: React.FC = () => {
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
+    setIsPaused(true);
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
@@ -173,9 +102,10 @@ export const HeroBannerCarousel: React.FC = () => {
   };
 
   const handleTouchEnd = () => {
+    setIsPaused(false);
     if (touchStartX.current === null || touchEndX.current === null) return;
     const diff = touchStartX.current - touchEndX.current;
-    if (Math.abs(diff) > 50) {
+    if (Math.abs(diff) > 40) {
       if (diff > 0) {
         nextSlide();
       } else {
@@ -186,119 +116,112 @@ export const HeroBannerCarousel: React.FC = () => {
     touchEndX.current = null;
   };
 
-  const currentSlide = SLIDES[currentIndex];
-
   return (
-    <section 
-      className="relative overflow-hidden bg-slate-950 text-white pt-20 pb-28 select-none"
+    <section
+      className="relative w-full overflow-hidden bg-slate-950 select-none"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
-      aria-label="AffordStack Highlights Carousel"
+      aria-label="AffordStack Highlights Banners"
     >
-      {/* Background Ambient Glows that transition with current slide */}
-      <div 
-        className={`absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-gradient-to-r ${currentSlide.accentGradient} blur-[140px] rounded-full pointer-events-none transition-all duration-1000`} 
-      />
-      <div className="absolute top-10 right-10 w-80 h-80 bg-blue-600/10 blur-[120px] rounded-full pointer-events-none" />
+      {/* 
+        HEIGHT CONSTRAINT:
+        - min-h-[52vh] on mobile / iPhone ensures the banner height is strictly NOT less than half the screen height.
+        - Scales seamlessly to h-[54vh] on small screens, h-[60vh] on tablets, and max 640px on large desktop monitors.
+      */}
+      <div className="relative w-full min-h-[52vh] sm:min-h-[54vh] md:min-h-[58vh] lg:h-[62vh] max-h-[640px] overflow-hidden">
+        {/* Banner Images Track */}
+        <div
+          className="flex h-full w-full transition-transform duration-700 ease-out"
+          style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+        >
+          {BANNERS.map((banner, index) => (
+            <div
+              key={banner.id}
+              className="relative w-full h-full shrink-0 flex items-center justify-center"
+            >
+              <Link
+                to={banner.link}
+                className="block w-full h-full relative cursor-pointer group"
+                tabIndex={index === currentIndex ? 0 : -1}
+                title={banner.title}
+              >
+                {/* Full-bleed Banner Image */}
+                <img
+                  src={banner.image}
+                  alt={banner.alt}
+                  className="w-full h-full object-cover object-center transition-transform duration-1000 group-hover:scale-[1.02]"
+                  loading={index === 0 ? 'eager' : 'lazy'}
+                />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Navigation Arrow Left */}
+                {/* Subtle dark vignette overlay for depth and contrast */}
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-black/30 sm:from-slate-950/85 sm:via-transparent sm:to-transparent pointer-events-none" />
+
+                {/* Amazon-style Bottom Blend Gradient into Page */}
+                <div className="absolute inset-x-0 bottom-0 h-24 sm:h-36 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent pointer-events-none" />
+
+                {/* Sleek Content Overlay Card */}
+                <div className="absolute left-4 right-4 sm:left-12 sm:right-auto bottom-6 sm:bottom-10 max-w-xl z-20 pointer-events-auto">
+                  <div className="p-4 sm:p-6 rounded-2xl bg-slate-950/80 dark:bg-slate-900/85 backdrop-blur-md border border-white/10 shadow-2xl space-y-2 sm:space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                      {banner.badge}
+                    </span>
+                    <h2 className="text-base sm:text-2xl font-black text-white tracking-tight leading-snug">
+                      {banner.title}
+                    </h2>
+                    <p className="text-xs sm:text-sm text-slate-300 line-clamp-2 leading-relaxed">
+                      {banner.subtitle}
+                    </p>
+                    <div className="pt-1">
+                      <span className="inline-flex items-center gap-2 text-xs sm:text-sm font-extrabold text-blue-400 group-hover:text-blue-300 transition-colors">
+                        {banner.ctaText}
+                        <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            </div>
+          ))}
+        </div>
+
+        {/* Amazon-style Left Navigation Arrow */}
         <button
-          onClick={prevSlide}
-          aria-label="Previous slide"
-          className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-slate-900/70 hover:bg-slate-800/90 text-slate-300 hover:text-white border border-slate-700/60 backdrop-blur-md flex items-center justify-center transition-all hover:scale-110 active:scale-95 cursor-pointer shadow-lg"
+          onClick={(e) => { e.stopPropagation(); prevSlide(); }}
+          aria-label="Previous banner"
+          className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-slate-900/70 hover:bg-slate-800 text-white/90 hover:text-white border border-white/15 backdrop-blur-md flex items-center justify-center transition-all hover:scale-110 active:scale-95 shadow-xl cursor-pointer"
         >
           <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>
 
-        {/* Navigation Arrow Right */}
+        {/* Amazon-style Right Navigation Arrow */}
         <button
-          onClick={nextSlide}
-          aria-label="Next slide"
-          className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-slate-900/70 hover:bg-slate-800/90 text-slate-300 hover:text-white border border-slate-700/60 backdrop-blur-md flex items-center justify-center transition-all hover:scale-110 active:scale-95 cursor-pointer shadow-lg"
+          onClick={(e) => { e.stopPropagation(); nextSlide(); }}
+          aria-label="Next banner"
+          className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-slate-900/70 hover:bg-slate-800 text-white/90 hover:text-white border border-white/15 backdrop-blur-md flex items-center justify-center transition-all hover:scale-110 active:scale-95 shadow-xl cursor-pointer"
         >
           <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>
 
-        {/* Slide Content Container */}
-        <div className="text-center px-4 sm:px-12 md:px-16 min-h-[460px] sm:min-h-[420px] flex flex-col justify-center">
-          {/* Tag Pill */}
-          <div className="flex justify-center mb-6">
-            <span 
-              className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase border backdrop-blur-md transition-all duration-500 ${currentSlide.tagColor}`}
-            >
-              {currentSlide.tagIcon}
-              <span>{currentSlide.tag}</span>
-            </span>
-          </div>
-
-          {/* Heading */}
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight max-w-5xl mx-auto leading-[1.15] text-white">
-            {currentSlide.title}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-sky-300 to-indigo-400">
-              {currentSlide.highlightedTitle}
-            </span>
-          </h1>
-
-          {/* Description */}
-          <p className="mt-6 text-base sm:text-lg lg:text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
-            {currentSlide.description}
-          </p>
-
-          {/* Action Buttons */}
-          <div className="mt-9 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              to={currentSlide.primaryCtaLink}
-              className="w-full sm:w-auto bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold text-sm sm:text-base px-8 py-3.5 rounded-2xl shadow-xl shadow-blue-600/30 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
-            >
-              {currentSlide.primaryCtaText}
-              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
-            </Link>
-
-            <Link
-              to={currentSlide.secondaryCtaLink}
-              className="w-full sm:w-auto bg-slate-900/80 hover:bg-slate-800 text-slate-200 font-bold text-sm sm:text-base px-7 py-3.5 rounded-2xl border border-slate-700/80 transition-all hover:border-blue-500/50 flex items-center justify-center gap-2 cursor-pointer backdrop-blur-xs"
-            >
-              {currentSlide.secondaryIcon}
-              {currentSlide.secondaryCtaText}
-            </Link>
-          </div>
-        </div>
-
-        {/* Carousel Bottom Indicator Pills (Amazon Style) */}
-        <div className="flex items-center justify-center gap-2.5 mt-8 z-20 relative">
-          {SLIDES.map((slide, idx) => {
+        {/* Bottom Pagination Indicator Pills (Amazon Style) */}
+        <div className="absolute bottom-3 sm:bottom-4 inset-x-0 z-30 flex items-center justify-center gap-2 pointer-events-auto">
+          {BANNERS.map((banner, idx) => {
             const isActive = idx === currentIndex;
             return (
               <button
-                key={slide.id}
-                onClick={() => setCurrentIndex(idx)}
-                aria-label={`Go to slide ${idx + 1}`}
-                className={`transition-all duration-300 rounded-full cursor-pointer h-2.5 ${
+                key={banner.id}
+                onClick={(e) => { e.stopPropagation(); setCurrentIndex(idx); }}
+                aria-label={`Go to banner ${idx + 1}`}
+                className={`transition-all duration-300 rounded-full cursor-pointer h-2 ${
                   isActive
-                    ? 'w-10 bg-gradient-to-r from-blue-500 to-indigo-500 shadow-md shadow-blue-500/50'
-                    : 'w-2.5 bg-slate-700 hover:bg-slate-500'
+                    ? 'w-8 bg-blue-500 shadow-md shadow-blue-500/50'
+                    : 'w-2 bg-white/40 hover:bg-white/70'
                 }`}
               />
             );
           })}
-        </div>
-
-        {/* Metrics Grid Bar below Carousel */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto mt-14 pt-10 border-t border-slate-800/80 text-center">
-          {currentSlide.stats.map((st, i) => (
-            <div key={i} className="transition-all duration-300">
-              <div className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-                {st.value}
-              </div>
-              <div className="text-xs sm:text-sm text-slate-400 mt-1 font-medium">
-                {st.label}
-              </div>
-            </div>
-          ))}
         </div>
       </div>
     </section>
