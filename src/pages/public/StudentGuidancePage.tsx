@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { GraduationCap, CheckCircle2, Award, BookOpen, Terminal, ArrowRight, ShieldCheck } from 'lucide-react';
+import { GraduationCap, CheckCircle2, Award, BookOpen, Terminal, ArrowRight, ArrowLeft, ShieldCheck } from 'lucide-react';
 
 export const StudentGuidancePage: React.FC = () => {
   return (
@@ -8,6 +8,14 @@ export const StudentGuidancePage: React.FC = () => {
       {/* Hero */}
       <section className="bg-slate-950 text-white py-20 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="mb-4">
+            <Link
+              to="/services"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-white transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" /> Back to Services
+            </Link>
+          </div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/20 text-blue-300 border border-blue-400/30 mb-6">
             <GraduationCap className="w-4 h-4" /> Academic Engineering Excellence
           </div>
@@ -15,7 +23,7 @@ export const StudentGuidancePage: React.FC = () => {
             Major &amp; Minor College Project Guidance for MCA, BCA, B.Tech &amp; M.Tech
           </h1>
           <p className="mt-6 text-base sm:text-lg text-slate-300 max-w-3xl leading-relaxed">
-            Stop worrying about your final year project. We mentor you from ground zero: clean architecture design, database modeling, source code walkthroughs, IEEE documentation, and mock viva preparation to ensure top evaluations.
+            Stop worrying about your final year project. We mentor you from ground zero: clean architecture design, database modeling, source code walkthroughs, IEEE documentation, and local setup guide to ensure top evaluations.
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
             <Link
@@ -107,9 +115,9 @@ export const StudentGuidancePage: React.FC = () => {
 
             <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200 dark:border-slate-800 shadow-sm">
               <Award className="w-8 h-8 text-blue-600 dark:text-blue-400 mb-4" />
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white">Viva &amp; Demo Preparation</h3>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">Project Setup &amp; Run Guide</h3>
               <p className="mt-2 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                Rigorous mock viva practice sessions, prediction of top questions asked by external examiners, presentation coaching, and confidence building.
+                Step-by-step local machine setup, environment configuration, database seeding, dependency installation, and running instructions so your project executes seamlessly.
               </p>
             </div>
           </div>
