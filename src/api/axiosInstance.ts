@@ -19,7 +19,11 @@ axiosInstance.interceptors.request.use(
     let tokenToAttach: string | null = null;
 
     // 1. Customer User Endpoints: ONLY attach userToken, NEVER fall back to adminToken
-    if (url.startsWith('/user/')) {
+    if (
+      url.startsWith('/user/') ||
+      url.startsWith('/payments/milestones') ||
+      url.startsWith('/payments/my-payments')
+    ) {
       tokenToAttach = userToken;
     }
     // 2. Admin & Staff Endpoints: ONLY attach adminToken, NEVER fall back to userToken
@@ -29,7 +33,6 @@ axiosInstance.interceptors.request.use(
       url.startsWith('/configurations') ||
       url.startsWith('/dashboard') ||
       url.startsWith('/customers') ||
-      url.startsWith('/payments') ||
       url.startsWith('/users')
     ) {
       tokenToAttach = adminToken;
