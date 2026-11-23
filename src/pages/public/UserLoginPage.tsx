@@ -309,7 +309,16 @@ export const UserLoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden transition-colors">
+    <div className="min-h-[calc(100vh-4rem)] bg-slate-50 dark:bg-slate-950 flex flex-col justify-start sm:justify-center pt-5 pb-12 sm:py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden transition-colors">
+      <div className="w-full max-w-md mx-auto mb-3 flex items-center justify-start relative z-10">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" /> Back to Home
+        </Link>
+      </div>
+
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10 text-center">
         <Link to="/" className="inline-flex items-center gap-2.5 group">
           <BrandLogoIcon size={44} />

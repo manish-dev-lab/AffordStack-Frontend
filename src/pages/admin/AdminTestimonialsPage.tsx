@@ -11,6 +11,8 @@ import {
   AlertCircle,
   Building,
   User,
+  Pencil,
+  Trash2
 } from 'lucide-react';
 
 export const AdminTestimonialsPage: React.FC = () => {
@@ -19,6 +21,7 @@ export const AdminTestimonialsPage: React.FC = () => {
 
   // Modal State
   const [modalOpen, setModalOpen] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -51,6 +54,7 @@ export const AdminTestimonialsPage: React.FC = () => {
   }, []);
 
   const handleOpenCreate = () => {
+    setEditingId(null);
     setFormData({
       clientName: '',
       clientRole: 'M.Tech Project Scholar',
@@ -66,6 +70,33 @@ export const AdminTestimonialsPage: React.FC = () => {
     setModalOpen(true);
   };
 
+  const handleOpenEdit = (t: Testimonial) => {
+    setEditingId(t.id);
+    setFormData({
+      clientName: t.clientName,
+      clientRole: t.clientRole || '',
+      companyOrInstitution: t.companyOrInstitution || '',
+      feedback: t.feedback,
+      rating: t.rating || 5,
+      avatarUrl: t.avatarUrl || '',
+      isFeatured: t.isFeatured,
+      displayOrder: t.displayOrder || 1,
+    });
+    setError(null);
+    setSuccess(null);
+    setModalOpen(true);
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!window.confirm('Are you sure you want to delete this testimonial?')) return;
+    try {
+      await contentApi.deleteTestimonial(id);
+      loadTestimonials();
+    } catch (err: any) {
+      alert(err.message || 'Failed to delete testimonial');
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.clientName.trim() || !formData.feedback.trim()) {
@@ -76,23 +107,38 @@ export const AdminTestimonialsPage: React.FC = () => {
     try {
       setSubmitting(true);
       setError(null);
-      await contentApi.createTestimonial({
-        clientName: formData.clientName,
-        clientRole: formData.clientRole,
-        companyOrInstitution: formData.companyOrInstitution,
-        feedback: formData.feedback,
-        rating: Number(formData.rating),
-        avatarUrl: formData.avatarUrl || undefined,
-        isFeatured: formData.isFeatured,
-        displayOrder: Number(formData.displayOrder),
-      });
 
-      setSuccess('Testimonial added successfully!');
+      if (editingId) {
+        await contentApi.updateTestimonial(editingId, {
+          clientName: formData.clientName,
+          clientRole: formData.clientRole,
+          companyOrInstitution: formData.companyOrInstitution,
+          feedback: formData.feedback,
+          rating: Number(formData.rating),
+          avatarUrl: formData.avatarUrl || undefined,
+          isFeatured: formData.isFeatured,
+          displayOrder: Number(formData.displayOrder),
+        });
+        setSuccess('Testimonial updated successfully!');
+      } else {
+        await contentApi.createTestimonial({
+          clientName: formData.clientName,
+          clientRole: formData.clientRole,
+          companyOrInstitution: formData.companyOrInstitution,
+          feedback: formData.feedback,
+          rating: Number(formData.rating),
+          avatarUrl: formData.avatarUrl || undefined,
+          isFeatured: formData.isFeatured,
+          displayOrder: Number(formData.displayOrder),
+        });
+        setSuccess('Testimonial added successfully!');
+      }
+
       setTimeout(() => {
         setModalOpen(false);
         setSuccess(null);
         loadTestimonials();
-      }, 1000);
+      }, 800);
     } catch (err: any) {
       setError(err.message || 'Failed to save testimonial');
     } finally {
@@ -151,11 +197,27 @@ export const AdminTestimonialsPage: React.FC = () => {
                       />
                     ))}
                   </div>
-                  {t.isFeatured && (
-                    <span className="text-[11px] font-semibold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/60 px-2.5 py-0.5 rounded-full border border-amber-200 dark:border-amber-800">
-                      Featured
-                    </span>
-                  )}
+                  <div className="flex items-center gap-2">
+                    {t.isFeatured && (
+                      <span className="text-[11px] font-semibold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/60 px-2.5 py-0.5 rounded-full border border-amber-200 dark:border-amber-800">
+                        Featured
+                      </span>
+                    )}
+                    <button
+                      onClick={() => handleOpenEdit(t)}
+                      className="p-1 text-slate-400 hover:text-amber-500 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                      title="Edit Testimonial"
+                    >
+                      <Pencil className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(t.id)}
+                      className="p-1 text-slate-400 hover:text-rose-500 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                      title="Delete Testimonial"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
 
                 <p className="text-sm text-slate-600 dark:text-slate-300 italic line-clamp-4 mb-4">
@@ -187,8 +249,8 @@ export const AdminTestimonialsPage: React.FC = () => {
         </div>
       )}
 
-      {/* Modal: Add Testimonial */}
-      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title="Add Client Testimonial">
+      {/* Modal: Add or Edit Testimonial */}
+      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={editingId ? "Edit Client Testimonial" : "Add Client Testimonial"}>
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
             <div className="p-3 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 rounded-lg text-red-700 dark:text-red-300 text-xs flex items-center gap-2">

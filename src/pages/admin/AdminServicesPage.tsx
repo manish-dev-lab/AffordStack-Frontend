@@ -414,7 +414,7 @@ export const AdminServicesPage: React.FC = () => {
             </label>
             <textarea
               rows={3}
-              placeholder="Full Architecture Documentation&#10;Complete Source Code & Git History&#10;One-on-One Viva Coaching"
+              placeholder="Full Architecture Documentation&#10;Complete Source Code & Git History&#10;One-on-One Code Walkthrough"
               value={formData.featuresText}
               onChange={(e) => setFormData({ ...formData, featuresText: e.target.value })}
               className="w-full px-3.5 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 font-mono text-xs text-slate-900 dark:text-white"

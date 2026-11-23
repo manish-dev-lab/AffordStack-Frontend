@@ -18,7 +18,8 @@ import {
   AlertCircle,
   Loader2,
   CreditCard,
-  Lock
+  Lock,
+  ArrowLeft
 } from 'lucide-react';
 
 export const PublicQuoteDecisionPage: React.FC = () => {
@@ -135,7 +136,22 @@ export const PublicQuoteDecisionPage: React.FC = () => {
   const isResponded = quotation.status === 'Accepted' || quotation.status === 'Rejected' || quotation.status === 4 || quotation.status === 5;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14 space-y-8">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-14 space-y-6 sm:space-y-8">
+      {/* Top Back Navigation for Mobile / iOS */}
+      <div className="flex items-center justify-between">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" /> Back to Home
+        </Link>
+        <Link
+          to="/user/dashboard"
+          className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline"
+        >
+          Customer Dashboard &rarr;
+        </Link>
+      </div>
       {/* Action banner if already responded */}
       {actionSuccess && (
         <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-sm flex items-center gap-3">

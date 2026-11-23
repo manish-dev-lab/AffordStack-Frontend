@@ -124,30 +124,30 @@ export const UserDashboardPage: React.FC = () => {
       <div className="max-w-6xl mx-auto space-y-8">
         {/* Welcome Header */}
         <Reveal animation="fade-up">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200/80 dark:border-slate-800 shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white text-xl font-extrabold shadow-md shadow-blue-500/25">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-8 border border-slate-200/80 dark:border-slate-800 shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+            <div className="flex items-center gap-3.5 sm:gap-4 min-w-0">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white text-lg sm:text-xl font-extrabold shadow-md shadow-blue-500/25 shrink-0">
                 {user?.fullName?.charAt(0) || 'U'}
               </div>
-              <div>
-                <span className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">
+              <div className="min-w-0 flex-1">
+                <span className="text-[11px] sm:text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider block">
                   Customer Portal
                 </span>
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
+                <h1 className="text-lg sm:text-2xl font-extrabold text-slate-900 dark:text-white truncate">
                   Welcome back, {user?.fullName || 'Valued Client'}
                 </h1>
-                <div className="flex items-center gap-3 mt-1 text-xs">
-                  <span className="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5" /> Account Verified
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 shrink-0">
+                    <CheckCircle2 className="w-3 h-3 shrink-0" /> Account Verified
                   </span>
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 shrink-0">
               <Link
                 to="/request-a-quote"
-                className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-600/20 transition-all flex items-center gap-2 cursor-pointer"
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-600/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Plus className="w-4 h-4" /> New Enquiry
               </Link>
@@ -420,76 +420,130 @@ export const UserDashboardPage: React.FC = () => {
                     </Link>
                   </div>
                 ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left text-xs">
-                      <thead className="bg-slate-50 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800 uppercase font-bold text-[11px] tracking-wider">
-                        <tr>
-                          <th className="p-4">Reference #</th>
-                          <th className="p-4">Project Title</th>
-                          <th className="p-4">Status</th>
-                          <th className="p-4">Quotation &amp; Advance</th>
-                          <th className="p-4">Date Submitted</th>
-                          <th className="p-4 text-right">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-300">
-                        {enquiries.map((enq) => (
-                          <tr key={enq.id} className="hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors">
-                            <td className="p-4 font-mono font-bold text-blue-600 dark:text-blue-400">
+                  <>
+                    {/* Mobile Card View (No Horizontal Table Overflow) */}
+                    <div className="md:hidden divide-y divide-slate-100 dark:divide-slate-800">
+                      {enquiries.map((enq) => (
+                        <div key={enq.id} className="p-4 space-y-3">
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="font-mono font-bold text-xs text-blue-600 dark:text-blue-400">
                               {enq.referenceNumber}
-                            </td>
-                            <td className="p-4 max-w-xs">
-                              <div className="font-bold text-slate-900 dark:text-white truncate">
-                                {enq.projectTitle}
+                            </span>
+                            <Badge status={enq.effectiveStatus || (enq.projectStatus ? String(enq.projectStatus) : (enq.quotationStatus === 'Accepted' ? 'Accepted' : enq.status))} />
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-bold text-slate-900 dark:text-white">
+                              {enq.projectTitle}
+                            </h4>
+                            <p className="text-xs text-slate-400 mt-0.5">
+                              {enq.requiredTechnology} &bull; {enq.estimatedBudget}
+                            </p>
+                            {enq.quotationNumber && (
+                              <div className="mt-2 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 flex items-center justify-between text-xs">
+                                <span className="font-mono font-bold text-slate-700 dark:text-slate-300">Quote #{enq.quotationNumber}</span>
+                                {enq.quotationAmount && (
+                                  <span className="font-bold text-emerald-600 dark:text-emerald-400">₹{enq.quotationAmount.toLocaleString('en-IN')}</span>
+                                )}
                               </div>
-                              <div className="text-[11px] text-slate-400 truncate mt-0.5">
-                                {enq.requiredTechnology} &bull; {enq.estimatedBudget}
-                              </div>
-                            </td>
-                            <td className="p-4">
-                              <Badge status={enq.effectiveStatus || (enq.projectStatus ? String(enq.projectStatus) : (enq.quotationStatus === 'Accepted' ? 'Accepted' : enq.status))} />
-                            </td>
-                            <td className="p-4">
-                              {enq.quotationNumber ? (
-                                <div>
-                                  <span className="font-mono font-bold text-slate-900 dark:text-white">
-                                    #{enq.quotationNumber}
-                                  </span>
-                                  {enq.quotationAmount && (
-                                    <div className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold">
-                                      ₹{enq.quotationAmount.toLocaleString('en-IN')}
-                                    </div>
-                                  )}
-                                </div>
-                              ) : (
-                                <span className="text-slate-400 italic">In preparation</span>
-                              )}
-                            </td>
-                            <td className="p-4 whitespace-nowrap text-slate-500">
+                            )}
+                          </div>
+                          <div className="flex items-center justify-between pt-1">
+                            <span className="text-[11px] text-slate-400">
                               {new Date(enq.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
-                            </td>
-                            <td className="p-4 text-right space-x-2 whitespace-nowrap">
+                            </span>
+                            <div className="flex items-center gap-2">
                               <Link
                                 to={`/track-enquiry?ref=${enq.referenceNumber}&email=${encodeURIComponent(user?.email || '')}`}
-                                className="px-3 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-900 font-bold hover:bg-blue-100 transition-colors inline-flex items-center gap-1"
+                                className="px-3 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-900 font-bold hover:bg-blue-100 transition-colors text-xs inline-flex items-center gap-1"
                               >
                                 Track <ArrowRight className="w-3 h-3" />
                               </Link>
-
                               {enq.quotationSecureToken && (
                                 <Link
                                   to={`/quote/${enq.quotationSecureToken}`}
-                                  className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition-all shadow-xs inline-flex items-center gap-1"
+                                  className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition-all text-xs inline-flex items-center gap-1"
                                 >
-                                  View Proposal <ExternalLink className="w-3 h-3" />
+                                  View <ExternalLink className="w-3 h-3" />
                                 </Link>
                               )}
-                            </td>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Desktop Table View */}
+                    <div className="hidden md:block overflow-x-auto">
+                      <table className="w-full text-left text-xs">
+                        <thead className="bg-slate-50 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800 uppercase font-bold text-[11px] tracking-wider">
+                          <tr>
+                            <th className="p-4">Reference #</th>
+                            <th className="p-4">Project Title</th>
+                            <th className="p-4">Status</th>
+                            <th className="p-4">Quotation &amp; Advance</th>
+                            <th className="p-4">Date Submitted</th>
+                            <th className="p-4 text-right">Actions</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-300">
+                          {enquiries.map((enq) => (
+                            <tr key={enq.id} className="hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors">
+                              <td className="p-4 font-mono font-bold text-blue-600 dark:text-blue-400">
+                                {enq.referenceNumber}
+                              </td>
+                              <td className="p-4 max-w-xs">
+                                <div className="font-bold text-slate-900 dark:text-white truncate">
+                                  {enq.projectTitle}
+                                </div>
+                                <div className="text-[11px] text-slate-400 truncate mt-0.5">
+                                  {enq.requiredTechnology} &bull; {enq.estimatedBudget}
+                                </div>
+                              </td>
+                              <td className="p-4">
+                                <Badge status={enq.effectiveStatus || (enq.projectStatus ? String(enq.projectStatus) : (enq.quotationStatus === 'Accepted' ? 'Accepted' : enq.status))} />
+                              </td>
+                              <td className="p-4">
+                                {enq.quotationNumber ? (
+                                  <div>
+                                    <span className="font-mono font-bold text-slate-900 dark:text-white">
+                                      #{enq.quotationNumber}
+                                    </span>
+                                    {enq.quotationAmount && (
+                                      <div className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold">
+                                        ₹{enq.quotationAmount.toLocaleString('en-IN')}
+                                      </div>
+                                    )}
+                                  </div>
+                                ) : (
+                                  <span className="text-slate-400 italic">In preparation</span>
+                                )}
+                              </td>
+                              <td className="p-4 whitespace-nowrap text-slate-500">
+                                {new Date(enq.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                              </td>
+                              <td className="p-4 text-right space-x-2 whitespace-nowrap">
+                                <Link
+                                  to={`/track-enquiry?ref=${enq.referenceNumber}&email=${encodeURIComponent(user?.email || '')}`}
+                                  className="px-3 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-900 font-bold hover:bg-blue-100 transition-colors inline-flex items-center gap-1"
+                                >
+                                  Track <ArrowRight className="w-3 h-3" />
+                                </Link>
+
+                                {enq.quotationSecureToken && (
+                                  <Link
+                                    to={`/quote/${enq.quotationSecureToken}`}
+                                    className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition-all shadow-xs inline-flex items-center gap-1"
+                                  >
+                                    View Proposal <ExternalLink className="w-3 h-3" />
+                                  </Link>
+                                )}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </>
                 )}
               </div>
             </Reveal>
@@ -528,62 +582,100 @@ export const UserDashboardPage: React.FC = () => {
                   </div>
                 </div>
               ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs">
-                    <thead className="bg-slate-50 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800 uppercase font-bold text-[11px] tracking-wider">
-                      <tr>
-                        <th className="p-4">Date</th>
-                        <th className="p-4">Reference / Order ID</th>
-                        <th className="p-4">Description</th>
-                        <th className="p-4">Amount</th>
-                        <th className="p-4">Gateway Method</th>
-                        <th className="p-4">Status</th>
-                        <th className="p-4 text-right">Receipt</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-300">
-                      {payments.map((p) => (
-                        <tr key={p.id} className="hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors">
-                          <td className="p-4 whitespace-nowrap text-slate-500 font-medium">
-                            {new Date(p.paymentDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
-                          </td>
-                          <td className="p-4 font-mono font-bold text-slate-900 dark:text-white">
+                <>
+                  {/* Mobile Card View (No Horizontal Table Overflow on iPhone/Android) */}
+                  <div className="md:hidden divide-y divide-slate-100 dark:divide-slate-800">
+                    {payments.map((p) => (
+                      <div key={p.id} className="p-4 space-y-3">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="font-mono font-bold text-xs text-slate-900 dark:text-white truncate">
                             {p.cashfreeOrderId || p.transactionReference || `#PAY-${p.id}`}
-                          </td>
-                          <td className="p-4 max-w-xs">
-                            <div className="font-semibold text-slate-900 dark:text-white truncate">
-                              {p.projectTitle || (p.quotationNumber ? `Quotation #${p.quotationNumber}` : 'Custom Software Service')}
-                            </div>
-                            <div className="text-[11px] text-slate-400 truncate">
-                              {p.notes || String(p.paymentType)}
-                            </div>
-                          </td>
-                          <td className="p-4 font-black text-slate-900 dark:text-white whitespace-nowrap">
+                          </span>
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 shrink-0">
+                            <CheckCircle2 className="w-3 h-3 text-emerald-600" /> Confirmed
+                          </span>
+                        </div>
+                        <div className="text-xs">
+                          <div className="font-semibold text-slate-900 dark:text-white">
+                            {p.projectTitle || (p.quotationNumber ? `Quotation #${p.quotationNumber}` : 'Custom Software Service')}
+                          </div>
+                          <div className="text-[11px] text-slate-400 mt-0.5">
+                            {new Date(p.paymentDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })} &bull; {p.paymentMethod || 'Cashfree PG'}
+                          </div>
+                        </div>
+                        <div className="flex items-center justify-between pt-1">
+                          <span className="font-black text-slate-900 dark:text-white text-sm">
                             ₹{p.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                          </td>
-                          <td className="p-4 whitespace-nowrap">
-                            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-600 dark:text-slate-300">
-                              <CreditCard className="w-3.5 h-3.5 text-blue-500" /> {p.paymentMethod || 'Cashfree Gateway'}
-                            </span>
-                          </td>
-                          <td className="p-4">
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-                              <CheckCircle2 className="w-3 h-3 text-emerald-600" /> Confirmed
-                            </span>
-                          </td>
-                          <td className="p-4 text-right whitespace-nowrap">
-                            <button
-                              onClick={() => setSelectedReceipt(p)}
-                              className="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold transition-colors inline-flex items-center gap-1.5 cursor-pointer"
-                            >
-                              <Receipt className="w-3.5 h-3.5" /> View Receipt
-                            </button>
-                          </td>
+                          </span>
+                          <button
+                            onClick={() => setSelectedReceipt(p)}
+                            className="px-3 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-950/60 hover:bg-blue-100 dark:hover:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs font-bold transition-colors inline-flex items-center gap-1.5 cursor-pointer"
+                          >
+                            <Receipt className="w-3.5 h-3.5" /> Receipt
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Desktop Table View */}
+                  <div className="hidden md:block overflow-x-auto">
+                    <table className="w-full text-left text-xs">
+                      <thead className="bg-slate-50 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800 uppercase font-bold text-[11px] tracking-wider">
+                        <tr>
+                          <th className="p-4">Date</th>
+                          <th className="p-4">Reference / Order ID</th>
+                          <th className="p-4">Description</th>
+                          <th className="p-4">Amount</th>
+                          <th className="p-4">Gateway Method</th>
+                          <th className="p-4">Status</th>
+                          <th className="p-4 text-right">Receipt</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-300">
+                        {payments.map((p) => (
+                          <tr key={p.id} className="hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors">
+                            <td className="p-4 whitespace-nowrap text-slate-500 font-medium">
+                              {new Date(p.paymentDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                            </td>
+                            <td className="p-4 font-mono font-bold text-slate-900 dark:text-white">
+                              {p.cashfreeOrderId || p.transactionReference || `#PAY-${p.id}`}
+                            </td>
+                            <td className="p-4 max-w-xs">
+                              <div className="font-semibold text-slate-900 dark:text-white truncate">
+                                {p.projectTitle || (p.quotationNumber ? `Quotation #${p.quotationNumber}` : 'Custom Software Service')}
+                              </div>
+                              <div className="text-[11px] text-slate-400 truncate">
+                                {p.notes || String(p.paymentType)}
+                              </div>
+                            </td>
+                            <td className="p-4 font-black text-slate-900 dark:text-white whitespace-nowrap">
+                              ₹{p.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                            </td>
+                            <td className="p-4 whitespace-nowrap">
+                              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-600 dark:text-slate-300">
+                                <CreditCard className="w-3.5 h-3.5 text-blue-500" /> {p.paymentMethod || 'Cashfree Gateway'}
+                              </span>
+                            </td>
+                            <td className="p-4">
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                                <CheckCircle2 className="w-3 h-3 text-emerald-600" /> Confirmed
+                              </span>
+                            </td>
+                            <td className="p-4 text-right whitespace-nowrap">
+                              <button
+                                onClick={() => setSelectedReceipt(p)}
+                                className="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold transition-colors inline-flex items-center gap-1.5 cursor-pointer"
+                              >
+                                <Receipt className="w-3.5 h-3.5" /> View Receipt
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
               )}
             </div>
           </Reveal>

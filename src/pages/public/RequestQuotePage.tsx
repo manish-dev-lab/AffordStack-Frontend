@@ -14,11 +14,21 @@ import {
   ShieldCheck, 
   Clock, 
   ArrowRight,
+  ArrowLeft,
   AlertCircle,
   Loader2,
   Search,
   UserCheck
 } from 'lucide-react';
+
+const getTomorrowDateStr = () => {
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const y = tomorrow.getFullYear();
+  const m = String(tomorrow.getMonth() + 1).padStart(2, '0');
+  const d = String(tomorrow.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+};
 import { Reveal } from '../../components/common/Reveal';
 
 const quoteSchema = z.object({
@@ -141,8 +151,13 @@ export const RequestQuotePage: React.FC = () => {
       formData.append('projectTitle', values.projectTitle);
       formData.append('projectDescription', values.projectDescription);
       formData.append('estimatedBudget', finalBudget);
-      if (values.expectedCompletionDate) {
-        formData.append('expectedCompletionDate', values.expectedCompletionDate);
+      const minDate = getTomorrowDateStr();
+      let compDate = values.expectedCompletionDate;
+      if (compDate && compDate < minDate) {
+        compDate = minDate;
+      }
+      if (compDate) {
+        formData.append('expectedCompletionDate', compDate);
       }
       if (values.additionalRequirements) {
         formData.append('additionalRequirements', values.additionalRequirements);
@@ -186,7 +201,17 @@ export const RequestQuotePage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-12 transition-colors duration-200">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-16 space-y-8 sm:space-y-12 transition-colors duration-200">
+      {/* Top Back Navigation for iOS / Mobile */}
+      <div className="flex items-center justify-start">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" /> Back to Home
+        </Link>
+      </div>
+
       {/* Header */}
       <Reveal animation="fade-up" className="text-center max-w-3xl mx-auto">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 dark:bg-blue-950/70 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-900 mb-3">
@@ -473,16 +498,34 @@ export const RequestQuotePage: React.FC = () => {
                     )}
                   </div>
 
-                  <div>
+                  <div className="w-full min-w-0">
                     <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
                       Expected Completion Date
                     </label>
                     <input
                       type="date"
-                      min={new Date(Date.now() + 86400000).toISOString().split('T')[0]}
-                      {...register('expectedCompletionDate')}
-                      className="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:outline-hidden cursor-pointer"
+                      min={getTomorrowDateStr()}
+                      {...register('expectedCompletionDate', {
+                        onChange: (e) => {
+                          const val = e.target.value;
+                          const minDate = getTomorrowDateStr();
+                          if (val && val < minDate) {
+                            e.target.value = minDate;
+                            setValue('expectedCompletionDate', minDate, { shouldValidate: true });
+                          }
+                        }
+                      })}
+                      onBlur={(e) => {
+                        const val = e.target.value;
+                        const minDate = getTomorrowDateStr();
+                        if (val && val < minDate) {
+                          e.target.value = minDate;
+                          setValue('expectedCompletionDate', minDate, { shouldValidate: true });
+                        }
+                      }}
+                      className="w-full max-w-full box-border min-w-0 appearance-none px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 focus:outline-hidden cursor-pointer"
                     />
+                    <p className="mt-1 text-[11px] text-slate-400">Earliest available delivery date is tomorrow.</p>
                   </div>
                 </div>
 

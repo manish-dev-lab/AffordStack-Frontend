@@ -136,6 +136,16 @@ export const contentApi = {
     return res.data.data!;
   },
 
+  updateTestimonial: async (id: number, payload: Partial<Testimonial>): Promise<Testimonial> => {
+    const res = await axiosInstance.put<ApiResponse<Testimonial>>(`/admin/settings/testimonials/${id}`, payload);
+    return res.data.data!;
+  },
+
+  deleteTestimonial: async (id: number): Promise<boolean> => {
+    const res = await axiosInstance.delete<ApiResponse<boolean>>(`/admin/settings/testimonials/${id}`);
+    return res.data.success;
+  },
+
   // Settings
   getSettings: async (): Promise<Record<string, string>> => {
     try {

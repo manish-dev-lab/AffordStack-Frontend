@@ -24,7 +24,7 @@ export const TermsPage: React.FC = () => {
         <section>
           <h2 className="text-xl font-bold text-slate-900">3. Academic Mentoring Ethics</h2>
           <p className="mt-2">
-            For student projects, our mentoring focuses on architectural coaching, technical understanding, code explanation, and viva defense. Students are encouraged to actively engage in the learning process to defend their projects successfully.
+            For student projects, our mentoring focuses on architectural coaching, technical understanding, code explanation, and local setup guide. Students are encouraged to actively engage in the learning process to run and understand their projects successfully.
           </p>
         </section>
 
