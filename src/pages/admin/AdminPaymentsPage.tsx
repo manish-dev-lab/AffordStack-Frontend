@@ -134,6 +134,21 @@ export const AdminPaymentsPage: React.FC = () => {
     }
   };
 
+  const formatISTDateTime = (dateVal: string | Date | undefined | null) => {
+    if (!dateVal) return 'N/A';
+    const str = typeof dateVal === 'string' ? dateVal : dateVal.toISOString();
+    const d = new Date(!str.endsWith('Z') && !str.includes('+') ? `${str}Z` : str);
+    return d.toLocaleString('en-IN', {
+      timeZone: 'Asia/Kolkata',
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    });
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -241,7 +256,7 @@ export const AdminPaymentsPage: React.FC = () => {
                     <td className="px-6 py-4">
                       <div className="font-semibold text-slate-900 dark:text-white">PAY-#{p.id}</div>
                       <div className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
-                        {p.paymentDate ? new Date(p.paymentDate).toLocaleDateString() : 'N/A'}
+                        {p.paymentDate ? formatISTDateTime(p.paymentDate) : 'N/A'}
                       </div>
                     </td>
                     <td className="px-6 py-4">
@@ -252,7 +267,7 @@ export const AdminPaymentsPage: React.FC = () => {
                     </td>
                     <td className="px-6 py-4">
                       <div className="font-medium text-slate-700 dark:text-slate-300">{getPaymentTypeName(Number(p.paymentType))}</div>
-                      <div className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{p.paymentMethod || 'Direct Transfer'}</div>
+                      <div className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{p.paymentMethod && p.paymentMethod !== 'Cashfree PG' ? p.paymentMethod : (p.paymentMethod === 'Cashfree PG' ? 'Online (UPI / Card)' : 'Online Transfer')}</div>
                     </td>
                     <td className="px-6 py-4">
                       <span className="font-mono text-xs bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-md text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
