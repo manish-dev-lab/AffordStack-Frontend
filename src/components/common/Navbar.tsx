@@ -122,11 +122,11 @@ export const Navbar: React.FC = () => {
             />
 
             {/* Desktop Navigation Links */}
-            <div className="hidden lg:flex items-center lg:gap-3 xl:gap-5 text-xs xl:text-sm font-semibold">
+            <div className="hidden lg:flex items-center lg:gap-2 xl:gap-3.5 2xl:gap-5 text-xs xl:text-sm font-semibold whitespace-nowrap shrink-0">
               <Link
                 to="/"
                 onClick={(e) => handleNavClick('/', e)}
-                className={`transition-colors hover:text-blue-600 dark:hover:text-blue-400 py-1 ${
+                className={`transition-colors hover:text-blue-600 dark:hover:text-blue-400 py-1 whitespace-nowrap shrink-0 ${
                   isActive('/') ? 'text-blue-600 dark:text-blue-400 font-bold' : 'text-slate-700 dark:text-slate-200'
                 }`}
               >
@@ -136,7 +136,7 @@ export const Navbar: React.FC = () => {
               <Link
                 to="/about"
                 onClick={(e) => handleNavClick('/about', e)}
-                className={`transition-colors hover:text-blue-600 dark:hover:text-blue-400 py-1 ${
+                className={`transition-colors hover:text-blue-600 dark:hover:text-blue-400 py-1 whitespace-nowrap shrink-0 ${
                   isActive('/about') ? 'text-blue-600 dark:text-blue-400 font-bold' : 'text-slate-700 dark:text-slate-200'
                 }`}
               >
@@ -145,14 +145,14 @@ export const Navbar: React.FC = () => {
 
               {/* Services Dropdown (Closes on click) */}
               <div 
-                className="relative"
+                className="relative shrink-0"
                 onMouseEnter={() => setServicesDropdown(true)}
                 onMouseLeave={() => setServicesDropdown(false)}
               >
                 <Link
                   to="/services"
                   onClick={(e) => handleNavClick('/services', e)}
-                  className={`flex items-center gap-1 transition-colors hover:text-blue-600 dark:hover:text-blue-400 py-1 ${
+                  className={`flex items-center gap-1 transition-colors hover:text-blue-600 dark:hover:text-blue-400 py-1 whitespace-nowrap shrink-0 ${
                     location.pathname.startsWith('/services') ? 'text-blue-600 dark:text-blue-400 font-bold' : 'text-slate-700 dark:text-slate-200'
                   }`}
                 >
@@ -210,7 +210,7 @@ export const Navbar: React.FC = () => {
               <Link
                 to="/portfolio"
                 onClick={(e) => handleNavClick('/portfolio', e)}
-                className={`transition-colors hover:text-blue-600 dark:hover:text-blue-400 py-1 ${
+                className={`transition-colors hover:text-blue-600 dark:hover:text-blue-400 py-1 whitespace-nowrap shrink-0 ${
                   isActive('/portfolio') ? 'text-blue-600 dark:text-blue-400 font-bold' : 'text-slate-700 dark:text-slate-200'
                 }`}
               >
@@ -220,7 +220,7 @@ export const Navbar: React.FC = () => {
               <Link
                 to="/technologies"
                 onClick={(e) => handleNavClick('/technologies', e)}
-                className={`transition-colors hover:text-blue-600 dark:hover:text-blue-400 py-1 ${
+                className={`transition-colors hover:text-blue-600 dark:hover:text-blue-400 py-1 whitespace-nowrap shrink-0 ${
                   isActive('/technologies') ? 'text-blue-600 dark:text-blue-400 font-bold' : 'text-slate-700 dark:text-slate-200'
                 }`}
               >
@@ -230,7 +230,7 @@ export const Navbar: React.FC = () => {
               <Link
                 to="/blog"
                 onClick={(e) => handleNavClick('/blog', e)}
-                className={`transition-colors hover:text-blue-600 dark:hover:text-blue-400 py-1 ${
+                className={`transition-colors hover:text-blue-600 dark:hover:text-blue-400 py-1 whitespace-nowrap shrink-0 ${
                   isActive('/blog') ? 'text-blue-600 dark:text-blue-400 font-bold' : 'text-slate-700 dark:text-slate-200'
                 }`}
               >
@@ -240,7 +240,7 @@ export const Navbar: React.FC = () => {
               <Link
                 to="/track-enquiry"
                 onClick={handleTrackClick}
-                className={`flex items-center gap-1 transition-colors hover:text-blue-600 dark:hover:text-blue-400 py-1 ${
+                className={`flex items-center gap-1 transition-colors hover:text-blue-600 dark:hover:text-blue-400 py-1 whitespace-nowrap shrink-0 ${
                   isActive('/track-enquiry') ? 'text-blue-600 dark:text-blue-400 font-bold' : 'text-slate-700 dark:text-slate-200'
                 }`}
                 title="Track Live Enquiry Status"
@@ -252,7 +252,7 @@ export const Navbar: React.FC = () => {
               <Link
                 to="/contact"
                 onClick={(e) => handleNavClick('/contact', e)}
-                className={`transition-colors hover:text-blue-600 dark:hover:text-blue-400 py-1 ${
+                className={`transition-colors hover:text-blue-600 dark:hover:text-blue-400 py-1 whitespace-nowrap shrink-0 ${
                   isActive('/contact') ? 'text-blue-600 dark:text-blue-400 font-bold' : 'text-slate-700 dark:text-slate-200'
                 }`}
               >
@@ -261,25 +261,25 @@ export const Navbar: React.FC = () => {
             </div>
 
             {/* Right Action Buttons */}
-            <div className="hidden lg:flex items-center gap-2 xl:gap-3 shrink-0">
+            <div className="hidden lg:flex items-center gap-1.5 xl:gap-2.5 shrink-0 whitespace-nowrap">
               <ThemeToggle />
 
               {/* Client Account: Avatar Dropdown (When Logged In) */}
               {isUserAuthenticated ? (
-                <div className="relative" ref={userMenuRef}>
+                <div className="relative shrink-0" ref={userMenuRef}>
                   <button
                     type="button"
                     onClick={() => setUserDropdown((prev) => !prev)}
-                    className="flex items-center gap-2 py-1.5 px-2.5 rounded-full bg-blue-50 dark:bg-blue-950/60 hover:bg-blue-100 dark:hover:bg-blue-900/60 border border-blue-200/80 dark:border-blue-900 transition-colors group cursor-pointer focus:outline-hidden"
+                    className="flex items-center gap-1.5 py-1.5 px-2 xl:px-2.5 rounded-full bg-blue-50 dark:bg-blue-950/60 hover:bg-blue-100 dark:hover:bg-blue-900/60 border border-blue-200/80 dark:border-blue-900 transition-colors group cursor-pointer focus:outline-hidden shrink-0"
                     title={`${clientUser?.fullName || 'User'} - Click for Account Menu`}
                   >
-                    <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-blue-600 via-indigo-600 to-blue-700 text-white flex items-center justify-center font-bold text-xs shadow-xs uppercase">
+                    <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-blue-600 via-indigo-600 to-blue-700 text-white flex items-center justify-center font-bold text-xs shadow-xs uppercase shrink-0">
                       {userInitial}
                     </div>
-                    <span className="text-xs font-bold text-slate-800 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 max-w-[90px] xl:max-w-[120px] truncate">
+                    <span className="text-xs font-bold text-slate-800 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 max-w-[80px] xl:max-w-[110px] truncate">
                       {clientUser?.fullName?.split(' ')[0] || 'Account'}
                     </span>
-                    <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${userDropdown ? 'rotate-180' : ''}`} />
+                    <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 shrink-0 ${userDropdown ? 'rotate-180' : ''}`} />
                   </button>
 
                   {/* Dropdown Menu */}
