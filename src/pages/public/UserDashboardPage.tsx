@@ -226,28 +226,28 @@ export const UserDashboardPage: React.FC = () => {
         </div>
 
         {/* Tab Controls */}
-        <div className="flex items-center gap-3 border-b border-slate-200 dark:border-slate-800 pb-2">
+        <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 border-b border-slate-200 dark:border-slate-800 pb-2">
           <button
             onClick={() => setActiveTab('projects')}
-            className={`px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all cursor-pointer flex items-center gap-2 ${
+            className={`px-4 sm:px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all cursor-pointer flex items-center gap-2 ${
               activeTab === 'projects'
                 ? 'bg-blue-600 text-white shadow-md shadow-blue-500/25'
                 : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-800'
             }`}
           >
-            <FolderKanban className="w-4 h-4" />
-            Enquiries &amp; Projects
+            <FolderKanban className="w-4 h-4 shrink-0" />
+            <span>Enquiries &amp; Projects</span>
           </button>
           <button
             onClick={() => setActiveTab('payments')}
-            className={`px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all cursor-pointer flex items-center gap-2 ${
+            className={`px-4 sm:px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all cursor-pointer flex items-center gap-2 ${
               activeTab === 'payments'
                 ? 'bg-blue-600 text-white shadow-md shadow-blue-500/25'
                 : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-800'
             }`}
           >
-            <Receipt className="w-4 h-4" />
-            Payment Receipts &amp; Invoices ({payments.length})
+            <Receipt className="w-4 h-4 shrink-0" />
+            <span>Transactions ({payments.length})</span>
           </button>
         </div>
 
