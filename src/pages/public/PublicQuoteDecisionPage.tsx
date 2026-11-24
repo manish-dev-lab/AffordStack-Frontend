@@ -311,6 +311,14 @@ export const PublicQuoteDecisionPage: React.FC = () => {
           </div>
         </div>
 
+        {/* Cashfree Error Banner if triggered directly */}
+        {cashfreeError && !decisionType && (
+          <div className="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-300 text-sm flex items-center gap-3">
+            <AlertCircle className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0" />
+            <span>{cashfreeError}</span>
+          </div>
+        )}
+
         {/* Decision Actions Bar */}
         {!isResponded ? (
           <div className="pt-6 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-end gap-4">
