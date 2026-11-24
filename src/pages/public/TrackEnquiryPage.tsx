@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { enquiryApi } from '../../api/enquiryApi';
 import { quotationApi } from '../../api/quotationApi';
+import { paymentApi } from '../../api/paymentApi';
+import { openCashfreeCheckout } from '../../utils/cashfree';
 import type { EnquiryTracking } from '../../types';
 import { Reveal } from '../../components/common/Reveal';
 import {
@@ -19,7 +21,8 @@ import {
   Layers,
   ArrowRight,
   RefreshCw,
-  FolderKanban
+  FolderKanban,
+  Lock
 } from 'lucide-react';
 
 export const TrackEnquiryPage: React.FC = () => {
@@ -38,6 +41,8 @@ export const TrackEnquiryPage: React.FC = () => {
   const [remarks, setRemarks] = useState('');
   const [actionLoading, setActionLoading] = useState(false);
   const [decisionSuccess, setDecisionSuccess] = useState<string | null>(null);
+  const [isPayingWithCashfree, setIsPayingWithCashfree] = useState(false);
+  const [cashfreeError, setCashfreeError] = useState<string | null>(null);
 
   const fetchTracking = async (ref: string, em: string) => {
     if (!ref.trim() || !em.trim()) return;
@@ -72,6 +77,39 @@ export const TrackEnquiryPage: React.FC = () => {
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     fetchTracking(referenceNumber, email);
+  };
+
+  const handlePayAdvanceWithCashfree = async () => {
+    const token = tracking?.activeQuotation?.secureToken;
+    if (!token) return;
+    setIsPayingWithCashfree(true);
+    setCashfreeError(null);
+    try {
+      const order = await paymentApi.createQuoteAdvanceOrder(token);
+      if (!order.paymentSessionId) {
+        throw new Error('Cashfree payment session ID was not received from server.');
+      }
+
+      await openCashfreeCheckout({
+        paymentSessionId: order.paymentSessionId,
+        environment: order.environment,
+        redirectTarget: '_modal'
+      });
+
+      const verifyRes = await paymentApi.verifyPayment(order.orderId);
+      if (verifyRes.success) {
+        setDecisionSuccess(`Advance payment of ₹${verifyRes.amount.toLocaleString('en-IN')} received! Project status is now In Progress. Payment Ref: ${verifyRes.paymentId || order.orderId}`);
+        setDecisionType(null);
+        await fetchTracking(referenceNumber, email);
+      } else {
+        setCashfreeError(`Payment status: ${verifyRes.message || 'Advance payment is required to start the project. Please try again.'}`);
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error processing Cashfree checkout';
+      setCashfreeError(msg);
+    } finally {
+      setIsPayingWithCashfree(false);
+    }
   };
 
   const handleDecisionSubmit = async () => {
@@ -503,27 +541,89 @@ export const TrackEnquiryPage: React.FC = () => {
                     </div>
                   </div>
 
+                  {cashfreeError && !decisionType && (
+                    <div className="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-300 text-xs sm:text-sm flex items-center gap-3">
+                      <AlertCircle className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0" />
+                      <span>{cashfreeError}</span>
+                    </div>
+                  )}
+
                   {/* Decision Actions Bar */}
-                  {tracking.activeQuotation.status === 'Sent' || tracking.activeQuotation.status === 'Draft' ? (
+                  {['Sent', 'Viewed', 'Draft', 1, 2, 3].includes(tracking.activeQuotation.status) ? (
                     <div className="pt-6 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-end gap-4">
                       <button
-                        onClick={() => { setDecisionType('reject'); setRemarks(''); }}
+                        onClick={() => { setDecisionType('reject'); setRemarks(''); setCashfreeError(null); }}
                         className="w-full sm:w-auto px-6 py-3 rounded-xl border border-rose-300 dark:border-rose-900 text-rose-700 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 font-bold text-sm transition-colors flex items-center justify-center gap-2 cursor-pointer"
                       >
                         <XCircle className="w-4 h-4" /> Decline Proposal
                       </button>
                       <button
-                        onClick={() => { setDecisionType('accept'); setRemarks(''); }}
-                        className="w-full sm:w-auto px-8 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm shadow-lg shadow-emerald-600/30 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                        disabled={isPayingWithCashfree}
+                        onClick={() => {
+                          if (tracking.activeQuotation!.advancePaymentAmount > 0 && !tracking.activeQuotation!.isAdvancePaid) {
+                            handlePayAdvanceWithCashfree();
+                          } else {
+                            setDecisionType('accept');
+                            setRemarks('');
+                          }
+                        }}
+                        className="w-full sm:w-auto px-8 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm shadow-lg shadow-emerald-600/30 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                       >
-                        <CheckCircle2 className="w-4 h-4" /> Accept Quotation Proposal
+                        {isPayingWithCashfree ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin shrink-0" />
+                            <span>Connecting to Cashfree...</span>
+                          </>
+                        ) : (
+                          <>
+                            <CheckCircle2 className="w-4 h-4" />
+                            <span>
+                              {tracking.activeQuotation.advancePaymentAmount > 0 && !tracking.activeQuotation.isAdvancePaid
+                                ? `Accept Proposal & Pay Advance (₹${tracking.activeQuotation.advancePaymentAmount.toLocaleString('en-IN')})`
+                                : 'Accept Quotation Proposal'}
+                            </span>
+                          </>
+                        )}
                       </button>
                     </div>
                   ) : (
-                    <div className="pt-6 border-t border-slate-200 dark:border-slate-800 text-center text-sm text-slate-500 dark:text-slate-400">
-                      This quotation proposal status is currently <strong className="text-slate-800 dark:text-slate-200">{String(tracking.activeQuotation.status)}</strong>.
-                      {tracking.activeQuotation.responseRemarks && (
-                        <p className="italic text-xs mt-1 text-slate-600 dark:text-slate-400">Remarks: "{tracking.activeQuotation.responseRemarks}"</p>
+                    <div className="pt-6 border-t border-slate-200 dark:border-slate-800 space-y-4">
+                      <div className="text-center text-sm text-slate-500 dark:text-slate-400">
+                        This quotation proposal status is currently <strong className="text-slate-800 dark:text-slate-200">{String(tracking.activeQuotation.status)}</strong>.
+                        {tracking.activeQuotation.responseRemarks && (
+                          <p className="italic text-xs mt-1 text-slate-600 dark:text-slate-400">Remarks: "{tracking.activeQuotation.responseRemarks}"</p>
+                        )}
+                      </div>
+
+                      {(tracking.activeQuotation.status === 'Accepted' || tracking.activeQuotation.status === 4) &&
+                        !tracking.activeQuotation.isAdvancePaid &&
+                        tracking.activeQuotation.advancePaymentAmount > 0 && (
+                        <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                          <div>
+                            <div className="text-xs font-bold uppercase tracking-wider text-amber-800 dark:text-amber-300 flex items-center gap-1.5">
+                              <AlertCircle className="w-4 h-4" /> Advance Deposit Pending
+                            </div>
+                            <p className="text-xs text-amber-700 dark:text-amber-400 mt-0.5">
+                              Pay the advance of ₹{tracking.activeQuotation.advancePaymentAmount.toLocaleString('en-IN')} to start project development immediately.
+                            </p>
+                          </div>
+                          <button
+                            type="button"
+                            disabled={isPayingWithCashfree}
+                            onClick={handlePayAdvanceWithCashfree}
+                            className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs shadow-md shadow-blue-500/25 shrink-0 inline-flex items-center justify-center gap-2 cursor-pointer transition-all disabled:opacity-50"
+                          >
+                            {isPayingWithCashfree ? (
+                              <>
+                                <Loader2 className="w-3.5 h-3.5 animate-spin" /> Connecting...
+                              </>
+                            ) : (
+                              <>
+                                <Lock className="w-3.5 h-3.5" /> Pay ₹{tracking.activeQuotation.advancePaymentAmount.toLocaleString('en-IN')} via Cashfree
+                              </>
+                            )}
+                          </button>
+                        </div>
                       )}
                     </div>
                   )}
